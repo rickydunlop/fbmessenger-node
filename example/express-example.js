@@ -14,6 +14,14 @@ let wrapper = new MessengerWrapper({
   pageAccessToken: process.env.PAGE_ACCESS_TOKEN
 });
 
+wrapper.on('message', (event) => {
+  console.log('message has come');
+});
+
+wrapper.on('delivery', (event) => {
+  console.log('delivery has come');
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
