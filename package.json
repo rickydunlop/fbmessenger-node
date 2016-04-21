@@ -1,0 +1,20 @@
+{
+  "name": "messenger-wrapper",
+  "version": "0.1.0",
+  "description": "A simple wrapper for Facebook Messenger Bots",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justynjozwiak/messenger-wrapper.git"
+  },
+  "author": "Justyn Jóźwiak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/justynjozwiak/messenger-wrapper/issues"
+  },
+  "homepage": "https://github.com/justynjozwiak/messenger-wrapper#readme"
+}
