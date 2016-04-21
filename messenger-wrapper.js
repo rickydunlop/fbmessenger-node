@@ -54,6 +54,14 @@ class MessengerWrapper extends EventEmitter {
       return this.messengerClient.getUserData(event);
     }
   }
+
+  sendData(payload, event) {
+    if (typeof event === 'object') {
+      return this.messengerClient.sendData(payload, event.sender.id)
+    } else {
+      return this.messengerClient.sendData(payload, event);
+    }
+  }
 }
 
 export default MessengerWrapper;
