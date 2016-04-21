@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/justynjozwiak/messenger-wrapper/issues"
   },
-  "homepage": "https://github.com/justynjozwiak/messenger-wrapper#readme"
+  "homepage": "https://github.com/justynjozwiak/messenger-wrapper#readme",
+  "devDependencies": {
+    "babel-core": "^6.7.7"
+  }
 }
