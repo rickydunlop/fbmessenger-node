@@ -21,6 +21,24 @@ class MessengerWrapper extends EventEmitter {
       return res.send('VERIFY_TOKEN does not match.');
     }
   }
+
+  handle(req) {
+    let entries = req.body.entry;
+
+    entries.forEach((entry) => {
+      entry.messaging.forEach((event) => {
+        if (event.message) {
+          this.handleEvent('message', event);
+        }
+        else if (event.delivery) {
+          this.handleEvent('delivery', event);
+        }
+        else if (event.postback) {
+          this.handleEvent('postback', event);
+        }
+      });
+    });
+  }
 }
 
 export default MessengerWrapper;
