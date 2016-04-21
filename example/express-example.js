@@ -29,4 +29,9 @@ app.get('/webhook', (req, res) => {
   return wrapper.verify(req, res);
 });
 
+app.post('/webhook', (req, res) => {
+  res.sendStatus(200);
+  wrapper.handle(req);
+});
+
 http.createServer(app).listen(3000);
