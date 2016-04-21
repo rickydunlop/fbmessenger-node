@@ -39,6 +39,10 @@ class MessengerWrapper extends EventEmitter {
       });
     });
   }
+
+  handleEvent(action, event) {
+    this.emit(action, event);
+  }
 }
 
 export default MessengerWrapper;
