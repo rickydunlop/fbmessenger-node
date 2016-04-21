@@ -13,6 +13,14 @@ class MessengerWrapper extends EventEmitter {
     this.verifyToken = opts.verifyToken;
     this.pageAccessToken = opts.pageAccessToken;
   }
+
+  verify(req, res) {
+    if (req.query['hub.verify_token'] === this.verifyToken) {
+      return res.send(req.query['hub.challenge']);
+    } else {
+      return res.send('VERIFY_TOKEN does not match.');
+    }
+  }
 }
 
 export default MessengerWrapper;
