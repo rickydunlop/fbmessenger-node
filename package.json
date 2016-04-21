@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node index.js",
+    "start:server": "babel-node example/express-example.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
