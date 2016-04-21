@@ -1,5 +1,7 @@
 import EventEmitter from 'events';
 
+import MessengerClient from './lib/messenger-client';
+
 class MessengerWrapper extends EventEmitter {
   constructor(opts) {
     super();
@@ -12,6 +14,7 @@ class MessengerWrapper extends EventEmitter {
 
     this.verifyToken = opts.verifyToken;
     this.pageAccessToken = opts.pageAccessToken;
+    this.messengerClient = new MessengerClient(this);
   }
 
   verify(req, res) {
@@ -42,6 +45,14 @@ class MessengerWrapper extends EventEmitter {
 
   handleEvent(action, event) {
     this.emit(action, event);
+  }
+
+  getUser(event) {
+    if (typeof event === 'object') {
+      return this.messengerClient.getUserData(event.sender.id);
+    } else {
+      return this.messengerClient.getUserData(event);
+    }
   }
 }
 
