@@ -1,16 +1,24 @@
+import dotenv from 'dotenv';
 import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
 
+dotenv.config();
+
 import MessengerWrapper from '../messenger-wrapper.js';
 
-let app = express()
+let app = express();
 
-app.use(bodyParser.json())
+let wrapper = new MessengerWrapper({
+  verifyToken: process.env.VERIFY_TOKEN,
+  pageAccessToken: process.env.PAGE_ACCESS_TOKEN
+});
+
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-  res.sendStatus(200);
+app.get('/webhook', (req, res) => {
+  return wrapper.verify(req, res);
 });
 
 http.createServer(app).listen(3000);
