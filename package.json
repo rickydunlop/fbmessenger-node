@@ -5,7 +5,8 @@
   "main": "messenger-wrapper.js",
   "scripts": {
     "start": "babel-node messenger-wrapper.js",
-    "start:server": "babel-node example/express-example.js"
+    "start:server": "babel-node example/express-example.js",
+    "test": "mocha --compilers js:babel-core/register \"test/**/*@(.js)\""
   },
   "repository": {
     "type": "git",
