@@ -15,9 +15,7 @@ let wrapper = new MessengerWrapper({
 });
 
 wrapper.on('message', (event) => {
-  wrapper.getUser(event).then((user) => {
-    console.log(user);
-  });
+  wrapper.sendData({ text: 'hello user' }, event);
 });
 
 wrapper.on('delivery', (event) => {
