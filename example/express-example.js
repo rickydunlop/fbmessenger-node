@@ -2,7 +2,7 @@ import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import MessengerWrapper from '../index.js';
+import MessengerWrapper from '../messenger-wrapper.js';
 
 let app = express()
 
