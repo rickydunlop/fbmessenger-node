@@ -14,7 +14,7 @@ A simple library for handling [Facebook Messenger Bots](https://developers.faceb
 Execute this line in your app directory:
 
 ```
-npm install messenger-wrapper --save
+npm install --save messenger-wrapper
 ```
 
 Import library into your app:
