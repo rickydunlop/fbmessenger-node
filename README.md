@@ -17,6 +17,23 @@ Execute this line in your app directory:
 npm install messenger-wrapper --save
 ```
 
+Import library into your app:
+
+```javascript
+import MessengerWrapper from 'messenger-wrapper';
+```
+
+Initialize it:
+
+```javascript
+let messenger = new MessengerWrapper({
+  verifyToken:     '<VERIFY_TOKEN>',
+  pageAccessToken: '<PAGE_ACCESS_TOKEN>'
+});
+```
+
+and you are ready to go.
+
 ## Express.js (example usage)
 
 ```javascript
