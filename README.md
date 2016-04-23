@@ -111,7 +111,7 @@ app.post('/webhook', (req, res) => {
 
 Basically we have 3 types of events according to Facebook documentation:
 
-#### `messenger.on('message', (event))`
+#### :information_source: `messenger.on('message', (event))`
 
 Event triggered when the bot receives message from the user.
 
@@ -125,7 +125,7 @@ messenger.on('message', (event) => {
 });
 ```
 
-#### `messenger.on('delivery', (event))`
+#### :information_source: `messenger.on('delivery', (event))`
 
 Event triggered when the message has been successfully delivered to the user.
 
@@ -139,7 +139,7 @@ messenger.on('delivery', (event) => {
 });
 ```
 
-#### `messenger.on('postback', (event))`
+#### :information_source: `messenger.on('postback', (event))`
 
 Event triggered when the postback action is triggered by the user.
 
@@ -155,7 +155,7 @@ messenger.on('postback', (event) => {
 
 ### Functions
 
-#### `messenger.getUser(event)`
+#### :information_source: `messenger.getUser(event)`
 
 `event` - object with payload received from messenger user
 
