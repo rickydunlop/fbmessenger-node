@@ -62,6 +62,10 @@ class MessengerWrapper extends EventEmitter {
       return this.messengerClient.sendData(payload, event);
     }
   }
+
+  subscribe() {
+    return this.messengerClient.subscribeAppToPage();
+  }
 }
 
 export default MessengerWrapper;
