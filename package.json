@@ -14,7 +14,7 @@
     "url": "git+https://github.com/justynjozwiak/messenger-wrapper.git"
   },
   "author": "Justyn Jóźwiak",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/justynjozwiak/messenger-wrapper/issues"
   },
