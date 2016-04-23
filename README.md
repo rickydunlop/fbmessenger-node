@@ -6,3 +6,14 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/571a18b3fcd19a00415b21bc/badge.svg)](https://www.versioneye.com/user/projects/571a18b3fcd19a00415b21bc)
 [![Github Issues](http://githubbadges.herokuapp.com/justynjozwiak/messenger-wrapper/issues.svg)](https://github.com/justynjozwiak/messenger-wrapper/issues)
 [![License](http://img.shields.io/:license-MIT-blue.svg)](http://badges.mit-license.org)
+
+A simple library for handling [Facebook Messenger Bots](https://developers.facebook.com/docs/messenger-platform).
+
+## Installation
+
+Execute this line in your app directory:
+
+```
+npm install messenger-wrapper --save
+```
+
