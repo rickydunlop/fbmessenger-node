@@ -34,7 +34,7 @@ let messenger = new MessengerWrapper({
 
 and you are ready to go.
 
-## Configuration (facebook's side)
+## Configuration (facebook's side) :paperclip:
 
 First of all visit this official [tutorial](https://developers.facebook.com/docs/messenger-platform/quickstart#steps])) and
 make sure you complete these :three: steps:
@@ -105,13 +105,13 @@ app.post('/webhook', (req, res) => {
 });
 ```
 
-## Documentation
+## Documentation :information_source:
 
 ### Events
 
 Basically we have 3 types of events according to Facebook documentation:
 
-#### `wrapper.on('message', (event))`
+#### `messenger.on('message', (event))`
 
 Event triggered when the bot receives message from the user.
 
@@ -125,7 +125,7 @@ messenger.on('message', (event) => {
 });
 ```
 
-#### `wrapper.on('delivery', (event))`
+#### `messenger.on('delivery', (event))`
 
 Event triggered when the message has been successfully delivered to the user.
 
@@ -139,7 +139,7 @@ messenger.on('delivery', (event) => {
 });
 ```
 
-#### `wrapper.on('postback', (event))`
+#### `messenger.on('postback', (event))`
 
 Event triggered when the postback action is triggered by the user.
 
