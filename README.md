@@ -57,6 +57,8 @@ Steps:
 
 ## Express.js (example usage) :book:
 
+This is sample usage withing express.js application. For full example look [here](https://github.com/justynjozwiak/messenger-wrapper/blob/master/example/express-example.js)
+
 ```javascript
 import MessengerWrapper from 'messenger-wrapper';
 
