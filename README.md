@@ -17,3 +17,40 @@ Execute this line in your app directory:
 npm install messenger-wrapper --save
 ```
 
+## Express.js (example usage)
+
+```javascript
+import MessengerWrapper from 'messenger-wrapper';
+
+let messenger = new MessengerWrapper({
+  verifyToken:     '<VERIFY_TOKEN>',
+  pageAccessToken: '<PAGE_ACCESS_TOKEN>'
+});
+
+messenger.on('message', (event) => {
+  messenger.sendData({ text: 'hello user' }, event);
+});
+
+messenger.on('delivery', (event) => {
+  messenger.sendData({ text: 'hello user' }, event);
+});
+
+messenger.on('postback', (event) => {
+  messenger.sendData({ text: 'hello user' }, event);
+});
+
+app.get('/webhook', (req, res) => {
+  messenger.verify(req, res);
+});
+
+app.get('/subscribe', (req, res) => {
+  messenger.subscribe().then((response) => {
+    res.send(response.body);
+  });
+});
+
+app.post('/webhook', (req, res) => {
+  res.sendStatus(200);
+  messenger.handle(req);
+});
+```
