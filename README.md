@@ -57,7 +57,7 @@ Steps:
 
 ## Express.js (example usage) :book:
 
-This is sample usage withing express.js application. For full example look [here](https://github.com/justynjozwiak/messenger-wrapper/blob/master/example/express-example.js)
+This is sample usage withing express.js application. For full example look [here](https://github.com/justynjozwiak/messenger-wrapper/blob/master/example/express-example.js).
 
 ```javascript
 import MessengerWrapper from 'messenger-wrapper';
@@ -104,3 +104,53 @@ app.post('/webhook', (req, res) => {
   messenger.handle(req);
 });
 ```
+
+## Documentation
+
+### Events
+
+Basically we have 3 types of events according to Facebook documentation:
+
+#### `wrapper.on('message', (event))`
+
+Event triggered when the bot receives message from the user.
+
+`event` - object with payload received from messenger user
+
+Example usage:
+
+```javascript
+messenger.on('message', (event) => {
+  messenger.sendData({ text: 'Welcome!' }, event);
+});
+```
+
+#### `wrapper.on('delivery', (event))`
+
+Event triggered when the message has been successfully delivered to the user.
+
+`event` - object with payload received from messenger user
+
+Example usage:
+
+```javascript
+messenger.on('delivery', (event) => {
+  messenger.sendData({ text: 'Message has been delivered!' }, event);
+});
+```
+
+#### `wrapper.on('postback', (event))`
+
+Event triggered when the postback action is triggered by the user.
+
+`event` - object with payload received from messenger user
+
+Example usage:
+
+```javascript
+messenger.on('postback', (event) => {
+  messenger.sendData({ text: 'Postback event!' }, event);
+});
+```
+
+### Functions
