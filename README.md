@@ -34,6 +34,25 @@ let messenger = new MessengerWrapper({
 
 and you are ready to go.
 
+## Configuration (facebook's side)
+
+First of all visit this official [tutorial](https://developers.facebook.com/docs/messenger-platform/quickstart#steps])) and
+make sure you complete these :three: steps:
+
+:exclamation: Subscribe the App to a Page - remember that instead of making subscription call manually:
+
+```
+curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=<PAGE_ACCESS_TOKEN>"
+```
+
+you can always run you express app with all necessary routes defined and go under `/subscribe`. See the first example for more details.
+
+Steps:
+
+:one: [Create page on Facebook](https://www.facebook.com/pages/create/) or use existing one if you already have it
+:two: [create app on Facebook](https://developers.facebook.com/quickstarts/?platform=web) or use existing one if you already have it
+:three: visit [your developer account](https://developers.facebook.com/apps/) and get `PAGE_ACCESS_TOKEN` to initialize wrapper
+
 ## Express.js (example usage) :book:
 
 ```javascript
@@ -67,7 +86,7 @@ app.get('/webhook', (req, res) => {
 });
 
 //according to documentation https://developers.facebook.com/docs/messenger-platform/implementation
-//instead of sending this request manualy -> curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=<PAGE_ACCESS_TOKEN>"
+//instead of sending this request manually -> curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=<PAGE_ACCESS_TOKEN>"
 //you can just run your express app and go under /subscribe in your web browser
 app.get('/subscribe', (req, res) => {
   messenger.subscribe().then((response) => {
