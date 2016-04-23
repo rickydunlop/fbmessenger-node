@@ -26,7 +26,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/webhook', (req, res) => {
-  return wrapper.verify(req, res);
+  wrapper.verify(req, res);
+});
+
+app.get('/subscribe', (req, res) => {
+  wrapper.subscribe().then((response) => {
+    res.send(response.body);
+  });
 });
 
 app.post('/webhook', (req, res) => {
