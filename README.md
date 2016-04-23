@@ -9,7 +9,7 @@
 
 A simple library for handling [Facebook Messenger Bots](https://developers.facebook.com/docs/messenger-platform).
 
-## Installation :electric_plug:
+## Installation
 
 Execute this line in your app directory:
 
@@ -34,12 +34,12 @@ let messenger = new MessengerWrapper({
 
 and you are ready to go.
 
-## Configuration (facebook's side) :paperclip:
+## Configuration (facebook's side)
 
 First of all visit this official [tutorial](https://developers.facebook.com/docs/messenger-platform/quickstart#steps])) and
-make sure you complete these :three: steps:
+make sure you complete these 3 steps:
 
-:exclamation: Subscribe the App to a Page - remember that instead of making subscription call manually:
+Subscribe the App to a Page - remember that instead of making subscription call manually:
 
 ```
 curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=<PAGE_ACCESS_TOKEN>"
@@ -49,13 +49,13 @@ You can always run you express app with all necessary routes defined and go unde
 
 Steps:
 
-:one: [Create page on Facebook](https://www.facebook.com/pages/create/) or use existing one if you already have it
+* [Create page on Facebook](https://www.facebook.com/pages/create/) or use existing one if you already have it
 
-:two: [create app on Facebook](https://developers.facebook.com/quickstarts/?platform=web) or use existing one if you already have it
+* [create app on Facebook](https://developers.facebook.com/quickstarts/?platform=web) or use existing one if you already have it
 
-:three: visit [your developer account](https://developers.facebook.com/apps/) and get `PAGE_ACCESS_TOKEN` to initialize wrapper
+* visit [your developer account](https://developers.facebook.com/apps/) and get `PAGE_ACCESS_TOKEN` to initialize wrapper
 
-## Express.js (example usage) :book:
+## Express.js (example usage)
 
 This is sample usage withing express.js application. For full example look [here](https://github.com/justynjozwiak/messenger-wrapper/blob/master/example/express-example.js).
 
@@ -105,13 +105,13 @@ app.post('/webhook', (req, res) => {
 });
 ```
 
-## Documentation :information_source:
+## Documentation
 
 ### Events
 
 Basically we have 3 types of events according to Facebook documentation:
 
-#### :information_source: `messenger.on('message', (event))`
+#### `messenger.on('message', (event))`
 
 Event triggered when the bot receives message from the user.
 
@@ -125,7 +125,7 @@ messenger.on('message', (event) => {
 });
 ```
 
-#### :information_source: `messenger.on('delivery', (event))`
+#### `messenger.on('delivery', (event))`
 
 Event triggered when the message has been successfully delivered to the user.
 
@@ -139,7 +139,7 @@ messenger.on('delivery', (event) => {
 });
 ```
 
-#### :information_source: `messenger.on('postback', (event))`
+#### `messenger.on('postback', (event))`
 
 Event triggered when the postback action is triggered by the user.
 
@@ -155,7 +155,7 @@ messenger.on('postback', (event) => {
 
 ### Functions
 
-#### :information_source: `messenger.sendData(payload, event)`
+#### `messenger.sendData(payload, event)`
 
 `payload` - object with data that will be send to the user, see [docs](https://developers.facebook.com/docs/messenger-platform/send-api-reference#request) for format specification
 
@@ -171,7 +171,7 @@ messenger.on('message', (event) => {
 });
 ```
 
-#### :information_source: `messenger.getUser(event)`
+#### `messenger.getUser(event)`
 
 `event` - object with payload received from messenger user
 
