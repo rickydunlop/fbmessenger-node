@@ -1,6 +1,6 @@
 {
   "name": "messenger-wrapper",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple wrapper for Facebook Messenger Bots",
   "main": "messenger-wrapper.js",
   "scripts": {
