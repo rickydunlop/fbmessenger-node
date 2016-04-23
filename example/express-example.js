@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 let wrapper = new MessengerWrapper({
-  verifyToken: process.env.VERIFY_TOKEN,
+  verifyToken:     process.env.VERIFY_TOKEN,
   pageAccessToken: process.env.PAGE_ACCESS_TOKEN
 });
 
