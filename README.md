@@ -22,33 +22,43 @@ npm install messenger-wrapper --save
 ```javascript
 import MessengerWrapper from 'messenger-wrapper';
 
+//let's initialize our wrapper here
 let messenger = new MessengerWrapper({
   verifyToken:     '<VERIFY_TOKEN>',
   pageAccessToken: '<PAGE_ACCESS_TOKEN>'
 });
 
+//here we define 3 available listeners: 'message', 'delivery' and 'postback'
 messenger.on('message', (event) => {
+  //put your logic here
   messenger.sendData({ text: 'hello user' }, event);
 });
 
 messenger.on('delivery', (event) => {
+  //put your logic here
   messenger.sendData({ text: 'hello user' }, event);
 });
 
 messenger.on('postback', (event) => {
+  //put your logic here
   messenger.sendData({ text: 'hello user' }, event);
 });
 
+//this route is needed for facebook messenger verification
 app.get('/webhook', (req, res) => {
   messenger.verify(req, res);
 });
 
+//according to documentation https://developers.facebook.com/docs/messenger-platform/implementation
+//instead of sending this request manualy -> curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=<PAGE_ACCESS_TOKEN>"
+//you can just run your express app and go under /subscribe in your web browser
 app.get('/subscribe', (req, res) => {
   messenger.subscribe().then((response) => {
     res.send(response.body);
   });
 });
 
+//here we handle messenger data, you've got nothing to do here, just define that route
 app.post('/webhook', (req, res) => {
   res.sendStatus(200);
   messenger.handle(req);
