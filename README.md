@@ -9,7 +9,7 @@
 
 A simple library for handling [Facebook Messenger Bots](https://developers.facebook.com/docs/messenger-platform).
 
-## :electric-plug: Installation
+## Installation :electric_plug:
 
 Execute this line in your app directory:
 
@@ -34,7 +34,7 @@ let messenger = new MessengerWrapper({
 
 and you are ready to go.
 
-## :book: Express.js (example usage)
+## Express.js (example usage) :book:
 
 ```javascript
 import MessengerWrapper from 'messenger-wrapper';
