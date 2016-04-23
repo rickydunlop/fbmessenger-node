@@ -18,7 +18,9 @@ let wrapper = new MessengerWrapper({
 });
 
 wrapper.on('message', (event) => {
-  wrapper.sendData({ text: 'hello user' }, event);
+  wrapper.getUser(event).then((user) => {
+    wrapper.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event);
+  })
 });
 
 wrapper.on('delivery', (event) => {
