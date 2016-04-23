@@ -9,6 +9,9 @@ dotenv.config();
 
 let app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 let wrapper = new MessengerWrapper({
   verifyToken: process.env.VERIFY_TOKEN,
   pageAccessToken: process.env.PAGE_ACCESS_TOKEN
@@ -19,11 +22,12 @@ wrapper.on('message', (event) => {
 });
 
 wrapper.on('delivery', (event) => {
-  console.log('delivery has come');
+  console.log('delivery event');
 });
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+wrapper.on('postback', (event) => {
+  console.log('postback event');
+});
 
 app.get('/webhook', (req, res) => {
   wrapper.verify(req, res);
