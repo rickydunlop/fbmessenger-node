@@ -45,7 +45,7 @@ make sure you complete these :three: steps:
 curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=<PAGE_ACCESS_TOKEN>"
 ```
 
-you can always run you express app with all necessary routes defined and go under `/subscribe`. See the first example for more details.
+You can always run you express app with all necessary routes defined and go under `/subscribe`. See the first example for more details.
 
 Steps:
 
@@ -155,6 +155,22 @@ messenger.on('postback', (event) => {
 
 ### Functions
 
+#### :information_source: `messenger.sendData(payload, event)`
+
+`payload` - object with data that will be send to the user, see [docs](https://developers.facebook.com/docs/messenger-platform/send-api-reference#request) for format specification
+
+`event` - object with payload received from messenger user (contains sender ID)
+
+Example usage:
+
+```javascript
+messenger.on('message', (event) => {
+  messenger.getUser(event).then((user) => {
+    messenger.sendData({ text: `Hey user!` }, event);
+  });
+});
+```
+
 #### :information_source: `messenger.getUser(event)`
 
 `event` - object with payload received from messenger user
@@ -168,9 +184,9 @@ Returns object with user data:
 Example usage:
 
 ```javascript
-wrapper.on('message', (event) => {
-  wrapper.getUser(event).then((user) => {
-    wrapper.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event);
+messenger.on('message', (event) => {
+  messenger.getUser(event).then((user) => {
+    messenger.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event);
   });
 });
 ```
@@ -178,9 +194,9 @@ wrapper.on('message', (event) => {
 or
 
 ```javascript
-wrapper.on('message', (event) => {
-  wrapper.getUser(event.sender.id).then((user) => {
-    wrapper.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event.sender.id);
+messenger.on('message', (event) => {
+  messenger.getUser(event.sender.id).then((user) => {
+    messenger.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event.sender.id);
   });
 });
 ```
