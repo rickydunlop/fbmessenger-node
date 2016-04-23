@@ -154,3 +154,35 @@ messenger.on('postback', (event) => {
 ```
 
 ### Functions
+
+#### `messenger.getUser(event)`
+
+`event` - object with payload received from messenger user
+
+Returns object with user data:
+
+* `first_name`
+* `last_name`
+* `profile_pic`
+
+Example usage:
+
+```javascript
+wrapper.on('message', (event) => {
+  wrapper.getUser(event).then((user) => {
+    wrapper.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event);
+  });
+});
+```
+
+or
+
+```javascript
+wrapper.on('message', (event) => {
+  wrapper.getUser(event.sender.id).then((user) => {
+    wrapper.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event.sender.id);
+  });
+});
+```
+
+You can pass `event.sender.id` attribute but also the whole `event` object.
