@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import MessengerWrapper from '../messenger-wrapper';
+import MessengerWrapper from '../lib/messenger-wrapper';
 
 describe('MessengerWrapper', () => {
   describe('new', () => {
