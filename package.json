@@ -2,8 +2,10 @@
   "name": "messenger-wrapper",
   "version": "1.0.2",
   "description": "A simple wrapper for Facebook Messenger Bots",
-  "main": "messenger-wrapper.js",
+  "main": "./distribution/messenger-wrapper.js",
   "scripts": {
+    "build": "babel messenger-wrapper.js --presets babel-preset-es2015 --out-dir distribution",
+    "prepublish": "npm run build",
     "start": "babel-node messenger-wrapper.js",
     "start:server": "babel-node example/express-example.js",
     "test": "mocha --compilers js:babel-core/register \"test/**/*@(.js)\"",
@@ -20,6 +22,8 @@
   },
   "homepage": "https://github.com/justynjozwiak/messenger-wrapper#readme",
   "devDependencies": {
+    "babel-core": "^6.7.7",
+    "babel-preset-es2015": "^6.6.0",
     "chai": "^3.5.0",
     "coveralls": "^2.11.9",
     "mocha": "^2.4.5",
@@ -27,8 +31,6 @@
     "nyc": "^6.4.0"
   },
   "dependencies": {
-    "babel-core": "^6.7.7",
-    "babel-preset-es2015": "^6.6.0",
     "bluebird": "^3.3.5",
     "request": "^2.72.0"
   }
