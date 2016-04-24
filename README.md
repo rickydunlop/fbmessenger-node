@@ -71,17 +71,17 @@ let messenger = new MessengerWrapper({
 //here we define 3 available listeners: 'message', 'delivery' and 'postback'
 messenger.on('message', (event) => {
   //put your logic here
-  messenger.sendData({ text: 'hello user' }, event);
+  messenger.send({ text: 'hello user' });
 });
 
 messenger.on('delivery', (event) => {
   //put your logic here
-  messenger.sendData({ text: 'hello user' }, event);
+  messenger.send({ text: 'hello user' });
 });
 
 messenger.on('postback', (event) => {
   //put your logic here
-  messenger.sendData({ text: 'hello user' }, event);
+  messenger.send({ text: 'hello user' });
 });
 
 //this route is needed for facebook messenger verification
@@ -111,6 +111,13 @@ app.post('/webhook', (req, res) => {
 
 Basically we have 3 types of events according to Facebook documentation:
 
+ATTENTION:
+
+`(event)` param here is optional, you can omit it, and it's only purpose is to show you incoming data. According to Facebook documentation
+each incoming data can containt multiple `entries`, that's why this library supports iterating over them in background and emits proper
+actions, so you don't have to worry about losing any data. To get latest entry you should use `messenger.lastEntry` object. Go through
+documentation to see examples.
+
 #### `messenger.on('message', (event))`
 
 Event triggered when the bot receives message from the user.
@@ -121,7 +128,7 @@ Example usage:
 
 ```javascript
 messenger.on('message', (event) => {
-  messenger.sendData({ text: 'Welcome!' }, event);
+  messenger.send({ text: 'Welcome!' });
 });
 ```
 
@@ -135,7 +142,7 @@ Example usage:
 
 ```javascript
 messenger.on('delivery', (event) => {
-  messenger.sendData({ text: 'Message has been delivered!' }, event);
+  messenger.send({ text: 'Message has been delivered!' });
 });
 ```
 
@@ -149,31 +156,45 @@ Example usage:
 
 ```javascript
 messenger.on('postback', (event) => {
-  messenger.sendData({ text: 'Postback event!' }, event);
+  messenger.send({ text: 'Postback event!' });
 });
 ```
 
 ### Functions
 
-#### `messenger.sendData(payload, event)`
+#### `messenger.send(payload)`
 
 `payload` - object with data that will be send to the user, see [docs](https://developers.facebook.com/docs/messenger-platform/send-api-reference#request) for format specification
-
-`event` - object with payload received from messenger user (contains sender ID)
 
 Example usage:
 
 ```javascript
-messenger.on('message', (event) => {
-  messenger.getUser(event).then((user) => {
-    messenger.sendData({ text: `Hey user!` }, event);
+messenger.on('message', () => {
+  messenger.send({
+    "attachment":{
+      "type":"template",
+      "payload":{
+        "template_type":"button",
+        "text":"What do you want to do next?",
+        "buttons":[
+          {
+            "type":"web_url",
+            "url":"https://petersapparel.parseapp.com",
+            "title":"Show Website"
+          },
+          {
+            "type":"postback",
+            "title":"Start Chatting",
+            "payload":"USER_DEFINED_PAYLOAD"
+          }
+        ]
+      }
+    }
   });
 });
 ```
 
-#### `messenger.getUser(event)`
-
-`event` - object with payload received from messenger user
+#### `messenger.getUser()`
 
 Returns object with user data:
 
@@ -184,21 +205,21 @@ Returns object with user data:
 Example usage:
 
 ```javascript
-messenger.on('message', (event) => {
-  messenger.getUser(event).then((user) => {
-    messenger.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event);
+messenger.on('message', () => {
+  messenger.getUser().then((user) => {
+    messenger.send({ text: `Hey ${user.first_name} ${user.last_name}` });
   });
 });
 ```
 
-or
+#### `messenger.getUserId()`
+
+Returns ID of the user who sent the message.
+
+Example usage:
 
 ```javascript
-messenger.on('message', (event) => {
-  messenger.getUser(event.sender.id).then((user) => {
-    messenger.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event.sender.id);
-  });
+messenger.on('postback', () => {
+  console.log(messenger.getUserId());
 });
 ```
-
-You can pass `event.sender.id` attribute but also the whole `event` object.
