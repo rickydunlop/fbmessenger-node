@@ -7,7 +7,7 @@
     "build": "babel lib --presets babel-preset-es2015 --out-dir distribution",
     "prepublish": "npm run build",
     "start": "babel-node ./lib/messenger-wrapper.js",
-    "start:server": "babel-node example/express-example.js",
+    "start:server": "nodemon --exec \"babel-node ./example/express-example.js\" --watch ./",
     "test": "mocha --compilers js:babel-core/register \"test/**/*@(.js)\"",
     "travis-coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
@@ -28,6 +28,7 @@
     "coveralls": "^2.11.9",
     "mocha": "^2.4.5",
     "mocha-lcov-reporter": "^1.2.0",
+    "nodemon": "^1.9.1",
     "nyc": "^6.4.0"
   },
   "dependencies": {
