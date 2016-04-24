@@ -12,38 +12,38 @@ let app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-let wrapper = new MessengerWrapper({
+let messenger = new MessengerWrapper({
   verifyToken:     process.env.VERIFY_TOKEN,
   pageAccessToken: process.env.PAGE_ACCESS_TOKEN
 });
 
-wrapper.on('message', () => {
-  wrapper.getUser().then((user) => {
-    wrapper.send({ text: user.first_name });
+messenger.on('message', () => {
+  messenger.getUser().then((user) => {
+    messenger.send({ text: user.first_name });
   });
 });
 
-wrapper.on('delivery', () => {
+messenger.on('delivery', () => {
   // console.log(wrapper.lastEntry);
 });
 
-wrapper.on('postback', () => {
+messenger.on('postback', () => {
   // console.log(wrapper.lastEntry);
 });
 
 app.get('/webhook', (req, res) => {
-  wrapper.verify(req, res);
+  messenger.verify(req, res);
 });
 
 app.get('/subscribe', (req, res) => {
-  wrapper.subscribe().then((response) => {
+  messenger.subscribe().then((response) => {
     res.send(response.body);
   });
 });
 
 app.post('/webhook', (req, res) => {
   res.sendStatus(200);
-  wrapper.handle(req);
+  messenger.handle(req);
 });
 
 http.createServer(app).listen(3000);
