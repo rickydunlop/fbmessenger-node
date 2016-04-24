@@ -3,4 +3,5 @@ node_js:
   - '5'
 install:
   - npm install -g babel-cli
+  - npm install
 after_success: npm run travis-coveralls

@@ -8,7 +8,7 @@
     "prepublish": "npm run build",
     "start": "babel-node ./lib/messenger-wrapper.js",
     "start:server": "babel-node example/express-example.js",
-    "test": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register \"test/**/*@(.js)\"",
+    "test": "mocha --compilers js:babel-core/register \"test/**/*@(.js)\"",
     "travis-coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
