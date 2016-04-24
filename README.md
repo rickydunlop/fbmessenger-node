@@ -36,7 +36,7 @@ and you are ready to go.
 
 ## Configuration (facebook's side)
 
-First of all visit this official [tutorial](https://developers.facebook.com/docs/messenger-platform/quickstart#steps])) and
+First of all visit this official [tutorial](https://developers.facebook.com/docs/messenger-platform/quickstart#steps]) and
 make sure you complete these 3 steps:
 
 Subscribe the App to a Page - remember that instead of making subscription call manually:
