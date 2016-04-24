@@ -17,18 +17,18 @@ let wrapper = new MessengerWrapper({
   pageAccessToken: process.env.PAGE_ACCESS_TOKEN
 });
 
-wrapper.on('message', (event) => {
-  wrapper.getUser(event).then((user) => {
-    wrapper.sendData({ text: `Hey ${user.first_name} ${user.last_name}` }, event);
-  })
+wrapper.on('message', () => {
+  wrapper.getUser().then((user) => {
+    wrapper.send({ text: user.first_name });
+  });
 });
 
-wrapper.on('delivery', (event) => {
-  console.log('delivery event');
+wrapper.on('delivery', () => {
+  // console.log(wrapper.lastEntry);
 });
 
-wrapper.on('postback', (event) => {
-  console.log('postback event');
+wrapper.on('postback', () => {
+  // console.log(wrapper.lastEntry);
 });
 
 app.get('/webhook', (req, res) => {
