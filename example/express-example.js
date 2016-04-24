@@ -3,7 +3,7 @@ import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import MessengerWrapper from '../messenger-wrapper.js';
+import MessengerWrapper from '../lib/messenger-wrapper.js';
 
 dotenv.config();
 

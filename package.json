@@ -4,9 +4,9 @@
   "description": "A simple wrapper for Facebook Messenger Bots",
   "main": "./distribution/messenger-wrapper.js",
   "scripts": {
-    "build": "babel messenger-wrapper.js --presets babel-preset-es2015 --out-dir distribution",
+    "build": "babel lib --presets babel-preset-es2015 --out-dir distribution",
     "prepublish": "npm run build",
-    "start": "babel-node messenger-wrapper.js",
+    "start": "babel-node ./lib/messenger-wrapper.js",
     "start:server": "babel-node example/express-example.js",
     "test": "mocha --compilers js:babel-core/register \"test/**/*@(.js)\"",
     "travis-coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
