@@ -3,9 +3,12 @@ import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import MessengerWrapper from '../lib/messenger-wrapper';
-import MessengerText from '../lib/elements/messenger-text';
-import MessengerImage from '../lib/elements/messenger-image';
+import {
+  MessengerWrapper,
+  MessengerText,
+  MessengerImage,
+  MessengerButton
+} from '../lib/messenger-wrapper';
 
 dotenv.config();
 
