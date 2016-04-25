@@ -3,7 +3,9 @@ import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import MessengerWrapper from '../lib/messenger-wrapper.js';
+import MessengerWrapper from '../lib/messenger-wrapper';
+import MessengerText from '../lib/elements/messenger-text';
+import MessengerImage from '../lib/elements/messenger-image';
 
 dotenv.config();
 
@@ -18,9 +20,7 @@ let messenger = new MessengerWrapper({
 });
 
 messenger.on('message', () => {
-  messenger.getUser().then((user) => {
-    messenger.send({ text: user.first_name });
-  });
+  messenger.send(new MessengerImage('http://lorempixel.com/400/200/sports/1/'));
 });
 
 messenger.on('delivery', () => {
