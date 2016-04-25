@@ -115,7 +115,7 @@ ATTENTION:
 
 `(event)` param here is optional, you can omit it, and it's only purpose is to show you incoming data. According to Facebook documentation
 each incoming data can containt multiple `entries`, that's why this library supports iterating over them in background and emits proper
-actions, so you don't have to worry about losing any data. To get latest entry you should use `messenger.lastEntry` object. Go through
+actions, so you don't have to worry about losing any data. To get latest entry you should use `messenger.lastEntry` object or use dedicated methods like `send()` or `getUserId()` (and more `soon`) that operate on `messenger.lastEntry` object. Go through
 documentation to see examples.
 
 #### `messenger.on('message', (event))`
