@@ -28,7 +28,7 @@ describe('MessengerButton', () => {
             url: 'http://www.example.com'
           }
         ]
-      })
+      });
     });
   });
 });
