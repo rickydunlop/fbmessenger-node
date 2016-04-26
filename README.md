@@ -60,7 +60,7 @@ Steps:
 This is sample usage within express.js application. For full example look [here](https://github.com/justynjozwiak/messenger-wrapper/blob/master/example/express-example.js).
 
 ```javascript
-import MessengerWrapper from 'messenger-wrapper';
+import { MessengerWrapper } from 'messenger-wrapper';
 
 //let's initialize our wrapper here
 let messenger = new MessengerWrapper({
