@@ -223,3 +223,250 @@ messenger.on('postback', () => {
   console.log(messenger.getUserId());
 });
 ```
+
+### Elements
+
+#### MessengerText(text)
+
+`text` - your text message to the user
+
+This element can be sent separately.
+
+Returns proper text hash:
+
+```javascript
+{ text: 'text attribute' }
+```
+
+Example usage:
+
+```javascript
+import { MessengerText } from 'messenger-wrapper';
+
+messenger.on('message', () => {
+  messenger.send(new MessengerText('Hello user!'));
+});
+```
+
+#### MessengerImage(url)
+
+`url` - url to the image
+
+This element can be sent separately.
+
+Returns proper image hash:
+
+```javascript
+attachment: {
+  type: 'image',
+  payload: {
+    url: 'http://yoururl.com/image'
+  }
+}
+```
+
+Example usage:
+
+```javascript
+import { MessengerImage } from 'messenger-wrapper';
+
+messenger.on('message', () => {
+  messenger.send(new MessengerImage('http://lorempixel.com/400/400/sports/1/'));
+});
+```
+
+#### MessengerButton(attrs)
+
+`attrs` - object containing two attributes: `{ url: 'url', title: 'title' }` or `{ title: 'title', payload: 'payload' }`
+
+This element CANNOT be sent separately. Use it with Button, Generic or Receipt templates.
+
+Returns proper button hash depending on attributes set:
+
+First:
+
+```javascript
+{
+  type: 'web_url',
+  url: 'url',
+  title: 'title'
+}
+```
+
+Second:
+
+```javascript
+{
+  type: 'postback',
+  title: 'title',
+  payload: 'payload'
+}
+```
+
+Example usage (with MessengerButtonTemplate):
+
+```javascript
+import {
+  MessengerButton,
+  MessengerButtonTemplate
+} from 'messenger-wrapper';
+
+messenger.on('message', () => {
+  messenger.send(new MessengerButtonTemplate(
+    'Hey user! Watch these buttons:',
+    [
+      new MessengerButton({ title: 'Web Url Button', url: 'http://www.example.com' }),
+      new MessengerButton({ title: 'Postback Button', payload: 'POSTBACK_INFO' })
+    ]
+  ));
+});
+```
+
+### MessengerBubble(attrs)
+
+`attrs` - hash attributes defined in Facebook documentation
+
+This element CANNOT be sent separately. Use it with Generic or Receipt templates.
+
+Returns `attrs` object:
+
+```javascript
+{
+  title: 'Title',
+  item_url: 'http://www.example.com',
+  image_url: 'http://www.example.com',
+  subtitle: 'Subtitle',
+  buttons: [
+    {
+      type: 'web_url',
+      title: 'Button',
+      url: 'http://www.example.com'
+    }
+  ]
+}
+```
+
+Example usage:
+
+```javascript
+import {
+  MessengerButton,
+  MessengerBubble,
+} from 'messenger-wrapper';
+
+...
+new MessengerBubble({
+  itle: 'Title',
+  item_url: 'http://www.example.com',
+  image_url: 'http://www.example.com',
+  subtitle: 'Subtitle',
+  buttons: [
+    new MessengerButton({ title: 'Web Url Button', url: 'http://www.example.com' }),
+    new MessengerButton({ title: 'Postback Button', payload: 'POSTBACK_INFO' })
+  ]
+});
+...
+```
+
+### MessengerAddress(attrs)
+
+`attrs` - hash attributes defined in Facebook documentation
+
+This element CANNOT be sent separately. Use it with Receipt templates.
+
+Returns `attrs` object:
+
+```javascript
+{
+  street_1: '1 Hacker Way',
+  street_2: '',
+  city: 'Menlo Park',
+  postal_code: '94025',
+  state: 'CA',
+  country: 'US'
+}
+```
+
+Example usage:
+
+```javascript
+import {
+  MessengerAddress
+} from 'messenger-wrapper';
+
+...
+new MessengerAddress({
+  street_1: '1 Hacker Way',
+  street_2: '',
+  city: 'Menlo Park',
+  postal_code: '94025',
+  state: 'CA',
+  country: 'US'
+});
+...
+```
+
+### MessengerSummary(attrs)
+
+`attrs` - hash attributes defined in Facebook documentation
+
+This element CANNOT be sent separately. Use it with Receipt templates.
+
+Returns `attrs` object:
+
+```javascript
+{
+  subtotal: 75.00,
+  shipping_cost: 4.95,
+  total_tax: 6.19,
+  total_cost: 56.14
+}
+```
+
+Example usage:
+
+```javascript
+import {
+  MessengerSummary
+} from 'messenger-wrapper';
+
+...
+new MessengerSummary({
+  subtotal: 75.00,
+  shipping_cost: 4.95,
+  total_tax: 6.19,
+  total_cost: 56.14
+});
+...
+```
+
+### MessengerAdjustment(text, amount)
+
+`text` - text attribute according to Facebook documentation
+`amount` - amount attribute according to Facebook documentation
+
+This element CANNOT be sent separately. Use it with Receipt templates.
+
+Returns `attrs` object:
+
+```javascript
+{
+  name: 'Adjustment',
+  amount: 20
+}
+```
+
+Example usage:
+
+```javascript
+import {
+  MessengerAdjustment
+} from 'messenger-wrapper';
+
+...
+new MessengerAdjustment({
+  name: 'Adjustment',
+  amount: 20
+});
+...
+```
