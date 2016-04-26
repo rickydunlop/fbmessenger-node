@@ -171,7 +171,7 @@ Example usage:
 
 ```javascript
 messenger.on('optin', (event) => {
-  messenger.send({ text: 'Postback event!' });
+  messenger.send({ text: 'Optin event!' });
 });
 ```
 
