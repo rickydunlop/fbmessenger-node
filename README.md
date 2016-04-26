@@ -374,7 +374,7 @@ new MessengerBubble({
 
 `attrs` - hash attributes defined in Facebook documentation
 
-This element CANNOT be sent separately. Use it with Receipt templates.
+This element CANNOT be sent separately. Use it with Receipt template.
 
 Returns `attrs` object:
 
@@ -412,7 +412,7 @@ new MessengerAddress({
 
 `attrs` - hash attributes defined in Facebook documentation
 
-This element CANNOT be sent separately. Use it with Receipt templates.
+This element CANNOT be sent separately. Use it with Receipt template.
 
 Returns `attrs` object:
 
@@ -448,7 +448,7 @@ new MessengerSummary({
 
 `amount` - amount attribute according to Facebook documentation
 
-This element CANNOT be sent separately. Use it with Receipt templates.
+This element CANNOT be sent separately. Use it with Receipt template.
 
 Returns `attrs` object:
 
