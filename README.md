@@ -68,20 +68,21 @@ let messenger = new MessengerWrapper({
   pageAccessToken: '<PAGE_ACCESS_TOKEN>'
 });
 
-//here we define 3 available listeners: 'message', 'delivery' and 'postback'
+//here we define 3 available listeners: 'message', 'delivery', 'postback' and 'optin':
 messenger.on('message', (event) => {
   //put your logic here
-  messenger.send({ text: 'hello user' });
 });
 
 messenger.on('delivery', (event) => {
   //put your logic here
-  messenger.send({ text: 'hello user' });
 });
 
 messenger.on('postback', (event) => {
   //put your logic here
-  messenger.send({ text: 'hello user' });
+});
+
+messenger.on('optin', (event) => {
+  //put your logic here
 });
 
 //this route is needed for facebook messenger verification
@@ -156,6 +157,20 @@ Example usage:
 
 ```javascript
 messenger.on('postback', (event) => {
+  messenger.send({ text: 'Postback event!' });
+});
+```
+
+#### `messenger.on('optin', (event))`
+
+Event triggered when the optin action is triggered by the user.
+
+`event` - object with payload received from messenger user
+
+Example usage:
+
+```javascript
+messenger.on('optin', (event) => {
   messenger.send({ text: 'Postback event!' });
 });
 ```
