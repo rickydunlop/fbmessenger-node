@@ -277,7 +277,9 @@ messenger.on('message', () => {
 
 #### MessengerButton(attrs)
 
-`attrs` - object containing two attributes: `{ url: 'url', title: 'title' }` or `{ title: 'title', payload: 'payload' }`
+`attrs` - object containing two attributes:
+
+`{ url: 'url', title: 'title' }` or `{ title: 'title', payload: 'payload' }`
 
 This element CANNOT be sent separately. Use it with Button, Generic or Receipt templates.
 
@@ -443,6 +445,7 @@ new MessengerSummary({
 ### MessengerAdjustment(text, amount)
 
 `text` - text attribute according to Facebook documentation
+
 `amount` - amount attribute according to Facebook documentation
 
 This element CANNOT be sent separately. Use it with Receipt templates.
