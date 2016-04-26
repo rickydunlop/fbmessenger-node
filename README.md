@@ -20,7 +20,7 @@ npm install --save messenger-wrapper
 Import library into your app:
 
 ```javascript
-import MessengerWrapper from 'messenger-wrapper';
+import { MessengerWrapper } from 'messenger-wrapper';
 ```
 
 Initialize it:
