@@ -7,7 +7,14 @@ import {
   MessengerWrapper,
   MessengerText,
   MessengerImage,
-  MessengerButton
+  MessengerButton,
+  MessengerBubble,
+  MessengerAddress,
+  MessengerSummary,
+  MessengerAdjustment,
+  MessengerButtonTemplate,
+  MessengerGenericTemplate,
+  MessengerReceiptTemplate
 } from '../lib/messenger-wrapper';
 
 dotenv.config();
@@ -23,7 +30,13 @@ let messenger = new MessengerWrapper({
 });
 
 messenger.on('message', () => {
-  messenger.send(new MessengerImage('http://lorempixel.com/400/200/sports/1/'));
+  messenger.send(new MessengerButtonTemplate(
+    'Hey user! Watch these buttons:',
+    [
+      new MessengerButton({ title: 'Web Url Button', url: 'http://www.example.com' }),
+      new MessengerButton({ title: 'Postback Button', payload: 'POSTBACK_INFO' })
+    ]
+  ));
 });
 
 messenger.on('delivery', () => {
