@@ -30,11 +30,17 @@ let messenger = new MessengerWrapper({
 });
 
 messenger.on('message', () => {
-  messenger.send(new MessengerButtonTemplate(
-    'Hey user! Watch these buttons:',
+  messenger.send(new MessengerGenericTemplate(
     [
-      new MessengerButton({ title: 'Web Url Button', url: 'http://www.example.com' }),
-      new MessengerButton({ title: 'Postback Button', payload: 'POSTBACK_INFO' })
+      new MessengerBubble({
+        title: 'Title',
+        item_url: 'http://www.example.com',
+        image_url: 'http://www.example.com',
+        subtitle: 'Subtitle',
+        buttons: [
+          new MessengerButton({ title: 'Button', url: 'http://www.example.com' })
+        ]
+      })
     ]
   ));
 });
