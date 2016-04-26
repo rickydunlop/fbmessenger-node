@@ -473,3 +473,219 @@ new MessengerAdjustment({
 });
 ...
 ```
+
+### Templates
+
+#### MessengerButtonTemplate(text, buttons)
+
+`text` - text attribute
+`buttons` - array with buttons
+
+Returns proper template object:
+
+```javascript
+{
+  attachment: {
+    type: 'template',
+    payload: {
+      template_type: 'button',
+      text: 'Hello user!',
+      buttons: [
+        {
+          type: 'web_url',
+          title: 'Button',
+          url: 'http://www.example.com'
+        }
+      ]
+    }
+  }
+}
+```
+
+Example usage:
+
+```javascript
+import {
+  MessengerButton,
+  MessengerButtonTemplate
+} from 'messenger-wrapper';
+
+messenger.on('message', () => {
+  messenger.send(new MessengerButtonTemplate(
+    'Hey user! Watch these buttons:',
+    [
+      new MessengerButton({ title: 'Web Url Button', url: 'http://www.example.com' }),
+      new MessengerButton({ title: 'Postback Button', payload: 'POSTBACK_INFO' })
+    ]
+  ));
+});
+```
+
+#### MessengerGenericTemplate(bubbles)
+
+`bubbles` - array with bubbles
+
+Returns proper generic template object:
+
+```javascript
+{
+  attachment: {
+    type: 'template',
+    payload: {
+      template_type: 'generic',
+      elements: [
+        {
+          title: 'Title',
+          item_url: 'http://www.example.com',
+          image_url: 'http://www.example.com',
+          subtitle: 'Subtitle',
+          buttons: [
+            {
+              type: 'web_url',
+              title: 'Button',
+              url: 'http://www.example.com'
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+Example usage:
+
+```javascript
+import {
+  MessengerButton,
+  MessengerBubble
+  MessengerGenericTemplate
+} from 'messenger-wrapper';
+
+messenger.on('message', () => {
+  messenger.send(new MessengerGenericTemplate(
+    [
+      new MessengerBubble({
+        title: 'Title',
+        item_url: 'http://www.example.com',
+        image_url: 'http://www.example.com',
+        subtitle: 'Subtitle',
+        buttons: [
+          new MessengerButton({ title: 'Button', url: 'http://www.example.com' })
+        ]
+      }),
+      ...
+    ]
+  ));
+});
+```
+
+#### MessengerReceiptTemplate(attrs)
+
+`attrs` - attributes hash according to Facebook documentation
+
+Returns proper receipt template object:
+
+```javascript
+{
+  attachment: {
+    type: 'template',
+    payload: {
+      template_type: 'receipt',
+      recipient_name: 'Name',
+      order_number: '123',
+      currency: 'USD',
+      payment_method: 'Visa',
+      order_url: 'http://www.example.com',
+      timestamp: '123123123',
+      elements: [
+        {
+          title: 'Title',
+          item_url: 'http://www.example.com',
+          image_url: 'http://www.example.com',
+          subtitle: 'Subtitle',
+          buttons: [
+            {
+              type: 'web_url',
+              title: 'Button',
+              url: 'http://www.example.com'
+            }
+          ]
+        }
+      ],
+      address: {
+        street_1: '1 Hacker Way',
+        street_2: '',
+        city: 'Menlo Park',
+        postal_code: '94025',
+        state: 'CA',
+        country: 'US'
+      },
+      summary: {
+        subtotal: 75.00,
+        shipping_cost: 4.95,
+        total_tax: 6.19,
+        total_cost: 56.14
+      },
+      adjustments: [
+        {
+          name: 'Adjustment',
+          amount: 20
+        }
+      ]
+    }
+  }
+}
+```
+
+Example usage:
+
+```javascript
+import {
+  MessengerButton,
+  MessengerBubble,
+  MessengerAddress,
+  MessengerSummary,
+  MessengerAdjustment,
+  MessengerReceiptTemplate
+} from 'messenger-wrapper';
+
+messenger.on('message', () => {
+  messenger.send(new MessengerReceiptTemplate({
+    recipient_name: 'Name',
+    order_number: '123',
+    currency: 'USD',
+    payment_method: 'Visa',
+    order_url: 'http://www.example.com',
+    timestamp: '123123123',
+    elements: [
+      new MessengerBubble({
+        title: 'Title',
+        item_url: 'http://www.example.com',
+        image_url: 'http://www.example.com',
+        subtitle: 'Subtitle',
+        buttons: [
+          new MessengerButton({ title: 'Button', url: 'http://www.example.com' })
+        ]
+      })
+    ],
+    address: new MessengerAddress({
+      street_1: '1 Hacker Way',
+      street_2: '',
+      city: 'Menlo Park',
+      postal_code: '94025',
+      state: 'CA',
+      country: 'US'
+    }),
+    summary: new MessengerSummary({
+      subtotal: 75.00,
+      shipping_cost: 4.95,
+      total_tax: 6.19,
+      total_cost: 56.14
+    }),
+    adjustments: [
+      new MessengerAdjustment('Adjustment', 20)
+    ]
+  });
+});
+```
