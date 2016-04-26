@@ -241,7 +241,7 @@ messenger.on('postback', () => {
 
 ### Elements
 
-#### MessengerText(text)
+#### `MessengerText(text)`
 
 `text` - your text message to the user
 
@@ -263,7 +263,7 @@ messenger.on('message', () => {
 });
 ```
 
-#### MessengerImage(url)
+#### `MessengerImage(url)`
 
 `url` - url to the image
 
@@ -290,7 +290,7 @@ messenger.on('message', () => {
 });
 ```
 
-#### MessengerButton(attrs)
+#### `MessengerButton(attrs)`
 
 `attrs` - object containing two attributes:
 
@@ -339,7 +339,7 @@ messenger.on('message', () => {
 });
 ```
 
-### MessengerBubble(attrs)
+### `MessengerBubble(attrs)`
 
 `attrs` - hash attributes defined in Facebook documentation
 
@@ -385,7 +385,7 @@ new MessengerBubble({
 ...
 ```
 
-### MessengerAddress(attrs)
+### `MessengerAddress(attrs)`
 
 `attrs` - hash attributes defined in Facebook documentation
 
@@ -423,7 +423,7 @@ new MessengerAddress({
 ...
 ```
 
-### MessengerSummary(attrs)
+### `MessengerSummary(attrs)`
 
 `attrs` - hash attributes defined in Facebook documentation
 
@@ -457,7 +457,7 @@ new MessengerSummary({
 ...
 ```
 
-### MessengerAdjustment(text, amount)
+### `MessengerAdjustment(text, amount)`
 
 `text` - text attribute according to Facebook documentation
 
@@ -491,7 +491,7 @@ new MessengerAdjustment({
 
 ### Templates
 
-#### MessengerButtonTemplate(text, buttons)
+#### `MessengerButtonTemplate(text, buttons)`
 
 `text` - text attribute
 `buttons` - array with buttons
@@ -536,7 +536,7 @@ messenger.on('message', () => {
 });
 ```
 
-#### MessengerGenericTemplate(bubbles)
+#### `MessengerGenericTemplate(bubbles)`
 
 `bubbles` - array with bubbles
 
@@ -595,7 +595,7 @@ messenger.on('message', () => {
 });
 ```
 
-#### MessengerReceiptTemplate(attrs)
+#### `MessengerReceiptTemplate(attrs)`
 
 `attrs` - attributes hash according to Facebook documentation
 
