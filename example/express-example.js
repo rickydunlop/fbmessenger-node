@@ -1,3 +1,5 @@
+'use strict';
+
 import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -8,7 +10,7 @@ import {
   Button,
   Element,
   GenericTemplate,
-} from '../lib/Messenger';
+} from 'fbmessenger';
 
 let app = express();
 

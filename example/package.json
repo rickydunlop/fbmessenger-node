@@ -11,6 +11,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "fbmessenger": "^1.0.0"
   }
 }
