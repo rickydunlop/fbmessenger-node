@@ -1,44 +1,35 @@
-import dotenv from 'dotenv';
 import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
 
 import {
-  MessengerWrapper,
-  MessengerText,
-  MessengerImage,
-  MessengerButton,
-  MessengerBubble,
-  MessengerAddress,
-  MessengerSummary,
-  MessengerAdjustment,
-  MessengerButtonTemplate,
-  MessengerGenericTemplate,
-  MessengerReceiptTemplate
-} from '../lib/messenger-wrapper';
-
-dotenv.config();
+  Messenger,
+  Text,
+  Button,
+  Element,
+  GenericTemplate,
+} from '../lib/Messenger';
 
 let app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-let messenger = new MessengerWrapper({
-  verifyToken:     process.env.VERIFY_TOKEN,
+let messenger = new Messenger({
   pageAccessToken: process.env.PAGE_ACCESS_TOKEN
 });
 
-messenger.on('message', () => {
-  messenger.send(new MessengerGenericTemplate(
+messenger.on('message', (message) => {
+  console.log(`Message received: ${JSON.stringify(message)}`);
+  messenger.send(new GenericTemplate(
     [
-      new MessengerBubble({
+      new Element({
         title: 'Title',
         item_url: 'http://www.example.com',
         image_url: 'http://www.example.com',
         subtitle: 'Subtitle',
         buttons: [
-          new MessengerButton({ title: 'Button', url: 'http://www.example.com' })
+          new Button({ type: 'web_url', title: 'Button', url: 'http://www.example.com' })
         ]
       })
     ]
@@ -46,26 +37,37 @@ messenger.on('message', () => {
 });
 
 messenger.on('delivery', () => {
-  // console.log(wrapper.lastEntry);
+  // console.log(messenger.lastEntry);
 });
 
 messenger.on('postback', () => {
-  // console.log(wrapper.lastEntry);
+  // console.log(messenger.lastEntry);
+});
+
+messenger.on('read', () => {
+  // console.log(messenger.lastEntry);
+});
+
+messenger.on('optin', () => {
+  // console.log(messenger.lastEntry);
+});
+
+messenger.on('account_linking', () => {
+  // console.log(messenger.lastEntry);
 });
 
 app.get('/webhook', (req, res) => {
-  messenger.verify(req, res);
-});
-
-app.get('/subscribe', (req, res) => {
-  messenger.subscribe().then((response) => {
-    res.send(response.body);
-  });
+  if (req.query['hub.mode'] === 'subscribe' &&
+    req.query['hub.verify_token'] === process.env.VERIFY_TOKEN) {
+    res.send(req.query['hub.challenge']);
+  } else {
+    res.sendStatus(400);
+  }
 });
 
 app.post('/webhook', (req, res) => {
   res.sendStatus(200);
-  messenger.handle(req);
+  messenger.handle(req.body);
 });
 
 http.createServer(app).listen(3000);

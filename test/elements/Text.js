@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 
-import MessengerText from '../../lib/elements/messenger-text';
+import Text from '../../lib/elements/Text';
 
-describe('MessengerText', () => {
+describe('Text', () => {
   describe('new', () => {
     it('returns proper object', () => {
-      const text = new MessengerText('Hello user!');
+      const text = new Text('Hello user!');
 
       expect(text).to.deep.equal({ text: 'Hello user!' });
     });

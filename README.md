@@ -1,189 +1,82 @@
-# messenger-wrapper
-[![Build Status](https://travis-ci.org/justynjozwiak/messenger-wrapper.svg?branch=master)](https://travis-ci.org/justynjozwiak/messenger-wrapper)
-[![CoverageStatus](https://coveralls.io/repos/github/justynjozwiak/messenger-wrapper/badge.svg?branch=master)](https://coveralls.io/github/justynjozwiak/messenger-wrapper?branch=master)
-[![npm version](https://img.shields.io/npm/v/messenger-wrapper.svg?style=flat)](https://www.npmjs.com/package/messenger-wrapper)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
-[![Dependency Status](https://www.versioneye.com/user/projects/571a18b3fcd19a00415b21bc/badge.svg)](https://www.versioneye.com/user/projects/571a18b3fcd19a00415b21bc)
-[![Github Issues](http://githubbadges.herokuapp.com/justynjozwiak/messenger-wrapper/issues.svg)](https://github.com/justynjozwiak/messenger-wrapper/issues)
-[![License](http://img.shields.io/:license-MIT-blue.svg)](http://badges.mit-license.org)
+# fbmessenger
+[![Build Status](https://travis-ci.org/rickydunlop/fbmessenger-node.svg?branch=master)](https://travis-ci.org/rickydunlop/fbmessenger-node)
+[![Coverage Status](https://coveralls.io/repos/github/rickydunlop/fbmessenger-node/badge.svg?branch=master)](https://coveralls.io/github/rickydunlop/fbmessenger-node?branch=master)
+[![npm version](https://img.shields.io/npm/v/fbmessenger.svg?style=flat)](https://www.npmjs.com/package/fbmessenger)
+[![npm](https://img.shields.io/npm/l/fbmessenger.svg?maxAge=2592000)]()
 
-A simple library for handling [Facebook Messenger Bots](https://developers.facebook.com/docs/messenger-platform).
+A  library to integrate with the [Facebook Messenger Platform](https://developers.facebook.com/docs/messenger-platform).
 
 ## Installation
 
 Execute this line in your app directory:
 
 ```
-npm install --save messenger-wrapper
+npm install --save fbmessenger
 ```
 
 Import library into your app:
 
 ```javascript
-import { MessengerWrapper } from 'messenger-wrapper';
+import { Messenger } from 'fbmessenger';
 ```
 
 Initialize it:
 
 ```javascript
-let messenger = new MessengerWrapper({
-  verifyToken:     '<VERIFY_TOKEN>',
+let messenger = new Messenger({
   pageAccessToken: '<PAGE_ACCESS_TOKEN>'
 });
 ```
 
-and you are ready to go.
 
-## Configuration (facebook's side)
+## Configuration of facebook app
 
 First of all visit this official [tutorial](https://developers.facebook.com/docs/messenger-platform/quickstart#steps]) and
 make sure you complete these 3 steps:
-
-Subscribe the App to a Page - remember that instead of making subscription call manually:
-
-```
-curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=<PAGE_ACCESS_TOKEN>"
-```
-
-You can always run you express app with all necessary routes defined and go under `/subscribe`. See the first example for more details.
 
 Steps:
 
 * [Create page on Facebook](https://www.facebook.com/pages/create/) or use existing one if you already have it
 
-* [create app on Facebook](https://developers.facebook.com/quickstarts/?platform=web) or use existing one if you already have it
+* [Create app on Facebook](https://developers.facebook.com/quickstarts/?platform=web) or use existing one if you already have it
 
-* visit [your developer account](https://developers.facebook.com/apps/) and get `PAGE_ACCESS_TOKEN` to initialize wrapper
+* Visit [your developer account](https://developers.facebook.com/apps/) and get the `PAGE_ACCESS_TOKEN`
 
-## Express.js (example usage)
+* Subscribe the app to a page 
 
-This is sample usage within express.js application. For full example look [here](https://github.com/justynjozwiak/messenger-wrapper/blob/master/example/express-example.js).
 
-```javascript
-import { MessengerWrapper } from 'messenger-wrapper';
+## Events
 
-//let's initialize our wrapper here
-let messenger = new MessengerWrapper({
-  verifyToken:     '<VERIFY_TOKEN>',
-  pageAccessToken: '<PAGE_ACCESS_TOKEN>'
-});
+There are 6 types of events we can listen for:
 
-//here we define 3 available listeners: 'message', 'delivery', 'postback' and 'optin':
+- message
+- delivery
+- optin
+- read
+- account_linking
+- postback
+
+## Receiving messages
+
+### Event Listeners
+
+```
 messenger.on('message', (event) => {
-  //put your logic here
-});
-
-messenger.on('delivery', (event) => {
-  //put your logic here
-});
-
-messenger.on('postback', (event) => {
-  //put your logic here
-});
-
-messenger.on('optin', (event) => {
-  //put your logic here
-});
-
-//this route is needed for facebook messenger verification
-app.get('/webhook', (req, res) => {
-  messenger.verify(req, res);
-});
-
-//according to documentation https://developers.facebook.com/docs/messenger-platform/implementation
-//instead of sending this request manually -> curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=<PAGE_ACCESS_TOKEN>"
-//you can just run your express app and go under /subscribe in your web browser
-app.get('/subscribe', (req, res) => {
-  messenger.subscribe().then((response) => {
-    res.send(response.body);
-  });
-});
-
-//here we handle messenger data, you've got nothing to do here, just define that route
-app.post('/webhook', (req, res) => {
-  res.sendStatus(200);
-  messenger.handle(req);
+	console.log(event);
 });
 ```
 
-## Documentation
+Events are triggered when Facebook posts to the webhook url
 
-### Events
 
-Basically we have 3 types of events according to Facebook documentation:
+## Sending messages
 
-ATTENTION:
+To send a message you can use `send`.
+You can send a raw payload or to make it easier you can use the helper classes which are documented below.
 
-`(event)` param here is optional, you can omit it, and it's only purpose is to show you incoming data. According to Facebook documentation
-each incoming data can containt multiple `entries`, that's why this library supports iterating over them in background and emits proper
-actions, so you don't have to worry about losing any data. To get latest entry you should use `messenger.lastEntry` object or use dedicated methods like `send()` or `getUserId()` (and more `soon`) that operate on `messenger.lastEntry` object. Go through
-documentation to see examples.
+Example usage (raw payload):
 
-#### `messenger.on('message', (event))`
-
-Event triggered when the bot receives message from the user.
-
-`event` - object with payload received from messenger user
-
-Example usage:
-
-```javascript
-messenger.on('message', (event) => {
-  messenger.send({ text: 'Welcome!' });
-});
 ```
-
-#### `messenger.on('delivery', (event))`
-
-Event triggered when the message has been successfully delivered to the user.
-
-`event` - object with payload received from messenger user
-
-Example usage:
-
-```javascript
-messenger.on('delivery', (event) => {
-  messenger.send({ text: 'Message has been delivered!' });
-});
-```
-
-#### `messenger.on('postback', (event))`
-
-Event triggered when the postback action is triggered by the user.
-
-`event` - object with payload received from messenger user
-
-Example usage:
-
-```javascript
-messenger.on('postback', (event) => {
-  messenger.send({ text: 'Postback event!' });
-});
-```
-
-#### `messenger.on('optin', (event))`
-
-Event triggered when the optin action is triggered by the user.
-
-`event` - object with payload received from messenger user
-
-Example usage:
-
-```javascript
-messenger.on('optin', (event) => {
-  messenger.send({ text: 'Optin event!' });
-});
-```
-
-### Functions
-
-#### `messenger.send(payload)`
-
-`payload` - object with data that will be send to the user, see [docs](https://developers.facebook.com/docs/messenger-platform/send-api-reference#request) for format specification
-
-Example usage:
-
-```javascript
 messenger.on('message', () => {
   messenger.send({
     "attachment":{
@@ -196,11 +89,6 @@ messenger.on('message', () => {
             "type":"web_url",
             "url":"https://petersapparel.parseapp.com",
             "title":"Show Website"
-          },
-          {
-            "type":"postback",
-            "title":"Start Chatting",
-            "payload":"USER_DEFINED_PAYLOAD"
           }
         ]
       }
@@ -209,13 +97,7 @@ messenger.on('message', () => {
 });
 ```
 
-#### `messenger.getUser()`
-
-Returns object with user data:
-
-* `first_name`
-* `last_name`
-* `profile_pic`
+### User details
 
 Example usage:
 
@@ -227,82 +109,59 @@ messenger.on('message', () => {
 });
 ```
 
-#### `messenger.getUserId()`
+Returns object with user data:
 
-Returns ID of the user who sent the message.
+* `first_name`
+* `last_name`
+* `profile_pic`
+* `locale`
+* `timezone`
+* `gender`
 
-Example usage:
 
-```javascript
-messenger.on('postback', () => {
-  console.log(messenger.getUserId());
-});
-```
+## Elements
 
-### Elements
-
-#### `MessengerText(text)`
+### `Text(text)`
 
 `text` - your text message to the user
 
-This element can be sent separately.
-
 Returns proper text hash:
 
-```javascript
-{ text: 'text attribute' }
+```
+{ text: 'Hello World!' }
 ```
 
 Example usage:
 
 ```javascript
-import { MessengerText } from 'messenger-wrapper';
+import { Text } from 'fbmessenger';
 
 messenger.on('message', () => {
-  messenger.send(new MessengerText('Hello user!'));
+  messenger.send(new Text('Hello user!'));
 });
 ```
 
-#### `MessengerImage(url)`
+#### `Button(attrs)`
 
-`url` - url to the image
+`attrs` - object containing 3 attributes:
 
-This element can be sent separately.
+- `type` (Allowed values)
+	- `web_url`
+	- `postback`
+	- `phone_number`
+	- `account_link`
+	- `account_unlink`
+- `title`
+- `url`
 
-Returns proper image hash:
 
-```javascript
-attachment: {
-  type: 'image',
-  payload: {
-    url: 'http://yoururl.com/image'
-  }
-}
-```
-
-Example usage:
-
-```javascript
-import { MessengerImage } from 'messenger-wrapper';
-
-messenger.on('message', () => {
-  messenger.send(new MessengerImage('http://lorempixel.com/400/400/sports/1/'));
-});
-```
-
-#### `MessengerButton(attrs)`
-
-`attrs` - object containing two attributes:
-
-`{ url: 'url', title: 'title' }` or `{ title: 'title', payload: 'payload' }`
-
-This element CANNOT be sent separately. Use it with Button, Generic or Receipt templates.
+This element must be used with the Button, Generic or Receipt templates.
 
 Returns proper button hash depending on attributes set:
 
 First:
 
-```javascript
+```
 {
   type: 'web_url',
   url: 'url',
@@ -312,7 +171,7 @@ First:
 
 Second:
 
-```javascript
+```
 {
   type: 'postback',
   title: 'title',
@@ -320,99 +179,60 @@ Second:
 }
 ```
 
-Example usage (with MessengerButtonTemplate):
+Example usage (with ButtonTemplate):
 
-```javascript
+```
 import {
-  MessengerButton,
-  MessengerButtonTemplate
-} from 'messenger-wrapper';
+  Button,
+  ButtonTemplate
+} from 'fbmessenger';
 
 messenger.on('message', () => {
-  messenger.send(new MessengerButtonTemplate(
+  messenger.send(new ButtonTemplate(
     'Hey user! Watch these buttons:',
     [
-      new MessengerButton({ title: 'Web Url Button', url: 'http://www.example.com' }),
-      new MessengerButton({ title: 'Postback Button', payload: 'POSTBACK_INFO' })
+      new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
+      new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
     ]
   ));
 });
 ```
 
-### `MessengerBubble(attrs)`
-
-`attrs` - hash attributes defined in Facebook documentation
-
-This element CANNOT be sent separately. Use it with Generic or Receipt templates.
-
-Returns `attrs` object:
-
-```javascript
-{
-  title: 'Title',
-  item_url: 'http://www.example.com',
-  image_url: 'http://www.example.com',
-  subtitle: 'Subtitle',
-  buttons: [
-    {
-      type: 'web_url',
-      title: 'Button',
-      url: 'http://www.example.com'
-    }
-  ]
-}
-```
+### `Element(attrs)`
 
 Example usage:
 
-```javascript
+```
 import {
-  MessengerButton,
-  MessengerBubble,
-} from 'messenger-wrapper';
+  Button,
+  Element,
+} from 'fbmessenger';
 
 ...
-new MessengerBubble({
+new Element({
   itle: 'Title',
   item_url: 'http://www.example.com',
   image_url: 'http://www.example.com',
   subtitle: 'Subtitle',
   buttons: [
-    new MessengerButton({ title: 'Web Url Button', url: 'http://www.example.com' }),
-    new MessengerButton({ title: 'Postback Button', payload: 'POSTBACK_INFO' })
+    new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
+    new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
   ]
 });
 ...
 ```
 
-### `MessengerAddress(attrs)`
+### `Address(attrs)`
 
-`attrs` - hash attributes defined in Facebook documentation
-
-This element CANNOT be sent separately. Use it with Receipt template.
-
-Returns `attrs` object:
-
-```javascript
-{
-  street_1: '1 Hacker Way',
-  street_2: '',
-  city: 'Menlo Park',
-  postal_code: '94025',
-  state: 'CA',
-  country: 'US'
-}
-```
+This element must be used with the Receipt template.
 
 Example usage:
 
-```javascript
-import {
-  MessengerAddress
-} from 'messenger-wrapper';
+```
+import { Address } from 'fbmessenger';
 
 ...
-new MessengerAddress({
+new Address({
   street_1: '1 Hacker Way',
   street_2: '',
   city: 'Menlo Park',
@@ -423,32 +243,17 @@ new MessengerAddress({
 ...
 ```
 
-### `MessengerSummary(attrs)`
+### `Summary(attrs)`
 
-`attrs` - hash attributes defined in Facebook documentation
-
-This element CANNOT be sent separately. Use it with Receipt template.
-
-Returns `attrs` object:
-
-```javascript
-{
-  subtotal: 75.00,
-  shipping_cost: 4.95,
-  total_tax: 6.19,
-  total_cost: 56.14
-}
-```
+This element must be used with the Receipt template.
 
 Example usage:
 
-```javascript
-import {
-  MessengerSummary
-} from 'messenger-wrapper';
+```
+import { Summary } from 'fbmessenger';
 
 ...
-new MessengerSummary({
+new Summary({
   subtotal: 75.00,
   shipping_cost: 4.95,
   total_tax: 6.19,
@@ -457,136 +262,117 @@ new MessengerSummary({
 ...
 ```
 
-### `MessengerAdjustment(text, amount)`
+### `Adjustment(text, amount)`
 
-`text` - text attribute according to Facebook documentation
-
-`amount` - amount attribute according to Facebook documentation
-
-This element CANNOT be sent separately. Use it with Receipt template.
-
-Returns `attrs` object:
-
-```javascript
-{
-  name: 'Adjustment',
-  amount: 20
-}
-```
+This element must be used with the Receipt template.
 
 Example usage:
 
-```javascript
-import {
-  MessengerAdjustment
-} from 'messenger-wrapper';
+```
+import { Adjustment } from 'fbmessenger';
 
 ...
-new MessengerAdjustment({
+new Adjustment({
   name: 'Adjustment',
   amount: 20
 });
 ...
 ```
 
-### Templates
+## Attachments
 
-#### `MessengerButtonTemplate(text, buttons)`
-
-`text` - text attribute
-`buttons` - array with buttons
-
-Returns proper template object:
-
-```javascript
-{
-  attachment: {
-    type: 'template',
-    payload: {
-      template_type: 'button',
-      text: 'Hello user!',
-      buttons: [
-        {
-          type: 'web_url',
-          title: 'Button',
-          url: 'http://www.example.com'
-        }
-      ]
-    }
-  }
-}
-```
+### `Image(url)`
 
 Example usage:
 
-```javascript
-import {
-  MessengerButton,
-  MessengerButtonTemplate
-} from 'messenger-wrapper';
+```
+import { Image } from 'fbmessenger';
 
 messenger.on('message', () => {
-  messenger.send(new MessengerButtonTemplate(
+  messenger.send(new Image('http://lorempixel.com/400/400/sports/1/'));
+});
+```
+
+### `Audio(url)`
+
+Example usage:
+
+```
+import { Audio } from 'fbmessenger';
+
+messenger.on('message', () => {
+  messenger.send(new Audio('http://example.com/audio.mp3'));
+});
+```
+
+### `Video(url)`
+
+Example usage:
+
+```
+import { Video } from 'fbmessenger';
+
+messenger.on('message', () => {
+  messenger.send(new Video('http://example.com/video.mp4'));
+});
+```
+
+### `File(url)`
+
+Example usage:
+
+```
+import { File } from 'fbmessenger';
+
+messenger.on('message', () => {
+  messenger.send(new File('http://example.com/file.txt'));
+});
+```
+
+## Templates
+
+### `ButtonTemplate(text, buttons)`
+
+Example usage:
+
+```
+import {
+  Button,
+  ButtonTemplate
+} from 'fbmessenger';
+
+messenger.on('message', () => {
+  messenger.send(new ButtonTemplate(
     'Hey user! Watch these buttons:',
     [
-      new MessengerButton({ title: 'Web Url Button', url: 'http://www.example.com' }),
-      new MessengerButton({ title: 'Postback Button', payload: 'POSTBACK_INFO' })
+      new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
+      new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
     ]
   ));
 });
 ```
 
-#### `MessengerGenericTemplate(bubbles)`
-
-`bubbles` - array with bubbles
-
-Returns proper generic template object:
-
-```javascript
-{
-  attachment: {
-    type: 'template',
-    payload: {
-      template_type: 'generic',
-      elements: [
-        {
-          title: 'Title',
-          item_url: 'http://www.example.com',
-          image_url: 'http://www.example.com',
-          subtitle: 'Subtitle',
-          buttons: [
-            {
-              type: 'web_url',
-              title: 'Button',
-              url: 'http://www.example.com'
-            }
-          ]
-        }
-      ]
-    }
-  }
-}
-```
+#### `GenericTemplate(bubbles)`
 
 Example usage:
 
-```javascript
+```
 import {
-  MessengerButton,
-  MessengerBubble
-  MessengerGenericTemplate
-} from 'messenger-wrapper';
+  Button,
+  Element
+  GenericTemplate
+} from 'fbmessenger';
 
 messenger.on('message', () => {
-  messenger.send(new MessengerGenericTemplate(
+  messenger.send(new GenericTemplate(
     [
-      new MessengerBubble({
+      new Element({
         title: 'Title',
         item_url: 'http://www.example.com',
         image_url: 'http://www.example.com',
         subtitle: 'Subtitle',
         buttons: [
-          new MessengerButton({ title: 'Button', url: 'http://www.example.com' })
+          new Button({ type: 'web_url', title: 'Button', url: 'http://www.example.com' })
         ]
       }),
       ...
@@ -595,78 +381,22 @@ messenger.on('message', () => {
 });
 ```
 
-#### `MessengerReceiptTemplate(attrs)`
-
-`attrs` - attributes hash according to Facebook documentation
-
-Returns proper receipt template object:
-
-```javascript
-{
-  attachment: {
-    type: 'template',
-    payload: {
-      template_type: 'receipt',
-      recipient_name: 'Name',
-      order_number: '123',
-      currency: 'USD',
-      payment_method: 'Visa',
-      order_url: 'http://www.example.com',
-      timestamp: '123123123',
-      elements: [
-        {
-          title: 'Title',
-          item_url: 'http://www.example.com',
-          image_url: 'http://www.example.com',
-          subtitle: 'Subtitle',
-          buttons: [
-            {
-              type: 'web_url',
-              title: 'Button',
-              url: 'http://www.example.com'
-            }
-          ]
-        }
-      ],
-      address: {
-        street_1: '1 Hacker Way',
-        street_2: '',
-        city: 'Menlo Park',
-        postal_code: '94025',
-        state: 'CA',
-        country: 'US'
-      },
-      summary: {
-        subtotal: 75.00,
-        shipping_cost: 4.95,
-        total_tax: 6.19,
-        total_cost: 56.14
-      },
-      adjustments: [
-        {
-          name: 'Adjustment',
-          amount: 20
-        }
-      ]
-    }
-  }
-}
-```
+#### `ReceiptTemplate(attrs)`
 
 Example usage:
 
-```javascript
+```
 import {
-  MessengerButton,
-  MessengerBubble,
-  MessengerAddress,
-  MessengerSummary,
-  MessengerAdjustment,
-  MessengerReceiptTemplate
-} from 'messenger-wrapper';
+  Button,
+  Element,
+  Address,
+  Summary,
+  Adjustment,
+  ReceiptTemplate
+} from 'fbmessenger';
 
 messenger.on('message', () => {
-  messenger.send(new MessengerReceiptTemplate({
+  messenger.send(new ReceiptTemplate({
     recipient_name: 'Name',
     order_number: '123',
     currency: 'USD',
@@ -674,17 +404,17 @@ messenger.on('message', () => {
     order_url: 'http://www.example.com',
     timestamp: '123123123',
     elements: [
-      new MessengerBubble({
+      new Element({
         title: 'Title',
         item_url: 'http://www.example.com',
         image_url: 'http://www.example.com',
         subtitle: 'Subtitle',
         buttons: [
-          new MessengerButton({ title: 'Button', url: 'http://www.example.com' })
+          new Button({ type: 'web_url', title: 'Button', url: 'http://www.example.com' })
         ]
       })
     ],
-    address: new MessengerAddress({
+    address: new Address({
       street_1: '1 Hacker Way',
       street_2: '',
       city: 'Menlo Park',
@@ -692,15 +422,70 @@ messenger.on('message', () => {
       state: 'CA',
       country: 'US'
     }),
-    summary: new MessengerSummary({
+    summary: new Summary({
       subtotal: 75.00,
       shipping_cost: 4.95,
       total_tax: 6.19,
       total_cost: 56.14
     }),
     adjustments: [
-      new MessengerAdjustment('Adjustment', 20)
+      new Adjustment('Adjustment', 20)
     ]
   });
+});
+```
+
+## Express.js (example usage)
+
+This is sample usage within an express.js application. For full example look [here](https://github.com/rickydunlop/fbmessenger/blob/master/example/express-example.js).
+
+```
+import { Messenger } from 'fbmessenger';
+
+// Initialize Messenger
+let messenger = new Messenger({
+  pageAccessToken: '<PAGE_ACCESS_TOKEN>'
+});
+
+// here we define some listeners:
+messenger.on('message', (event) => {
+  // put your logic here
+});
+
+messenger.on('delivery', (event) => {
+  // put your logic here
+});
+
+messenger.on('postback', (event) => {
+  // put your logic here
+});
+
+messenger.on('optin', (event) => {
+  // put your logic here
+});
+
+messenger.on('read', (event) => {
+  // put your logic here
+});
+
+messenger.on('account_linking', (event) => {
+  // put your logic here
+});
+
+// This example shows how to setup verification using express
+app.get('/webhook', (req, res) => {
+  if (req.query['hub.mode'] === 'subscribe' &&
+    req.query['hub.verify_token'] === process.env.VERIFY_TOKEN) {
+    res.send(req.query['hub.challenge']);
+  } else {
+    res.sendStatus(400);
+  }
+});
+
+
+// This route handles the webhook callbacks from Facebook
+app.post('/webhook', (req, res) => {
+  res.sendStatus(200);
+  messenger.handle(req.body);
 });
 ```

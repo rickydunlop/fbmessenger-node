@@ -1,39 +1,45 @@
 {
-  "name": "messenger-wrapper",
-  "version": "2.2.3",
+  "name": "fbmessenger",
+  "version": "1.0.0",
   "description": "A simple wrapper for Facebook Messenger Bots",
-  "main": "./distribution/messenger-wrapper.js",
+  "main": "./dist/Mmessenger.js",
   "scripts": {
-    "build": "babel lib --presets babel-preset-es2015 --out-dir distribution",
+    "build": "babel lib --presets babel-preset-es2015 --out-dir dist",
+    "coverage": "nyc --reporter=lcov npm test",
     "prepublish": "npm run build",
-    "start": "babel-node ./lib/messenger-wrapper.js",
+    "start": "babel-node ./lib/Messenger.js",
     "start:server": "nodemon --exec \"babel-node ./example/express-example.js\" --watch ./",
     "test": "mocha --compilers js:babel-core/register \"test/**/*@(.js)\"",
     "travis-coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/justynjozwiak/messenger-wrapper.git"
+    "url": "git+https://github.com/rickydunlop/fbmessenger-node.git"
   },
-  "author": "Justyn Jóźwiak",
+  "contributors": {
+    "name": "Ricky Dunlop"
+  },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/justynjozwiak/messenger-wrapper/issues"
+    "url": "https://github.com/rickydunlop/fbmessenger-node/issues"
   },
-  "homepage": "https://github.com/justynjozwiak/messenger-wrapper#readme",
+  "homepage": "https://github.com/rickydunlop/fbmessenger-node#readme",
   "devDependencies": {
+    "babel-cli": "^6.11.4",
     "babel-core": "^6.7.7",
     "babel-preset-es2015": "^6.6.0",
     "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
     "coveralls": "^2.11.9",
+    "fetch-mock": "^5.0.5",
     "mocha": "^2.4.5",
     "mocha-lcov-reporter": "^1.2.0",
+    "nock": "^8.0.0",
     "nodemon": "^1.9.1",
-    "nyc": "^6.4.0"
+    "nyc": "^6.4.0",
+    "sinon": "^2.0.0-pre.2"
   },
   "dependencies": {
-    "bluebird": "^3.3.5",
-    "lodash": "^4.11.1",
-    "request": "^2.72.0"
+    "node-fetch": "^1.5.3"
   }
 }
