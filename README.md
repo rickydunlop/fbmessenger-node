@@ -42,7 +42,7 @@ Steps:
 
 * Visit [your developer account](https://developers.facebook.com/apps/) and get the `PAGE_ACCESS_TOKEN`
 
-* Subscribe the app to a page 
+* Subscribe the app to a page
 
 
 ## Events
@@ -60,7 +60,7 @@ There are 6 types of events we can listen for:
 
 ### Event Listeners
 
-```
+```javascript
 messenger.on('message', (event) => {
 	console.log(event);
 });
@@ -76,7 +76,7 @@ You can send a raw payload or to make it easier you can use the helper classes w
 
 Example usage (raw payload):
 
-```
+```javascript
 messenger.on('message', () => {
   messenger.send({
     "attachment":{
@@ -127,7 +127,7 @@ Returns object with user data:
 
 Returns proper text hash:
 
-```
+```javascript
 { text: 'Hello World!' }
 ```
 
@@ -161,7 +161,7 @@ Returns proper button hash depending on attributes set:
 
 First:
 
-```
+```javascript
 {
   type: 'web_url',
   url: 'url',
@@ -171,7 +171,7 @@ First:
 
 Second:
 
-```
+```javascript
 {
   type: 'postback',
   title: 'title',
@@ -181,7 +181,7 @@ Second:
 
 Example usage (with ButtonTemplate):
 
-```
+```javascript
 import {
   Button,
   ButtonTemplate
@@ -202,7 +202,7 @@ messenger.on('message', () => {
 
 Example usage:
 
-```
+```javascript
 import {
   Button,
   Element,
@@ -228,7 +228,7 @@ This element must be used with the Receipt template.
 
 Example usage:
 
-```
+```javascript
 import { Address } from 'fbmessenger';
 
 ...
@@ -249,7 +249,7 @@ This element must be used with the Receipt template.
 
 Example usage:
 
-```
+```javascript
 import { Summary } from 'fbmessenger';
 
 ...
@@ -268,7 +268,7 @@ This element must be used with the Receipt template.
 
 Example usage:
 
-```
+```javascript
 import { Adjustment } from 'fbmessenger';
 
 ...
@@ -285,7 +285,7 @@ new Adjustment({
 
 Example usage:
 
-```
+```javascript
 import { Image } from 'fbmessenger';
 
 messenger.on('message', () => {
@@ -297,7 +297,7 @@ messenger.on('message', () => {
 
 Example usage:
 
-```
+```javascript
 import { Audio } from 'fbmessenger';
 
 messenger.on('message', () => {
@@ -309,7 +309,7 @@ messenger.on('message', () => {
 
 Example usage:
 
-```
+```javascript
 import { Video } from 'fbmessenger';
 
 messenger.on('message', () => {
@@ -321,7 +321,7 @@ messenger.on('message', () => {
 
 Example usage:
 
-```
+```javascript
 import { File } from 'fbmessenger';
 
 messenger.on('message', () => {
@@ -335,7 +335,7 @@ messenger.on('message', () => {
 
 Example usage:
 
-```
+```javascript
 import {
   Button,
   ButtonTemplate
@@ -356,7 +356,7 @@ messenger.on('message', () => {
 
 Example usage:
 
-```
+```javascript
 import {
   Button,
   Element
@@ -385,7 +385,7 @@ messenger.on('message', () => {
 
 Example usage:
 
-```
+```javascript
 import {
   Button,
   Element,
@@ -439,7 +439,7 @@ messenger.on('message', () => {
 
 This is sample usage within an express.js application. For full example look [here](https://github.com/rickydunlop/fbmessenger/blob/master/example/express-example.js).
 
-```
+```javascript
 import { Messenger } from 'fbmessenger';
 
 // Initialize Messenger
