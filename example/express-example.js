@@ -10,7 +10,7 @@ import {
   Button,
   Element,
   GenericTemplate,
-} from 'fbmessenger';
+} from '../lib/Messenger';
 
 let app = express();
 
