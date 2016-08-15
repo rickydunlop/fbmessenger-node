@@ -5,6 +5,7 @@
 [![npm](https://img.shields.io/npm/l/fbmessenger.svg?maxAge=2592000)]()
 
 A  library to integrate with the [Facebook Messenger Platform](https://developers.facebook.com/docs/messenger-platform).
+Based on [messenger-wrapper](https://github.com/justynjozwiak/messenger-wrapper/).
 
 ## Installation
 
