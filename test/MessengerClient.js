@@ -6,7 +6,9 @@ import MessengerClient from '../lib/MessengerClient';
 describe('MessengerClient', () => {
   describe('get user', () => {
     it('calls get user', (done) => {
-      let client = new MessengerClient('PAGE_ACCESS_TOKEN');
+      let client = new MessengerClient({
+        pageAccessToken: 'PAGE_ACCESS_TOKEN'
+      });
       let scope = nock('https://graph.facebook.com')
         .get(/USER_ID/)
         .reply(200, {'username': 'test', id: 1});
@@ -24,7 +26,9 @@ describe('MessengerClient', () => {
 
   describe('send', () => {
     it('calls send', (done) => {
-      let client = new MessengerClient('PAGE_ACCESS_TOKEN');
+      let client = new MessengerClient({
+        pageAccessToken: 'PAGE_ACCESS_TOKEN'
+      });
       let scope = nock('https://graph.facebook.com')
         .post(/me/)
         .reply(200, {

@@ -8,11 +8,11 @@ describe('Messenger', () => {
   describe('new', () => {
     describe('with all attributes', () => {
       it('initializes correctly', () => {
-        const wrapper = new Messenger({
+        const client = new Messenger({
           pageAccessToken: 'page_access_token'
         });
 
-        expect(wrapper).to.be.ok;
+        expect(client).to.be.ok;
       });
     });
 
