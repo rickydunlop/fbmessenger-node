@@ -73,6 +73,8 @@ Events are triggered when Facebook posts to the webhook url
 ## Sending messages
 
 To send a message you can use `send`.
+All requests will return a Promise (from node-fetch)
+
 You can send a raw payload or to make it easier you can use the helper classes which are documented below.
 
 Example usage (raw payload):
@@ -98,7 +100,19 @@ messenger.on('message', () => {
 });
 ```
 
-### User details
+
+## Catching errors
+
+You can add a `catch` to get errors from the request.
+
+```javascript
+messenger.send({ text: "Hello" })
+  .then(console.log(res))
+  .catch(err => console.log(err));
+```
+
+
+## Getting user details
 
 Example usage:
 
@@ -124,13 +138,7 @@ Returns object with user data:
 
 ### `Text(text)`
 
-`text` - your text message to the user
-
-Returns proper text hash:
-
-```javascript
-{ text: 'Hello World!' }
-```
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)
 
 Example usage:
 
@@ -138,8 +146,15 @@ Example usage:
 import { Text } from 'fbmessenger';
 
 messenger.on('message', () => {
-  messenger.send(new Text('Hello user!'));
+  messenger.send(new Text('Hello World!'));
 });
+```
+
+you can also just pass a simple object to the `send` method like this
+
+
+```javascript
+{ text: 'Hello World!' }
 ```
 
 #### `Button(attrs)`
@@ -201,6 +216,8 @@ messenger.on('message', () => {
 
 ### `Element(attrs)`
 
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template)
+
 Example usage:
 
 ```javascript
@@ -225,6 +242,8 @@ new Element({
 
 ### `Address(attrs)`
 
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
+
 This element must be used with the Receipt template.
 
 Example usage:
@@ -246,6 +265,8 @@ new Address({
 
 ### `Summary(attrs)`
 
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
+
 This element must be used with the Receipt template.
 
 Example usage:
@@ -264,6 +285,8 @@ new Summary({
 ```
 
 ### `Adjustment(text, amount)`
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
 
 This element must be used with the Receipt template.
 
@@ -284,6 +307,8 @@ new Adjustment({
 
 ### `Image(url)`
 
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/image-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/image-attachment)
+
 Example usage:
 
 ```javascript
@@ -295,6 +320,8 @@ messenger.on('message', () => {
 ```
 
 ### `Audio(url)`
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/audio-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/audio-attachment)
 
 Example usage:
 
@@ -308,6 +335,8 @@ messenger.on('message', () => {
 
 ### `Video(url)`
 
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/video-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/video-attachment)
+
 Example usage:
 
 ```javascript
@@ -319,6 +348,8 @@ messenger.on('message', () => {
 ```
 
 ### `File(url)`
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/file-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/file-attachment)
 
 Example usage:
 
@@ -333,6 +364,8 @@ messenger.on('message', () => {
 ## Templates
 
 ### `ButtonTemplate(text, buttons)`
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/button-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/button-template)
 
 Example usage:
 
@@ -354,6 +387,8 @@ messenger.on('message', () => {
 ```
 
 #### `GenericTemplate(bubbles)`
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template)
 
 Example usage:
 
@@ -383,6 +418,8 @@ messenger.on('message', () => {
 ```
 
 #### `ReceiptTemplate(attrs)`
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
 
 Example usage:
 
@@ -435,6 +472,80 @@ messenger.on('message', () => {
   });
 });
 ```
+
+## Thread settings
+### Greeting Text
+
+[https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text](https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text)
+
+```javascript
+import { GreetingText } from fbmessenger
+
+let greeting = new GreetingText('Hello');
+messenger.set_thread_setting(greeting);
+```
+
+### Get Started Button
+
+[https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button](https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button)
+
+```javascript
+import { GetStartedButton } from 'fbmessenger';
+
+let getStarted = new GetStartedButton('start');
+messenger.set_thread_setting(getStarted);
+```
+
+When someone first interacts with your bot they will see a `Get Started` button. When this is clicked it will send a `postback` to your server with the value of `start`.
+
+### Persistent Menu
+
+[https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu)
+
+```javascript
+import {
+  PersistentMenu,
+  PersistentMenuItem
+} from 'fbmessenger';
+
+let item_1 = new PersistentMenuItem({
+	item_type: 'web_url',
+	title: 'Menu button 1',
+	url: 'http://facebook.com'
+});
+
+let item_2 = new PersistentMenuItem({
+	item_type: 'payload',
+	title: 'Menu button 2',
+	payload: 'menu_button_2'
+});
+
+let menu = new PersistentMenu([item_1, item_2]);
+messenger.set_thread_setting(menu);
+```
+
+## Sender Actions
+
+Available actions are
+
+- typing_on
+- typing_off
+- mark_seen
+
+```javascript
+messenger.sender_action('typing_on');
+```
+
+
+## Extra methods
+
+There's also methods available on the `messenger` instance for 
+
+- `subscribe_app_to_page`
+- `delete_get_started`
+- `link_account`
+- `unlink_account`
+
 
 ## Express.js (example usage)
 
