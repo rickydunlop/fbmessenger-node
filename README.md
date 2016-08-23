@@ -482,7 +482,7 @@ messenger.on('message', () => {
 import { GreetingText } from fbmessenger
 
 let greeting = new GreetingText('Hello');
-messenger.set_thread_setting(greeting);
+messenger.setThreadSetting(greeting);
 ```
 
 ### Get Started Button
@@ -493,7 +493,7 @@ messenger.set_thread_setting(greeting);
 import { GetStartedButton } from 'fbmessenger';
 
 let getStarted = new GetStartedButton('start');
-messenger.set_thread_setting(getStarted);
+messenger.setThreadSetting(getStarted);
 ```
 
 When someone first interacts with your bot they will see a `Get Started` button. When this is clicked it will send a `postback` to your server with the value of `start`.
@@ -521,7 +521,7 @@ let item_2 = new PersistentMenuItem({
 });
 
 let menu = new PersistentMenu([item_1, item_2]);
-messenger.set_thread_setting(menu);
+messenger.setThreadSetting(menu);
 ```
 
 ## Sender Actions
@@ -533,7 +533,7 @@ Available actions are
 - mark_seen
 
 ```javascript
-messenger.sender_action('typing_on');
+messenger.senderAction('typing_on');
 ```
 
 
@@ -541,10 +541,10 @@ messenger.sender_action('typing_on');
 
 There's also methods available on the `messenger` instance for 
 
-- `subscribe_app_to_page`
-- `delete_get_started`
-- `link_account`
-- `unlink_account`
+- `subscribeAppToPage`
+- `deleteGetStarted`
+- `linkAccount`
+- `unlinkAccount`
 
 
 ## Express.js (example usage)
