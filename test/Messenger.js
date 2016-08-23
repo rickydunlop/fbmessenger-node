@@ -9,7 +9,7 @@ describe('Messenger', () => {
     describe('with all attributes', () => {
       it('initializes correctly', () => {
         const client = new Messenger({
-          pageAccessToken: 'page_access_token'
+          pageAccessToken: 'page_access_token',
         });
 
         expect(client).to.be.ok;
@@ -28,13 +28,13 @@ describe('Messenger', () => {
   describe('Events', () => {
     it('Handles message', () => {
       const messenger = new Messenger({
-        pageAccessToken: 'page_access_token'
+        pageAccessToken: 'page_access_token',
       });
-      var spy = sinon.spy();
+      const spy = sinon.spy();
 
       messenger.on('message', spy);
 
-      let payload = {
+      const payload = {
         'object': 'page',
         'entry': [
           {

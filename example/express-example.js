@@ -6,19 +6,18 @@ import bodyParser from 'body-parser';
 
 import {
   Messenger,
-  Text,
   Button,
   Element,
   GenericTemplate,
 } from '../lib/Messenger';
 
-let app = express();
+const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-let messenger = new Messenger({
-  pageAccessToken: process.env.PAGE_ACCESS_TOKEN
+const messenger = new Messenger({
+  pageAccessToken: process.env.PAGE_ACCESS_TOKEN,
 });
 
 messenger.on('message', (message) => {
@@ -31,9 +30,9 @@ messenger.on('message', (message) => {
         image_url: 'http://www.example.com',
         subtitle: 'Subtitle',
         buttons: [
-          new Button({ type: 'web_url', title: 'Button', url: 'http://www.example.com' })
-        ]
-      })
+          new Button({ type: 'web_url', title: 'Button', url: 'http://www.example.com' }),
+        ],
+      }),
     ]
   ));
 });

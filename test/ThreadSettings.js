@@ -4,7 +4,7 @@ import {
   GreetingText,
   GetStartedButton,
   PersistentMenu,
-  PersistentMenuItem
+  PersistentMenuItem,
 } from '../lib/ThreadSettings';
 
 describe('Thread Settings', () => {
@@ -125,7 +125,7 @@ describe('Thread Settings', () => {
         url: 'http://facebook.com'
       });
 
-      let menu = new PersistentMenu([item_1, item_2]);
+      const menu = new PersistentMenu([item_1, item_2]);
       expect(menu).to.deep.equal({
         setting_type: 'call_to_actions',
         thread_state: 'existing_thread',
