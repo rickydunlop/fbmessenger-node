@@ -15,9 +15,9 @@ describe('Element', () => {
           new Button({
             type: 'web_url',
             title: 'Button',
-            url: 'http://www.example.com'
-          })
-        ]
+            url: 'http://www.example.com',
+          }),
+        ],
       });
 
       expect(element).to.deep.equal({
@@ -29,9 +29,9 @@ describe('Element', () => {
           {
             type: 'web_url',
             title: 'Button',
-            url: 'http://www.example.com'
-          }
-        ]
+            url: 'http://www.example.com',
+          },
+        ],
       });
     });
   });
@@ -39,7 +39,7 @@ describe('Element', () => {
   describe('properties', () => {
     it('accepts just title', () => {
       const element = new Element({
-        title: 'Title'
+        title: 'Title',
       });
 
       expect(element).to.deep.equal({
@@ -47,9 +47,7 @@ describe('Element', () => {
         item_url: '',
         image_url: '',
         subtitle: '',
-        buttons: []
       });
     });
-
   });
 });
