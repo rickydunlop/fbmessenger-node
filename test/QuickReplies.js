@@ -6,17 +6,17 @@ describe('QuickReplies', () => {
   describe('new', () => {
     describe('with correct attributes', () => {
       it('returns proper object', () => {
-        let qr = new QuickReply('Example', 'payload');
-        let qrs = new QuickReplies([qr]);
+        const qr = new QuickReply('Example', 'payload');
+        const qrs = new QuickReplies([qr]);
 
         expect(qrs).to.deep.equal({
-          'quick_replies': [
+          quick_replies: [
             {
-              'content_type': 'text',
-              'title': 'Example',
-              'payload': 'payload'
-            }
-          ]
+              content_type: 'text',
+              title: 'Example',
+              payload: 'payload',
+            },
+          ],
         });
       });
     });
@@ -38,7 +38,6 @@ describe('QuickReplies', () => {
         }).to.throw('You cannot have more than 10 quick replies.');
       });
     });
-
   });
 });
 
@@ -46,19 +45,18 @@ describe('QuickReply', () => {
   describe('new', () => {
     describe('with correct attributes', () => {
       it('returns proper object', () => {
-        let qr = new QuickReply('Example', 'payload');
+        const qr = new QuickReply('Example', 'payload');
 
         expect(qr).to.deep.equal({
-          'content_type': 'text',
-          'title': 'Example',
-          'payload': 'payload'
+          content_type: 'text',
+          title: 'Example',
+          payload: 'payload',
         });
       });
     });
   });
 
   describe('errors', () => {
-
     describe('title length', () => {
       it('throws error', () => {
         expect(() => {
@@ -74,6 +72,5 @@ describe('QuickReply', () => {
         }).to.throw('Payload cannot be longer 1000 characters.');
       });
     });
-
   });
 });
