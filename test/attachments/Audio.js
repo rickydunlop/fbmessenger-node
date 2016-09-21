@@ -11,9 +11,10 @@ describe('Audio', () => {
         attachment: {
           type: 'audio',
           payload: {
-            url: 'http://test.com/audio.mp3'
-          }
-        }
+            url: 'http://test.com/audio.mp3',
+            is_reusable: false,
+          },
+        },
       });
     });
   });

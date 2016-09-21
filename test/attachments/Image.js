@@ -11,9 +11,24 @@ describe('Image', () => {
         attachment: {
           type: 'image',
           payload: {
-            url: 'http://test.com/image.jpg'
-          }
-        }
+            url: 'http://test.com/image.jpg',
+            is_reusable: false,
+          },
+        },
+      });
+    });
+
+    it('is reusable', () => {
+      const image = new Image('http://test.com/image.jpg', true);
+
+      expect(image).to.deep.equal({
+        attachment: {
+          type: 'image',
+          payload: {
+            url: 'http://test.com/image.jpg',
+            is_reusable: true,
+          },
+        },
       });
     });
   });

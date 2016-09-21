@@ -11,9 +11,10 @@ describe('Video', () => {
         attachment: {
           type: 'video',
           payload: {
-            url: 'http://test.com/video.mp4'
-          }
-        }
+            url: 'http://test.com/video.mp4',
+            is_reusable: false,
+          },
+        },
       });
     });
   });

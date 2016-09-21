@@ -11,9 +11,10 @@ describe('File', () => {
         attachment: {
           type: 'file',
           payload: {
-            url: 'http://test.com/file.mp3'
-          }
-        }
+            url: 'http://test.com/file.mp3',
+            is_reusable: false,
+          },
+        },
       });
     });
   });
