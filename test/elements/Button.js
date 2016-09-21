@@ -5,7 +5,7 @@ import Button from '../../lib/elements/Button';
 describe('Button', () => {
   describe('new', () => {
     describe('with type of web_url', () => {
-      it('returns proper object', () => {
+      it('returns valid object', () => {
         const button = new Button({
           type: 'web_url',
           url: 'http://www.example.com',
@@ -21,7 +21,7 @@ describe('Button', () => {
     });
 
     describe('with type of postback', () => {
-      it('returns proper object', () => {
+      it('returns valid object', () => {
         const button = new Button({
           type: 'postback',
           title: 'Example Title',
@@ -37,7 +37,7 @@ describe('Button', () => {
     });
 
     describe('with webview', () => {
-      it('returns proper object', () => {
+      it('returns valid object', () => {
         const button = new Button({
           type: 'postback',
           title: 'Example Title',
@@ -50,6 +50,46 @@ describe('Button', () => {
           title: 'Example Title',
           url: 'https://facebook.com',
           webview_height_ratio: 'tall',
+        });
+      });
+    });
+
+    describe('with messenger extensions enabled', () => {
+      it('returns valid object', () => {
+        const button = new Button({
+          type: 'postback',
+          title: 'Example Title',
+          url: 'https://facebook.com',
+          webview_height_ratio: 'tall',
+          messenger_extensions: true,
+        });
+
+        expect(button).to.deep.equal({
+          type: 'postback',
+          title: 'Example Title',
+          url: 'https://facebook.com',
+          webview_height_ratio: 'tall',
+          messenger_extensions: 'true',
+        });
+      });
+    });
+
+    describe('with fallback url', () => {
+      it('returns valid object', () => {
+        const button = new Button({
+          type: 'postback',
+          title: 'Example Title',
+          url: 'https://facebook.com',
+          webview_height_ratio: 'tall',
+          fallback_url: 'https://facebook.com',
+        });
+
+        expect(button).to.deep.equal({
+          type: 'postback',
+          title: 'Example Title',
+          url: 'https://facebook.com',
+          webview_height_ratio: 'tall',
+          fallback_url: 'https://facebook.com',
         });
       });
     });

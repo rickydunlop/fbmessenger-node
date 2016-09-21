@@ -1,20 +1,40 @@
 import { expect } from 'chai';
 
 import { QuickReply, QuickReplies } from '../lib/QuickReplies';
+import Text from '../lib/elements/Text';
 
 describe('QuickReplies', () => {
-  describe('new', () => {
+  describe('when created', () => {
     describe('with correct attributes', () => {
-      it('returns proper object', () => {
-        const qr = new QuickReply('Example', 'payload');
+      it('returns a valid object', () => {
+        const qr = new QuickReply({ title: 'Example', payload: 'payload' });
         const qrs = new QuickReplies([qr]);
 
         expect(qrs).to.deep.equal({
           quick_replies: [
             {
-              content_type: 'text',
               title: 'Example',
+              content_type: 'text',
               payload: 'payload',
+            },
+          ],
+        });
+      });
+    });
+
+    describe('Merges with messages', () => {
+      it('returns valid object', () => {
+        const qr = new QuickReply({ title: 'Location', content_type: 'location' });
+        const qrs = new QuickReplies([qr]);
+        const text = new Text('Simple text message');
+        const payload = Object.assign(text, qrs);
+
+        expect(payload).to.deep.equal({
+          text: 'Simple text message',
+          quick_replies: [
+            {
+              title: 'Location',
+              content_type: 'location',
             },
           ],
         });
@@ -45,7 +65,7 @@ describe('QuickReply', () => {
   describe('new', () => {
     describe('with correct attributes', () => {
       it('returns proper object', () => {
-        const qr = new QuickReply('Example', 'payload');
+        const qr = new QuickReply({ title: 'Example', payload: 'payload' });
 
         expect(qr).to.deep.equal({
           content_type: 'text',
@@ -54,22 +74,41 @@ describe('QuickReply', () => {
         });
       });
     });
+
+    describe('supports location type', () => {
+      it('returns valid object', () => {
+        const qr = new QuickReply({ title: 'Location', content_type: 'location' });
+
+        expect(qr).to.deep.equal({
+          title: 'Location',
+          content_type: 'location',
+        });
+      });
+    });
   });
 
   describe('errors', () => {
     describe('title length', () => {
-      it('throws error', () => {
+      it('throws an error', () => {
         expect(() => {
-          new QuickReply('x'.repeat(21), 'payload');
+          new QuickReply({ title: 'x'.repeat(21), payload: 'payload' });
         }).to.throw('Title cannot be longer 20 characters.');
       });
     });
 
     describe('payload length', () => {
-      it('throws error', () => {
+      it('throws an error', () => {
         expect(() => {
-          new QuickReply('Text', 'x'.repeat(1001));
+          new QuickReply({ title: 'Text', payload: 'x'.repeat(1001) });
         }).to.throw('Payload cannot be longer 1000 characters.');
+      });
+    });
+
+    describe('invalid content type', () => {
+      it('throws an error', () => {
+        expect(() => {
+          new QuickReply({ title: 'Text', content_type: 'wrong' });
+        }).to.throw('Invalid content type provided.');
       });
     });
   });

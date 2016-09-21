@@ -4,15 +4,49 @@ import fetchMock from 'fetch-mock';
 
 import { Messenger } from '../lib/Messenger';
 
+const messenger = new Messenger({
+  pageAccessToken: 'page_access_token',
+});
+messenger.lastMessage = {
+  sender: {
+    id: 'USER_ID',
+  },
+  recipient: {
+    id: 'PAGE_ID',
+  },
+};
+
+
+function generatePayload(key, payload) {
+  const res = {
+    object: 'page',
+    entry: [
+      {
+        id: 1234,
+        time: 1457764198246,
+        messaging: [
+          {
+            sender: {
+              id: 1234,
+            },
+            recipient: {
+              id: 1234,
+            },
+            timestamp: 1457764197627,
+          },
+        ],
+      },
+    ],
+  };
+  res.entry[0].messaging[0][key] = payload;
+  return res;
+}
+
 describe('Messenger', () => {
   describe('new', () => {
     describe('with all attributes', () => {
       it('initializes correctly', () => {
-        const client = new Messenger({
-          pageAccessToken: 'page_access_token',
-        });
-
-        expect(client).to.be.ok;
+        expect(messenger).to.be.ok;
       });
     });
 
@@ -27,272 +61,205 @@ describe('Messenger', () => {
 
   describe('Events', () => {
     it('Handles message', () => {
-      const messenger = new Messenger({
-        pageAccessToken: 'page_access_token',
-      });
       const spy = sinon.spy();
 
       messenger.on('message', spy);
+      const payload = generatePayload('message', {
+        mid: 'mid.1457764197618:41d102a3e1ae206a38',
+        seq: 73,
+        text: 'hello, world!',
+        quick_reply: {
+          payload: 'DEVELOPER_DEFINED_PAYLOAD',
+        },
+      });
 
-      const payload = {
-        'object': 'page',
-        'entry': [
-          {
-            'id': 1234,
-            'time': 1457764198246,
-            'messaging': [
-              {
-                'sender': {
-                  'id': 1234
-                },
-                'recipient': {
-                  'id': 1234
-                },
-                'timestamp': 1457764197627,
-                'message':{
-                  'mid':'mid.1457764197618:41d102a3e1ae206a38',
-                  'seq':73,
-                  'text':'hello, world!',
-                  'quick_reply': {
-                    'payload': 'DEVELOPER_DEFINED_PAYLOAD'
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      };
       messenger.handle(payload);
-      expect(spy).to.have.been.called;
+      expect(spy.callCount).to.equal(1);
     });
 
     it('Handles deliveries', () => {
-      const messenger = new Messenger({
-        pageAccessToken: 'page_access_token'
-      });
-      var spy = sinon.spy();
+      const spy = sinon.spy();
 
       messenger.on('delivery', spy);
-
-      let payload = {
-        'object': 'page',
-        'entry': [
-          {
-            'id': 1234,
-            'time': 1457764198246,
-            'messaging': [
-              {
-                'sender': {
-                  'id': 1234
-                },
-                'recipient': {
-                  'id': 1234
-                },
-                'timestamp': 1457764197627,
-                'delivery':{
-                  'mids':[
-                    'mid.1458668856218:ed81099e15d3f4f233'
-                  ],
-                  'watermark':1458668856253,
-                  'seq':37
-                }
-              }
-            ]
-          }
-        ]
-      };
+      const payload = generatePayload('delivery', {
+        mids: [
+          'mid.1458668856218:ed81099e15d3f4f233',
+        ],
+        watermark: 1458668856253,
+        seq: 37,
+      });
       messenger.handle(payload);
-      expect(spy).to.have.been.called;
+      expect(spy.callCount).to.equal(1);
     });
 
     it('Handles reads', () => {
-      const messenger = new Messenger({
-        pageAccessToken: 'page_access_token'
-      });
-      var spy = sinon.spy();
-
+      const spy = sinon.spy();
       messenger.on('read', spy);
 
-      let payload = {
-        'object': 'page',
-        'entry': [
-          {
-            'id': 1234,
-            'time': 1457764198246,
-            'messaging': [
-              {
-                'sender': {
-                  'id': 1234
-                },
-                'recipient': {
-                  'id': 1234
-                },
-                'timestamp': 1457764197627,
-                'read':{
-                  'watermark':1458668856253,
-                  'seq':38
-                }
-              }
-            ]
-          }
-        ]
-      };
+      const payload = generatePayload('read', {
+        watermark: 1458668856253,
+        seq: 38,
+      });
+
       messenger.handle(payload);
-      expect(spy).to.have.been.called;
+      expect(spy.callCount).to.equal(1);
     });
 
     it('Handles postbacks', () => {
-      const messenger = new Messenger({
-        pageAccessToken: 'page_access_token'
-      });
-      var spy = sinon.spy();
-
+      const spy = sinon.spy();
       messenger.on('postback', spy);
+      const payload = generatePayload('postback', {
+        payload: 'USER_DEFINED_PAYLOAD',
+      });
 
-      let payload = {
-        'object': 'page',
-        'entry': [
-          {
-            'id': 1234,
-            'time': 1457764198246,
-            'messaging': [
-              {
-                'sender': {
-                  'id': 1234
-                },
-                'recipient': {
-                  'id': 1234
-                },
-                'timestamp': 1457764197627,
-                'postback':{
-                  'payload':'USER_DEFINED_PAYLOAD'
-                }
-              }
-            ]
-          }
-        ]
-      };
       messenger.handle(payload);
-      expect(spy).to.have.been.called;
+      expect(spy.callCount).to.equal(1);
     });
 
     it('Handles optins', () => {
-      const messenger = new Messenger({
-        pageAccessToken: 'page_access_token'
-      });
-      var spy = sinon.spy();
-
+      const spy = sinon.spy();
       messenger.on('optin', spy);
 
-      let payload = {
-        'object': 'page',
-        'entry': [
-          {
-            'id': 1234,
-            'time': 1457764198246,
-            'messaging': [
-              {
-                'sender': {
-                  'id': 1234
-                },
-                'recipient': {
-                  'id': 1234
-                },
-                'timestamp': 1457764197627,
-                'optin':{
-                  'ref':'PASS_THROUGH_PARAM'
-                }
-              }
-            ]
-          }
-        ]
-      };
+      const payload = generatePayload('optin', {
+        ref: 'PASS_THROUGH_PARAM',
+      });
+
       messenger.handle(payload);
-      expect(spy).to.have.been.called;
+      expect(spy.callCount).to.equal(1);
     });
 
     it('Handles account linking', () => {
-      const messenger = new Messenger({
-        pageAccessToken: 'page_access_token'
-      });
-      var spy = sinon.spy();
-
+      const spy = sinon.spy();
       messenger.on('account_linking', spy);
 
-      let payload = {
-        'object': 'page',
-        'entry': [
-          {
-            'id': 1234,
-            'time': 1457764198246,
-            'messaging': [
-              {
-                'sender': {
-                  'id': 1234
-                },
-                'recipient': {
-                  'id': 1234
-                },
-                'timestamp': 1457764197627,
-                'account_linking': {
-                  'status':'linked',
-                  'authorization_code':'PASS_THROUGH_AUTHORIZATION_CODE'
-                }
-              }
-            ]
-          }
-        ]
-      };
+      const payload = generatePayload('account_linking', {
+        status: 'linked',
+        authorization_code: 'PASS_THROUGH_AUTHORIZATION_CODE',
+      });
+
       messenger.handle(payload);
-      expect(spy).to.have.been.called;
+      expect(spy.callCount).to.equal(1);
     });
   });
 
   describe('get user', () => {
     it('calls get user', () => {
-      let messenger = new Messenger({
-        pageAccessToken: 'PAGE_ACCESS_TOKEN'
-      });
-      messenger.lastMessage = {
-        'sender':{
-          'id':'USER_ID'
-        },
-        'recipient':{
-          'id':'PAGE_ID'
-        }
-      };
-      let mockGetUser = sinon.spy(messenger, 'getUser');
+      const mockGetUser = sinon.spy(messenger.client, 'getUser');
       messenger.getUser();
       expect(mockGetUser.callCount).to.equal(1);
     });
   });
 
   describe('send', () => {
+    afterEach(() => {
+      messenger.client.send.restore();
+    });
+
     it('calls send', () => {
-      let messenger = new Messenger({
-        pageAccessToken: 'PAGE_ACCESS_TOKEN'
-      });
-      messenger.lastMessage = {
-        'sender':{
-          'id':'USER_ID'
+      const payload = {
+        recipient: {
+          id: 'USER_ID',
         },
-        'recipient':{
-          'id':'PAGE_ID'
-        }
+        message: {
+          text: 'hello, world!',
+        },
       };
 
-      let payload = {
-        'recipient':{
-          'id':'USER_ID'
-        },
-        'message':{
-          'text':'hello, world!'
-        }
-      };
-
-      let mockSend = sinon.spy(messenger, 'send');
+      const mock = sinon.spy(messenger.client, 'send');
       messenger.send(payload);
-      expect(mockSend.callCount).to.equal(1);
+      expect(mock.callCount).to.equal(1);
+    });
+
+    it('accepts an id', () => {
+      const payload = {
+        recipient: {
+          id: 'USER_ID',
+        },
+        message: {
+          text: 'hello, world!',
+        },
+      };
+
+      const mock = sinon.spy(messenger.client, 'send');
+      messenger.send(payload, 1234);
+      expect(mock.callCount).to.equal(1);
+    });
+  });
+
+  describe('sender actions', () => {
+    it('calls correct method', () => {
+      const mock = sinon.spy(messenger.client, 'senderAction');
+      messenger.senderAction('typing_on');
+      expect(mock.callCount).to.equal(1);
+    });
+  });
+
+  describe('setThreadSetting', () => {
+    it('calls correct method', () => {
+      const mock = sinon.spy(messenger.client, 'setThreadSetting');
+      messenger.setThreadSetting();
+      expect(mock.callCount).to.equal(1);
+    });
+  });
+
+  describe('subscribeAppToPage', () => {
+    it('calls correct method', () => {
+      const mock = sinon.spy(messenger.client, 'subscribeAppToPage');
+      messenger.subscribeAppToPage();
+      expect(mock.callCount).to.equal(1);
+    });
+  });
+
+  describe('deleteGetStarted', () => {
+    it('calls correct method', () => {
+      const mock = sinon.spy(messenger.client, 'deleteGetStarted');
+      messenger.deleteGetStarted();
+      expect(mock.callCount).to.equal(1);
+    });
+  });
+
+  describe('deleteGreetingText', () => {
+    it('calls correct method', () => {
+      const mock = sinon.spy(messenger.client, 'deleteGreetingText');
+      messenger.deleteGreetingText();
+      expect(mock.callCount).to.equal(1);
+    });
+  });
+
+  describe('deletePersistentMenu', () => {
+    it('calls correct method', () => {
+      const mock = sinon.spy(messenger.client, 'deletePersistentMenu');
+      messenger.deletePersistentMenu();
+      expect(mock.callCount).to.equal(1);
+    });
+  });
+
+  describe('linkAccount', () => {
+    it('calls correct method', () => {
+      const mock = sinon.spy(messenger.client, 'linkAccount');
+      messenger.linkAccount();
+      expect(mock.callCount).to.equal(1);
+    });
+  });
+
+  describe('unlinkAccount', () => {
+    it('calls correct method', () => {
+      const mock = sinon.spy(messenger.client, 'unlinkAccount');
+      messenger.unlinkAccount();
+      expect(mock.callCount).to.equal(1);
+    });
+  });
+
+  describe('whitelisted domains', () => {
+    it('calls correct method', () => {
+      const mock = sinon.spy(messenger.client, 'updateWhitelistedDomains');
+
+      messenger.addWhitelistedDomain();
+      messenger.addWhitelistedDomains();
+      messenger.removeWhitelistedDomain();
+      messenger.removeWhitelistedDomains();
+
+      expect(mock.callCount).to.equal(4);
     });
   });
 });

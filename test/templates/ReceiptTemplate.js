@@ -27,10 +27,10 @@ describe('ReceiptTemplate', () => {
               new Button({
                 type: 'web_url',
                 title: 'Button',
-                url: 'http://www.example.com'
-              })
-            ]
-          })
+                url: 'http://www.example.com',
+              }),
+            ],
+          }),
         ],
         address: new Address({
           street_1: '1 Hacker Way',
@@ -38,20 +38,20 @@ describe('ReceiptTemplate', () => {
           city: 'Menlo Park',
           postal_code: '94025',
           state: 'CA',
-          country: 'US'
+          country: 'US',
         }),
         summary: new Summary({
           subtotal: 75.00,
           shipping_cost: 4.95,
           total_tax: 6.19,
-          total_cost: 56.14
+          total_cost: 56.14,
         }),
         adjustments: [
           new Adjustment({
-            'name': 'Adjustment',
-            'amount': 20
-          })
-        ]
+            name: 'Adjustment',
+            amount: 20,
+          }),
+        ],
       });
 
       expect(template).to.deep.equal({
@@ -75,10 +75,10 @@ describe('ReceiptTemplate', () => {
                   {
                     type: 'web_url',
                     title: 'Button',
-                    url: 'http://www.example.com'
-                  }
-                ]
-              }
+                    url: 'http://www.example.com',
+                  },
+                ],
+              },
             ],
             address: {
               street_1: '1 Hacker Way',
@@ -86,22 +86,22 @@ describe('ReceiptTemplate', () => {
               city: 'Menlo Park',
               postal_code: '94025',
               state: 'CA',
-              country: 'US'
+              country: 'US',
             },
             summary: {
               subtotal: 75.00,
               shipping_cost: 4.95,
               total_tax: 6.19,
-              total_cost: 56.14
+              total_cost: 56.14,
             },
             adjustments: [
               {
                 name: 'Adjustment',
-                amount: 20
-              }
-            ]
-          }
-        }
+                amount: 20,
+              },
+            ],
+          },
+        },
       });
     });
 
@@ -121,16 +121,16 @@ describe('ReceiptTemplate', () => {
               new Button({
                 type: 'web_url',
                 title: 'Button',
-                url: 'http://www.example.com'
-              })
-            ]
-          })
+                url: 'http://www.example.com',
+              }),
+            ],
+          }),
         ],
         summary: new Summary({
           subtotal: 75.00,
           shipping_cost: 4.95,
           total_tax: 6.19,
-          total_cost: 56.14
+          total_cost: 56.14,
         }),
       });
 
@@ -155,24 +155,21 @@ describe('ReceiptTemplate', () => {
                   {
                     type: 'web_url',
                     title: 'Button',
-                    url: 'http://www.example.com'
-                  }
-                ]
-              }
+                    url: 'http://www.example.com',
+                  },
+                ],
+              },
             ],
             summary: {
               subtotal: 75.00,
               shipping_cost: 4.95,
               total_tax: 6.19,
-              total_cost: 56.14
+              total_cost: 56.14,
             },
             address: '',
-            adjustments: []
-          }
-        }
+          },
+        },
       });
-
     });
-
   });
 });
