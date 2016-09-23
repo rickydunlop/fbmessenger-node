@@ -44,7 +44,6 @@ describe('Element', () => {
 
       expect(element).to.deep.equal({
         title: 'Title',
-        item_url: '',
         image_url: '',
         subtitle: '',
       });

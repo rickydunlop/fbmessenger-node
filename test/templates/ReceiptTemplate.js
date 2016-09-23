@@ -20,16 +20,11 @@ describe('ReceiptTemplate', () => {
         elements: [
           new Element({
             title: 'Title',
-            item_url: 'http://www.example.com',
             image_url: 'http://www.example.com',
             subtitle: 'Subtitle',
-            buttons: [
-              new Button({
-                type: 'web_url',
-                title: 'Button',
-                url: 'http://www.example.com',
-              }),
-            ],
+            quantity: 1,
+            price: 12.50,
+            currency: 'USD',
           }),
         ],
         address: new Address({
@@ -68,16 +63,11 @@ describe('ReceiptTemplate', () => {
             elements: [
               {
                 title: 'Title',
-                item_url: 'http://www.example.com',
                 image_url: 'http://www.example.com',
                 subtitle: 'Subtitle',
-                buttons: [
-                  {
-                    type: 'web_url',
-                    title: 'Button',
-                    url: 'http://www.example.com',
-                  },
-                ],
+                quantity: 1,
+                price: 12.50,
+                currency: 'USD',
               },
             ],
             address: {

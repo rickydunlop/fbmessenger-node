@@ -24,7 +24,7 @@ import { Messenger } from 'fbmessenger';
 Initialize it:
 
 ```javascript
-let messenger = new Messenger({
+const messenger = new Messenger({
   pageAccessToken: '<PAGE_ACCESS_TOKEN>'
 });
 ```
@@ -67,17 +67,497 @@ messenger.on('message', (event) => {
 });
 ```
 
-Events are triggered when Facebook posts to the webhook url
+Events are triggered when Facebook posts to your webhook url.
 
 
 ## Sending messages
 
-To send a message you can use `send`.
-All requests will return a Promise (from node-fetch)
+To send a message you can use the `send` method.
+All requests return a Promise (from node-fetch).
 
 You can send a raw payload or to make it easier you can use the helper classes which are documented below.
 
-Example usage (raw payload):
+### Example
+
+```javascript
+messenger.on('message', () => {
+  messenger.send({ text: 'Hello' });
+});
+```
+
+
+## Catching errors
+
+You can add a `catch` to get errors from the request.
+
+```javascript
+messenger.send({ text: "Hello" })
+  .then(console.log(res))
+  .catch(err => console.log(err));
+```
+
+## Getting user details
+
+Example usage:
+
+```javascript
+messenger.getUser().then((user) => {
+  messenger.send({ text: `Hey ${user.first_name} ${user.last_name}` });
+});
+```
+
+Returns object with user data:
+
+* `first_name`
+* `last_name`
+* `profile_pic`
+* `locale`
+* `timezone`
+* `gender`
+
+
+## Elements
+
+### Text
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)
+
+Example usage:
+
+```javascript
+import { Text } from 'fbmessenger';
+
+messenger.send(new Text('Hello World!'));
+```
+
+you can also just pass a simple object to the `send` method like this
+
+
+```javascript
+{ text: 'Hello World!' }
+```
+
+### Button
+
+- `type` (Allowed values)
+	- `web_url`
+	- `postback`
+	- `phone_number`
+	- `account_link`
+	- `account_unlink`
+- `title`
+- `url`
+
+
+This element must be used with the Button, Generic or Receipt templates.
+
+
+#### Example usage (with ButtonTemplate):
+
+```javascript
+import {
+  Button,
+  ButtonTemplate
+} from 'fbmessenger';
+
+messenger.send(new ButtonTemplate(
+  'Hey user! Watch these buttons:',
+  [
+    new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
+    new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
+  ]
+));
+```
+
+### Element
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template)
+
+#### Example usage:
+
+```javascript
+import {
+  Button,
+  Element,
+} from 'fbmessenger';
+
+...
+new Element({
+  itle: 'Title',
+  item_url: 'http://www.example.com',
+  image_url: 'http://www.example.com',
+  subtitle: 'Subtitle',
+  buttons: [
+    new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
+    new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
+  ]
+});
+...
+```
+
+### Address
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
+
+This element must be used with the Receipt template.
+
+#### Example usage:
+
+```javascript
+import { Address } from 'fbmessenger';
+
+...
+new Address({
+  street_1: '1 Hacker Way',
+  street_2: '',
+  city: 'Menlo Park',
+  postal_code: '94025',
+  state: 'CA',
+  country: 'US'
+});
+...
+```
+
+### Summary
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
+
+This element must be used with the Receipt template.
+
+#### Example usage:
+
+```javascript
+import { Summary } from 'fbmessenger';
+
+...
+new Summary({
+  subtotal: 75.00,
+  shipping_cost: 4.95,
+  total_tax: 6.19,
+  total_cost: 56.14
+});
+...
+```
+
+### Adjustment
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
+
+This element must be used with the Receipt template.
+
+#### Example usage:
+
+```javascript
+import { Adjustment } from 'fbmessenger';
+
+...
+new Adjustment({
+  name: 'Adjustment',
+  amount: 20
+});
+...
+```
+
+## Attachments
+
+### Image
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/image-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/image-attachment)
+
+#### Example usage:
+
+```javascript
+import { Image } from 'fbmessenger';
+
+messenger.send(new Image({ url: 'http://lorempixel.com/400/400/sports/1/' }));
+```
+
+### Audio
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/audio-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/audio-attachment)
+
+#### Example usage:
+
+```javascript
+import { Audio } from 'fbmessenger';
+
+messenger.send(new Audio({ url: 'http://example.com/audio.mp3' }));
+```
+
+### Video
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/video-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/video-attachment)
+
+#### Example usage:
+
+```javascript
+import { Video } from 'fbmessenger';
+
+messenger.send(new Video({ url: 'http://example.com/video.mp4' }));
+```
+
+### File
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/file-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/file-attachment)
+
+#### Example usage:
+
+```javascript
+import { File } from 'fbmessenger';
+
+messenger.send(new File({ url: 'http://example.com/file.txt' }));
+```
+
+### Reusable attachments
+
+Attachments can be reused by passing `true` as the second parameter. This sets the `is_reusable` flag.
+
+```javascript
+const image = new Image({
+  url: 'http://lorempixel.com/400/400/sports/1/',
+  is_reusable: true
+});
+messenger.send(image);
+```
+
+You can then use the `attachment_id` from the response to send the same attachment again
+
+```javascript
+messenger.send(new Image({ attachment_id: 12345 });
+```
+
+## Templates
+
+### ButtonTemplate
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/button-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/button-template)
+
+#### Example usage:
+
+```javascript
+import {
+  Button,
+  ButtonTemplate
+} from 'fbmessenger';
+
+messenger.send(new ButtonTemplate(
+  'Hey user! Watch these buttons:',
+  [
+    new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
+    new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
+  ]
+));
+```
+
+#### GenericTemplate
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template)
+
+#### Example usage:
+
+```javascript
+import {
+  Button,
+  Element
+  GenericTemplate
+} from 'fbmessenger';
+
+messenger.send(new GenericTemplate(
+[
+  new Element({
+    title: 'Title',
+    item_url: 'http://www.example.com',
+    image_url: 'http://www.example.com',
+    subtitle: 'Subtitle',
+    buttons: [
+      new Button({ type: 'web_url', title: 'Button', url: 'http://www.example.com' })
+    ]
+  }),
+  ...
+]
+));
+```
+
+#### ReceiptTemplate
+
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
+
+#### Example usage:
+
+```javascript
+import {
+  Button,
+  Element,
+  Address,
+  Summary,
+  Adjustment,
+  ReceiptTemplate
+} from 'fbmessenger';
+
+messenger.send(new ReceiptTemplate({
+  recipient_name: 'Name',
+  order_number: '123',
+  currency: 'USD',
+  payment_method: 'Visa',
+  order_url: 'http://www.example.com',
+  timestamp: '123123123',
+  elements: [
+    new Element({
+      title: 'Title',
+      image_url: 'http://www.example.com',
+      subtitle: 'Subtitle',
+      currency: 'USD',
+      quantity: 1,
+      price: 15
+    })
+  ],
+  address: new Address({
+    street_1: '1 Hacker Way',
+    street_2: '',
+    city: 'Menlo Park',
+    postal_code: '94025',
+    state: 'CA',
+    country: 'US'
+  }),
+  summary: new Summary({
+    subtotal: 75.00,
+    shipping_cost: 4.95,
+    total_tax: 6.19,
+    total_cost: 56.14
+  }),
+  adjustments: [
+    new Adjustment('Adjustment', 20)
+  ]
+});
+```
+
+## Thread settings
+### Greeting Text
+
+[https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text](https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text)
+
+```javascript
+import { GreetingText } from fbmessenger
+
+const greeting = new GreetingText('Hello');
+messenger.setThreadSetting(greeting);
+```
+
+There is also a method to delete the greeting text called `deleteGreetingText`
+
+### Get Started Button
+
+[https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button](https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button)
+
+```javascript
+import { GetStartedButton } from 'fbmessenger';
+
+const getStarted = new GetStartedButton('start');
+messenger.setThreadSetting(getStarted);
+```
+
+When someone first interacts with your bot they will see a `Get Started` button. When this is clicked it will send a `postback` to your server with the value of `start`.
+
+There is also a method to delete the Get Started Button called `deleteGetStartedButton`
+
+### Persistent Menu
+
+[https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu)
+
+```javascript
+import {
+  PersistentMenu,
+  PersistentMenuItem
+} from 'fbmessenger';
+
+const item_1 = new PersistentMenuItem({
+	item_type: 'web_url',
+	title: 'Menu button 1',
+	url: 'http://facebook.com'
+});
+
+const item_2 = new PersistentMenuItem({
+	item_type: 'payload',
+	title: 'Menu button 2',
+	payload: 'menu_button_2'
+});
+
+const menu = new PersistentMenu([item_1, item_2]);
+messenger.setThreadSetting(menu);
+```
+
+You can delete the Persistent Menu using the `deletePersistentMenu` method
+
+## Sender Actions
+
+Available actions are
+
+- `typing_on`
+- `typing_off`
+- `mark_seen`
+
+```javascript
+messenger.senderAction('typing_on');
+```
+
+## Quick Replies
+
+Quick Replies work with all message types including text message, image and template attachments.
+
+```javascript
+const reply1 = new QuickReply({ title: 'Example', payload: 'payload' });
+const reply2 = new QuickReply({ title: 'Location', content_type: 'location' });
+const quick_replies = new QuickReplies([reply1, reply2]);
+
+const text = new Text('A simple text message')
+
+const payload = Object.assign(text, quick_replies)
+
+messenger.send(payload)
+```
+
+## Whitelisted domains
+
+### Adding
+
+```javascript
+// Single
+messenger.addWhitelistedDomain('http://example.com');
+
+// Multiple
+messenger.addWhitelistedDomains(['http://example.com', 'http://example2.com']);
+```
+
+### Removing
+
+```javascript
+// Single
+messenger.removeWhitelistedDomain('http://example.com');
+
+// Multiple
+messenger.removeWhitelistedDomains(['http://example.com', 'http://example2.com']);
+```
+
+## Subscribing an app to a page
+
+The easiest way to do this is now through the Facebook developer site. If you need to do this progamatically you can use `subscribeAppToPage`
+
+
+## Account linking
+
+You can link and unlink accounts with `linkAccount` and `unlinkAccount`
+
+```javascript
+messenger.linkAccount('ACCOUNT_LINKING_TOKEN');
+```
+
+```javascript
+messenger.unlinkAccount('PSID');
+```
+
+## Sending raw payloads
+
+You can also send raw payloads with `send`. This lets you use any new features from Facebook while waiting for support to be added to this library.
 
 ```javascript
 messenger.on('message', () => {
@@ -101,452 +581,6 @@ messenger.on('message', () => {
 ```
 
 
-## Catching errors
-
-You can add a `catch` to get errors from the request.
-
-```javascript
-messenger.send({ text: "Hello" })
-  .then(console.log(res))
-  .catch(err => console.log(err));
-```
-
-
-## Getting user details
-
-Example usage:
-
-```javascript
-messenger.on('message', () => {
-  messenger.getUser().then((user) => {
-    messenger.send({ text: `Hey ${user.first_name} ${user.last_name}` });
-  });
-});
-```
-
-Returns object with user data:
-
-* `first_name`
-* `last_name`
-* `profile_pic`
-* `locale`
-* `timezone`
-* `gender`
-
-
-## Elements
-
-### `Text(text)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)
-
-Example usage:
-
-```javascript
-import { Text } from 'fbmessenger';
-
-messenger.on('message', () => {
-  messenger.send(new Text('Hello World!'));
-});
-```
-
-you can also just pass a simple object to the `send` method like this
-
-
-```javascript
-{ text: 'Hello World!' }
-```
-
-#### `Button(attrs)`
-
-`attrs` - object containing 3 attributes:
-
-- `type` (Allowed values)
-	- `web_url`
-	- `postback`
-	- `phone_number`
-	- `account_link`
-	- `account_unlink`
-- `title`
-- `url`
-
-
-This element must be used with the Button, Generic or Receipt templates.
-
-Returns proper button hash depending on attributes set:
-
-First:
-
-```javascript
-{
-  type: 'web_url',
-  url: 'url',
-  title: 'title'
-}
-```
-
-Second:
-
-```javascript
-{
-  type: 'postback',
-  title: 'title',
-  payload: 'payload'
-}
-```
-
-Example usage (with ButtonTemplate):
-
-```javascript
-import {
-  Button,
-  ButtonTemplate
-} from 'fbmessenger';
-
-messenger.on('message', () => {
-  messenger.send(new ButtonTemplate(
-    'Hey user! Watch these buttons:',
-    [
-      new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
-      new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
-    ]
-  ));
-});
-```
-
-### `Element(attrs)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template)
-
-Example usage:
-
-```javascript
-import {
-  Button,
-  Element,
-} from 'fbmessenger';
-
-...
-new Element({
-  itle: 'Title',
-  item_url: 'http://www.example.com',
-  image_url: 'http://www.example.com',
-  subtitle: 'Subtitle',
-  buttons: [
-    new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
-    new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
-  ]
-});
-...
-```
-
-### `Address(attrs)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
-
-This element must be used with the Receipt template.
-
-Example usage:
-
-```javascript
-import { Address } from 'fbmessenger';
-
-...
-new Address({
-  street_1: '1 Hacker Way',
-  street_2: '',
-  city: 'Menlo Park',
-  postal_code: '94025',
-  state: 'CA',
-  country: 'US'
-});
-...
-```
-
-### `Summary(attrs)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
-
-This element must be used with the Receipt template.
-
-Example usage:
-
-```javascript
-import { Summary } from 'fbmessenger';
-
-...
-new Summary({
-  subtotal: 75.00,
-  shipping_cost: 4.95,
-  total_tax: 6.19,
-  total_cost: 56.14
-});
-...
-```
-
-### `Adjustment(text, amount)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
-
-This element must be used with the Receipt template.
-
-Example usage:
-
-```javascript
-import { Adjustment } from 'fbmessenger';
-
-...
-new Adjustment({
-  name: 'Adjustment',
-  amount: 20
-});
-...
-```
-
-## Attachments
-
-### `Image(url)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/image-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/image-attachment)
-
-Example usage:
-
-```javascript
-import { Image } from 'fbmessenger';
-
-messenger.on('message', () => {
-  messenger.send(new Image('http://lorempixel.com/400/400/sports/1/'));
-});
-```
-
-### `Audio(url)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/audio-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/audio-attachment)
-
-Example usage:
-
-```javascript
-import { Audio } from 'fbmessenger';
-
-messenger.on('message', () => {
-  messenger.send(new Audio('http://example.com/audio.mp3'));
-});
-```
-
-### `Video(url)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/video-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/video-attachment)
-
-Example usage:
-
-```javascript
-import { Video } from 'fbmessenger';
-
-messenger.on('message', () => {
-  messenger.send(new Video('http://example.com/video.mp4'));
-});
-```
-
-### `File(url)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/file-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/file-attachment)
-
-Example usage:
-
-```javascript
-import { File } from 'fbmessenger';
-
-messenger.on('message', () => {
-  messenger.send(new File('http://example.com/file.txt'));
-});
-```
-
-## Templates
-
-### `ButtonTemplate(text, buttons)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/button-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/button-template)
-
-Example usage:
-
-```javascript
-import {
-  Button,
-  ButtonTemplate
-} from 'fbmessenger';
-
-messenger.on('message', () => {
-  messenger.send(new ButtonTemplate(
-    'Hey user! Watch these buttons:',
-    [
-      new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
-      new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
-    ]
-  ));
-});
-```
-
-#### `GenericTemplate(bubbles)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template)
-
-Example usage:
-
-```javascript
-import {
-  Button,
-  Element
-  GenericTemplate
-} from 'fbmessenger';
-
-messenger.on('message', () => {
-  messenger.send(new GenericTemplate(
-    [
-      new Element({
-        title: 'Title',
-        item_url: 'http://www.example.com',
-        image_url: 'http://www.example.com',
-        subtitle: 'Subtitle',
-        buttons: [
-          new Button({ type: 'web_url', title: 'Button', url: 'http://www.example.com' })
-        ]
-      }),
-      ...
-    ]
-  ));
-});
-```
-
-#### `ReceiptTemplate(attrs)`
-
-[https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
-
-Example usage:
-
-```javascript
-import {
-  Button,
-  Element,
-  Address,
-  Summary,
-  Adjustment,
-  ReceiptTemplate
-} from 'fbmessenger';
-
-messenger.on('message', () => {
-  messenger.send(new ReceiptTemplate({
-    recipient_name: 'Name',
-    order_number: '123',
-    currency: 'USD',
-    payment_method: 'Visa',
-    order_url: 'http://www.example.com',
-    timestamp: '123123123',
-    elements: [
-      new Element({
-        title: 'Title',
-        item_url: 'http://www.example.com',
-        image_url: 'http://www.example.com',
-        subtitle: 'Subtitle',
-        buttons: [
-          new Button({ type: 'web_url', title: 'Button', url: 'http://www.example.com' })
-        ]
-      })
-    ],
-    address: new Address({
-      street_1: '1 Hacker Way',
-      street_2: '',
-      city: 'Menlo Park',
-      postal_code: '94025',
-      state: 'CA',
-      country: 'US'
-    }),
-    summary: new Summary({
-      subtotal: 75.00,
-      shipping_cost: 4.95,
-      total_tax: 6.19,
-      total_cost: 56.14
-    }),
-    adjustments: [
-      new Adjustment('Adjustment', 20)
-    ]
-  });
-});
-```
-
-## Thread settings
-### Greeting Text
-
-[https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text](https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text)
-
-```javascript
-import { GreetingText } from fbmessenger
-
-let greeting = new GreetingText('Hello');
-messenger.setThreadSetting(greeting);
-```
-
-### Get Started Button
-
-[https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button](https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button)
-
-```javascript
-import { GetStartedButton } from 'fbmessenger';
-
-let getStarted = new GetStartedButton('start');
-messenger.setThreadSetting(getStarted);
-```
-
-When someone first interacts with your bot they will see a `Get Started` button. When this is clicked it will send a `postback` to your server with the value of `start`.
-
-### Persistent Menu
-
-[https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu)
-
-```javascript
-import {
-  PersistentMenu,
-  PersistentMenuItem
-} from 'fbmessenger';
-
-let item_1 = new PersistentMenuItem({
-	item_type: 'web_url',
-	title: 'Menu button 1',
-	url: 'http://facebook.com'
-});
-
-let item_2 = new PersistentMenuItem({
-	item_type: 'payload',
-	title: 'Menu button 2',
-	payload: 'menu_button_2'
-});
-
-let menu = new PersistentMenu([item_1, item_2]);
-messenger.setThreadSetting(menu);
-```
-
-## Sender Actions
-
-Available actions are
-
-- typing_on
-- typing_off
-- mark_seen
-
-```javascript
-messenger.senderAction('typing_on');
-```
-
-
-## Extra methods
-
-There's also methods available on the `messenger` instance for 
-
-- `subscribeAppToPage`
-- `deleteGetStarted`
-- `linkAccount`
-- `unlinkAccount`
-
-
 ## Express.js (example usage)
 
 This is sample usage within an express.js application. For full example look [here](https://github.com/rickydunlop/fbmessenger/blob/master/example/express-example.js).
@@ -555,7 +589,7 @@ This is sample usage within an express.js application. For full example look [he
 import { Messenger } from 'fbmessenger';
 
 // Initialize Messenger
-let messenger = new Messenger({
+const messenger = new Messenger({
   pageAccessToken: '<PAGE_ACCESS_TOKEN>'
 });
 
