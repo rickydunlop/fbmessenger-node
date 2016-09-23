@@ -19,7 +19,7 @@
     "start": "babel-node ./lib/Messenger.js",
     "start:server": "nodemon --exec \"babel-node ./example/express-example.js\" --watch ./",
     "test": "mocha --recursive --compilers js:babel-core/register",
-    "travis-coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
+    "travis-coveralls": "NODE_ENV=test nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
