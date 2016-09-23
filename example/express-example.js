@@ -230,9 +230,14 @@ messenger.on('delivery', () => {
 
 messenger.on('postback', (message) => {
   const payload = message.postback.payload;
-  if ('help' in payload) {
-    messenger.send({ text: 'A help message or template can go here.' });
-  } else if ('start' in payload) {
+  console.log(payload);
+  if (payload === 'help') {
+    console.log('Help payload');
+    messenger.send({ text: 'A help message or template can go here.' })
+      .then((res) => {
+        console.log(res);
+      });
+  } else if (payload === 'start') {
     const text = `Hey, let's get started! Try sending me one of these messages:
     text, image, video, "quick replies", compact, tall, full`;
     messenger.send({ text });
