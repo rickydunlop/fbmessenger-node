@@ -117,7 +117,17 @@ messenger.on('message', (message) => {
     }
 
     if (msg.includes('image')) {
-      messenger.send(new Image({ url: 'https://unsplash.it/300/200/?random' }));
+      messenger.send(new Image({
+        url: 'https://unsplash.it/300/200/?random',
+        is_reusable: true,
+      }))
+        .then((res) => {
+          console.log(`Resuable attachment ID: ${res.attachment_id}`);
+        });
+    }
+
+    if (msg.includes('reuse')) {
+      messenger.send(new Image({ attachment_id: 947782652018100 }));
     }
 
     if (msg.includes('video')) {
@@ -238,8 +248,7 @@ messenger.on('postback', (message) => {
         console.log(res);
       });
   } else if (payload === 'start') {
-    const text = `Hey, let's get started! Try sending me one of these messages:
-    text, image, video, "quick replies", compact, tall, full`;
+    const text = 'Try sending me one of these messages: text, image, video, reuse, bubble, "quick replies", compact, tall, full';
     messenger.send({ text });
   }
 });
