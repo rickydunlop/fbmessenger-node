@@ -458,7 +458,7 @@ messenger.setThreadSetting(getStarted);
 
 When someone first interacts with your bot they will see a `Get Started` button. When this is clicked it will send a `postback` to your server with the value of `start`.
 
-There is also a method to delete the Get Started Button called `deleteGetStartedButton`
+There is also a method to delete the Get Started Button called `deleteGetStarted`
 
 ### Persistent Menu
 
