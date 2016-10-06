@@ -7,6 +7,29 @@
 A  library to integrate with the [Facebook Messenger Platform](https://developers.facebook.com/docs/messenger-platform).
 Based on [messenger-wrapper](https://github.com/justynjozwiak/messenger-wrapper/).
 
+<!-- MarkdownTOC depth="2" autolink="true" autoanchor="true" bracket="round" -->
+
+- [Installation](#installation)
+- [Express.js \(example usage\)](#expressjs-example-usage)
+- [Events](#events)
+- [Receiving messages](#receiving-messages)
+- [Sending messages](#sending-messages)
+- [Catching errors](#catching-errors)
+- [Getting user details](#getting-user-details)
+- [Elements](#elements)
+- [Attachments](#attachments)
+- [Templates](#templates)
+- [Thread settings](#thread-settings)
+- [Sender Actions](#sender-actions)
+- [Quick Replies](#quick-replies)
+- [Whitelisted domains](#whitelisted-domains)
+- [Subscribing an app to a page](#subscribing-an-app-to-a-page)
+- [Account linking](#account-linking)
+- [Sending raw payloads](#sending-raw-payloads)
+
+<!-- /MarkdownTOC -->
+
+<a name="installation"></a>
 ## Installation
 
 Execute this line in your app directory:
@@ -30,7 +53,8 @@ const messenger = new Messenger({
 ```
 
 
-## Configuration of facebook app
+<a name="configuration-of-facebook-app"></a>
+### Configuration of facebook app
 
 First of all visit this official [tutorial](https://developers.facebook.com/docs/messenger-platform/quickstart#steps]) and
 make sure you complete these 3 steps:
@@ -46,6 +70,63 @@ Steps:
 * Subscribe the app to a page
 
 
+<a name="expressjs-example-usage"></a>
+## Express.js (example usage)
+
+This is basic usage within an express.js application. For more detailed example look [here](https://github.com/rickydunlop/fbmessenger/blob/master/example/express-example.js).
+
+```javascript
+import { Messenger } from 'fbmessenger';
+
+// Initialize Messenger
+const messenger = new Messenger({
+  pageAccessToken: '<PAGE_ACCESS_TOKEN>'
+});
+
+// here we define some listeners:
+messenger.on('message', (event) => {
+  // put your logic here
+});
+
+messenger.on('delivery', (event) => {
+  // put your logic here
+});
+
+messenger.on('postback', (event) => {
+  // put your logic here
+});
+
+messenger.on('optin', (event) => {
+  // put your logic here
+});
+
+messenger.on('read', (event) => {
+  // put your logic here
+});
+
+messenger.on('account_linking', (event) => {
+  // put your logic here
+});
+
+// This example shows how to setup verification using express
+app.get('/webhook', (req, res) => {
+  if (req.query['hub.mode'] === 'subscribe' &&
+    req.query['hub.verify_token'] === process.env.VERIFY_TOKEN) {
+    res.send(req.query['hub.challenge']);
+  } else {
+    res.sendStatus(400);
+  }
+});
+
+
+// This route handles the webhook callbacks from Facebook
+app.post('/webhook', (req, res) => {
+  res.sendStatus(200);
+  messenger.handle(req.body);
+});
+```
+
+<a name="events"></a>
 ## Events
 
 There are 6 types of events we can listen for:
@@ -57,8 +138,10 @@ There are 6 types of events we can listen for:
 - account_linking
 - postback
 
+<a name="receiving-messages"></a>
 ## Receiving messages
 
+<a name="event-listeners"></a>
 ### Event Listeners
 
 ```javascript
@@ -70,6 +153,7 @@ messenger.on('message', (event) => {
 Events are triggered when Facebook posts to your webhook url.
 
 
+<a name="sending-messages"></a>
 ## Sending messages
 
 To send a message you can use the `send` method.
@@ -77,6 +161,7 @@ All requests return a Promise (from node-fetch).
 
 You can send a raw payload or to make it easier you can use the helper classes which are documented below.
 
+<a name="example"></a>
 ### Example
 
 ```javascript
@@ -86,6 +171,7 @@ messenger.on('message', () => {
 ```
 
 
+<a name="catching-errors"></a>
 ## Catching errors
 
 You can add a `catch` to get errors from the request.
@@ -96,6 +182,7 @@ messenger.send({ text: "Hello" })
   .catch(err => console.log(err));
 ```
 
+<a name="getting-user-details"></a>
 ## Getting user details
 
 Example usage:
@@ -116,8 +203,10 @@ Returns object with user data:
 * `gender`
 
 
+<a name="elements"></a>
 ## Elements
 
+<a name="text"></a>
 ### Text
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message)
@@ -137,6 +226,7 @@ you can also just pass a simple object to the `send` method like this
 { text: 'Hello World!' }
 ```
 
+<a name="button"></a>
 ### Button
 
 - `type` (Allowed values)
@@ -169,6 +259,7 @@ messenger.send(new ButtonTemplate(
 ));
 ```
 
+<a name="element"></a>
 ### Element
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template)
@@ -195,6 +286,7 @@ new Element({
 ...
 ```
 
+<a name="address"></a>
 ### Address
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
@@ -218,6 +310,7 @@ new Address({
 ...
 ```
 
+<a name="summary"></a>
 ### Summary
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
@@ -239,6 +332,7 @@ new Summary({
 ...
 ```
 
+<a name="adjustment"></a>
 ### Adjustment
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template)
@@ -258,8 +352,10 @@ new Adjustment({
 ...
 ```
 
+<a name="attachments"></a>
 ## Attachments
 
+<a name="image"></a>
 ### Image
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/image-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/image-attachment)
@@ -272,6 +368,7 @@ import { Image } from 'fbmessenger';
 messenger.send(new Image({ url: 'http://lorempixel.com/400/400/sports/1/' }));
 ```
 
+<a name="audio"></a>
 ### Audio
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/audio-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/audio-attachment)
@@ -284,6 +381,7 @@ import { Audio } from 'fbmessenger';
 messenger.send(new Audio({ url: 'http://example.com/audio.mp3' }));
 ```
 
+<a name="video"></a>
 ### Video
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/video-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/video-attachment)
@@ -296,6 +394,7 @@ import { Video } from 'fbmessenger';
 messenger.send(new Video({ url: 'http://example.com/video.mp4' }));
 ```
 
+<a name="file"></a>
 ### File
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/file-attachment](https://developers.facebook.com/docs/messenger-platform/send-api-reference/file-attachment)
@@ -308,6 +407,7 @@ import { File } from 'fbmessenger';
 messenger.send(new File({ url: 'http://example.com/file.txt' }));
 ```
 
+<a name="reusable-attachments"></a>
 ### Reusable attachments
 
 Attachments can be reused by passing `true` as the second parameter. This sets the `is_reusable` flag.
@@ -326,8 +426,10 @@ You can then use the `attachment_id` from the response to send the same attachme
 messenger.send(new Image({ attachment_id: 12345 });
 ```
 
+<a name="templates"></a>
 ## Templates
 
+<a name="buttontemplate"></a>
 ### ButtonTemplate
 
 [https://developers.facebook.com/docs/messenger-platform/send-api-reference/button-template](https://developers.facebook.com/docs/messenger-platform/send-api-reference/button-template)
@@ -431,7 +533,9 @@ messenger.send(new ReceiptTemplate({
 });
 ```
 
+<a name="thread-settings"></a>
 ## Thread settings
+<a name="greeting-text"></a>
 ### Greeting Text
 
 [https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text](https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text)
@@ -445,6 +549,7 @@ messenger.setThreadSetting(greeting);
 
 There is also a method to delete the greeting text called `deleteGreetingText`
 
+<a name="get-started-button"></a>
 ### Get Started Button
 
 [https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button](https://developers.facebook.com/docs/messenger-platform/thread-settings/get-started-button)
@@ -460,6 +565,7 @@ When someone first interacts with your bot they will see a `Get Started` button.
 
 There is also a method to delete the Get Started Button called `deleteGetStarted`
 
+<a name="persistent-menu"></a>
 ### Persistent Menu
 
 [https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu](https://developers.facebook.com/docs/messenger-platform/thread-settings/persistent-menu)
@@ -488,6 +594,7 @@ messenger.setThreadSetting(menu);
 
 You can delete the Persistent Menu using the `deletePersistentMenu` method
 
+<a name="sender-actions"></a>
 ## Sender Actions
 
 Available actions are
@@ -500,6 +607,7 @@ Available actions are
 messenger.senderAction('typing_on');
 ```
 
+<a name="quick-replies"></a>
 ## Quick Replies
 
 Quick Replies work with all message types including text message, image and template attachments.
@@ -516,8 +624,10 @@ const payload = Object.assign(text, quick_replies)
 messenger.send(payload)
 ```
 
+<a name="whitelisted-domains"></a>
 ## Whitelisted domains
 
+<a name="adding"></a>
 ### Adding
 
 ```javascript
@@ -528,6 +638,7 @@ messenger.addWhitelistedDomain('http://example.com');
 messenger.addWhitelistedDomains(['http://example.com', 'http://example2.com']);
 ```
 
+<a name="removing"></a>
 ### Removing
 
 ```javascript
@@ -538,11 +649,13 @@ messenger.removeWhitelistedDomain('http://example.com');
 messenger.removeWhitelistedDomains(['http://example.com', 'http://example2.com']);
 ```
 
+<a name="subscribing-an-app-to-a-page"></a>
 ## Subscribing an app to a page
 
 The easiest way to do this is now through the Facebook developer site. If you need to do this progamatically you can use `subscribeAppToPage`
 
 
+<a name="account-linking"></a>
 ## Account linking
 
 You can link and unlink accounts with `linkAccount` and `unlinkAccount`
@@ -555,6 +668,7 @@ messenger.linkAccount('ACCOUNT_LINKING_TOKEN');
 messenger.unlinkAccount('PSID');
 ```
 
+<a name="sending-raw-payloads"></a>
 ## Sending raw payloads
 
 You can also send raw payloads with `send`. This lets you use any new features from Facebook while waiting for support to be added to this library.
@@ -577,61 +691,5 @@ messenger.on('message', () => {
       }
     }
   });
-});
-```
-
-
-## Express.js (example usage)
-
-This is sample usage within an express.js application. For full example look [here](https://github.com/rickydunlop/fbmessenger/blob/master/example/express-example.js).
-
-```javascript
-import { Messenger } from 'fbmessenger';
-
-// Initialize Messenger
-const messenger = new Messenger({
-  pageAccessToken: '<PAGE_ACCESS_TOKEN>'
-});
-
-// here we define some listeners:
-messenger.on('message', (event) => {
-  // put your logic here
-});
-
-messenger.on('delivery', (event) => {
-  // put your logic here
-});
-
-messenger.on('postback', (event) => {
-  // put your logic here
-});
-
-messenger.on('optin', (event) => {
-  // put your logic here
-});
-
-messenger.on('read', (event) => {
-  // put your logic here
-});
-
-messenger.on('account_linking', (event) => {
-  // put your logic here
-});
-
-// This example shows how to setup verification using express
-app.get('/webhook', (req, res) => {
-  if (req.query['hub.mode'] === 'subscribe' &&
-    req.query['hub.verify_token'] === process.env.VERIFY_TOKEN) {
-    res.send(req.query['hub.challenge']);
-  } else {
-    res.sendStatus(400);
-  }
-});
-
-
-// This route handles the webhook callbacks from Facebook
-app.post('/webhook', (req, res) => {
-  res.sendStatus(200);
-  messenger.handle(req.body);
 });
 ```
