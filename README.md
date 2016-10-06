@@ -7,6 +7,7 @@
 A  library to integrate with the [Facebook Messenger Platform](https://developers.facebook.com/docs/messenger-platform).
 Based on [messenger-wrapper](https://github.com/justynjozwiak/messenger-wrapper/).
 
+## Table of contents
 <!-- MarkdownTOC depth="2" autolink="true" autoanchor="true" bracket="round" -->
 
 - [Installation](#installation)
