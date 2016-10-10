@@ -614,7 +614,7 @@ messenger.senderAction('typing_on');
 Quick Replies work with all message types including text message, image and template attachments.
 
 ```javascript
-const reply1 = new QuickReply({ title: 'Example', payload: 'payload' });
+const reply1 = new QuickReply({ title: 'Example', payload: 'payload', image_url:'http://www.example.com/images/example.png' });
 const reply2 = new QuickReply({ title: 'Location', content_type: 'location' });
 const quick_replies = new QuickReplies([reply1, reply2]);
 
