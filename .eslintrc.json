@@ -1,5 +1,6 @@
 {
   "rules": {
+    "linebreak-style": ["error", "windows"],
     "camelcase": [0, {"properties": "never"}]
   },
   "env": {
