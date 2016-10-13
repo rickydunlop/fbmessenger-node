@@ -75,6 +75,19 @@ describe('QuickReply', () => {
       });
     });
 
+    describe('supports text and image', () => {
+      it('returns proper object', () => {
+        const qr = new QuickReply({ title: 'Example', payload: 'payload', image_url: 'http://test.com/image.jpg' });
+
+        expect(qr).to.deep.equal({
+          content_type: 'text',
+          title: 'Example',
+          payload: 'payload',
+          image_url: 'http://test.com/image.jpg',
+        });
+      });
+    });
+
     describe('supports location type', () => {
       it('returns valid object', () => {
         const qr = new QuickReply({ title: 'Location', content_type: 'location' });
