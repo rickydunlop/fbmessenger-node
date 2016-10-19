@@ -10,55 +10,87 @@ import {
 describe('Thread Settings', () => {
   describe('Greeting text', () => {
     it('returns proper object', () => {
-      let text = new GreetingText('Welcome to My Company!');
+      const text = new GreetingText('Welcome to My Company!');
       expect(text).to.deep.equal({
-        'setting_type':'greeting',
-        'greeting':{
-          'text':'Welcome to My Company!'
-        }
+        setting_type: 'greeting',
+        greeting: {
+          text: 'Welcome to My Company!',
+        },
       });
     });
   });
 
   describe('Get started button', () => {
     it('returns proper object', () => {
-      let get_started = new GetStartedButton('USER_DEFINED_PAYLOAD');
+      const get_started = new GetStartedButton('USER_DEFINED_PAYLOAD');
       expect(get_started).to.deep.equal({
-        'setting_type':'call_to_actions',
-        'thread_state':'new_thread',
-        'call_to_actions':[
+        setting_type: 'call_to_actions',
+        thread_state: 'new_thread',
+        call_to_actions: [
           {
-            'payload':'USER_DEFINED_PAYLOAD'
-          }
-        ]
+            payload: 'USER_DEFINED_PAYLOAD',
+          },
+        ],
       });
     });
   });
 
   describe('persistent menu item', () => {
     it('works for postbacks', () => {
-      let item = new PersistentMenuItem({
+      const item = new PersistentMenuItem({
         type: 'postback',
         title: 'Help',
-        payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP'
+        payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
       });
       expect(item).to.deep.equal({
         type: 'postback',
         title: 'Help',
-        payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP'
+        payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
       });
     });
 
     it('works for web urls', () => {
-      let item = new PersistentMenuItem({
+      const item = new PersistentMenuItem({
         type: 'web_url',
         title: 'Help',
-        url: 'http://facebook.com'
+        url: 'http://facebook.com',
       });
       expect(item).to.deep.equal({
         type: 'web_url',
         title: 'Help',
-        url: 'http://facebook.com'
+        url: 'http://facebook.com',
+      });
+    });
+
+    it('allows web view ratio and messenger extensions to be set', () => {
+      const item = new PersistentMenuItem({
+        type: 'web_url',
+        title: 'Help',
+        url: 'http://facebook.com',
+        webview_height_ratio: 'full',
+        messenger_extensions: true,
+      });
+      expect(item).to.deep.equal({
+        type: 'web_url',
+        title: 'Help',
+        url: 'http://facebook.com',
+        webview_height_ratio: 'full',
+        messenger_extensions: true,
+      });
+    });
+
+    it('ensures messenger extensions is a boolean', () => {
+      const item = new PersistentMenuItem({
+        type: 'web_url',
+        title: 'Help',
+        url: 'http://facebook.com',
+        messenger_extensions: 'true',
+      });
+      expect(item).to.deep.equal({
+        type: 'web_url',
+        title: 'Help',
+        url: 'http://facebook.com',
+        messenger_extensions: true,
       });
     });
 
@@ -67,7 +99,7 @@ describe('Thread Settings', () => {
         new PersistentMenuItem({
           type: 'wrong',
           title: 'Help',
-          payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP'
+          payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
         });
       }).to.throw('Invalid type provided.');
     });
@@ -77,7 +109,7 @@ describe('Thread Settings', () => {
         new PersistentMenuItem({
           type: 'postback',
           title: 'x'.repeat(31),
-          payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP'
+          payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
         });
       }).to.throw('Title cannot be longer 30 characters.');
     });
@@ -87,7 +119,7 @@ describe('Thread Settings', () => {
         new PersistentMenuItem({
           type: 'postback',
           title: 'title',
-          payload: 'x'.repeat(1001)
+          payload: 'x'.repeat(1001),
         });
       }).to.throw('Payload cannot be longer 1000 characters.');
     });
@@ -96,7 +128,7 @@ describe('Thread Settings', () => {
       expect(() => {
         new PersistentMenuItem({
           type: 'web_url',
-          title: 'title'
+          title: 'title',
         });
       }).to.throw('`url` must be supplied for `web_url` type menu items.');
     });
@@ -105,24 +137,35 @@ describe('Thread Settings', () => {
       expect(() => {
         new PersistentMenuItem({
           type: 'postback',
-          title: 'title'
+          title: 'title',
         });
       }).to.throw('`payload` must be supplied for `postback` type menu items.');
+    });
+
+    it('it errors if incorrect webview_height_ratio is provided', () => {
+      expect(() => {
+        new PersistentMenuItem({
+          type: 'web_url',
+          title: 'title',
+          url: 'https://facebook.com',
+          webview_height_ratio: 'wrong',
+        });
+      }).to.throw('Invalid `webview_height_ratio` provided.');
     });
   });
 
   describe('persistent menu', () => {
     it('works', () => {
-      let item_1 = new PersistentMenuItem({
+      const item_1 = new PersistentMenuItem({
         type: 'postback',
         title: 'Help',
-        payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP'
+        payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
       });
 
-      let item_2 = new PersistentMenuItem({
+      const item_2 = new PersistentMenuItem({
         type: 'web_url',
         title: 'Help',
-        url: 'http://facebook.com'
+        url: 'http://facebook.com',
       });
 
       const menu = new PersistentMenu([item_1, item_2]);
@@ -133,16 +176,15 @@ describe('Thread Settings', () => {
           {
             type: 'postback',
             title: 'Help',
-            payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP'
+            payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
           },
           {
             type: 'web_url',
             title: 'Help',
-            url: 'http://facebook.com'
-          }
-        ]
+            url: 'http://facebook.com',
+          },
+        ],
       });
-
     });
 
     describe('instantiation with non array', () => {
@@ -160,7 +202,5 @@ describe('Thread Settings', () => {
         }).to.throw('You cannot have more than 5 menu items.');
       });
     });
-
   });
-
 });
