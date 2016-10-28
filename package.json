@@ -49,7 +49,7 @@
     "fetch-mock": "^5.5.0",
     "mocha": "^3.1.2",
     "mocha-lcov-reporter": "^1.2.0",
-    "nock": "^8.1.0",
+    "nock": "^9.0.2",
     "nodemon": "^1.11.0",
     "nyc": "^8.3.1",
     "sinon": "^2.0.0-pre.3"
