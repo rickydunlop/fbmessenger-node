@@ -166,7 +166,7 @@ messenger.on('message', (message) => {
               }),
             ],
           }),
-        ]
+        ],
       ));
     }
 
@@ -176,7 +176,7 @@ messenger.on('message', (message) => {
       const qrs = new QuickReplies([qr1, qr2]);
       messenger.send(Object.assign(
         { text: 'This is an example with quick replies.' },
-        qrs
+        qrs,
       ));
     }
 

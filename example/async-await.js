@@ -124,13 +124,11 @@ messenger.on('message', async (message) => {
     }
 
     if (msg.includes('image')) {
-      messenger.send(new Image({
+      const res = await messenger.send(new Image({
         url: 'https://unsplash.it/300/200/?random',
         is_reusable: true,
-      }))
-        .then((res) => {
-          console.log(`Resuable attachment ID: ${res.attachment_id}`);
-        });
+      }));
+      console.log(`Resuable attachment ID: ${res.attachment_id}`);
     }
 
     if (msg.includes('reuse')) {
@@ -163,7 +161,7 @@ messenger.on('message', async (message) => {
               }),
             ],
           }),
-        ]
+        ],
       ));
     }
 
@@ -173,7 +171,7 @@ messenger.on('message', async (message) => {
       const qrs = new QuickReplies([qr1, qr2]);
       messenger.send(Object.assign(
         { text: 'This is an example with quick replies.' },
-        qrs
+        qrs,
       ));
     }
 
@@ -239,10 +237,8 @@ messenger.on('message', async (message) => {
           }),
         ],
       });
-      messenger.send(template)
-        .then((res) => {
-          console.log(res);
-        });
+      const res = await messenger.send(template);
+      console.log(res);
     }
   }
 });
