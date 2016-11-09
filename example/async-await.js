@@ -38,7 +38,6 @@ const messenger = new Messenger({
 const WHITELISTED_DOMAINS = [
   'https://bbc.co.uk',
   'https://stackoverflow.com',
-  'https://357f6bc9.ngrok.io',
 ];
 
 function timeout(ms) {
@@ -80,7 +79,7 @@ function get_button(ratio) {
   return new Button({
     type: 'web_url',
     title: 'Stack Overflow',
-    url: 'https://357f6bc9.ngrok.io/share',
+    url: 'https://bbc.co.uk',
     webview_height_ratio: ratio,
   });
 }

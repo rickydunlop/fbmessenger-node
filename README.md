@@ -589,7 +589,15 @@ const item_2 = new PersistentMenuItem({
 	payload: 'menu_button_2'
 });
 
-const menu = new PersistentMenu([item_1, item_2]);
+const item_3 = new PersistentMenuItem({
+	item_type: 'web_url',
+	title: 'Menu button 3',
+	url: 'http://facebook.com',
+	webview_height_ratio: 'tall',
+	messenger_extensions: true
+});
+
+const menu = new PersistentMenu([item_1, item_2, item_3]);
 messenger.setThreadSetting(menu);
 ```
 
