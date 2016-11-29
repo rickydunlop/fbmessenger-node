@@ -17,10 +17,10 @@ describe('GenericTemplate', () => {
             new Button({
               type: 'web_url',
               title: 'Button',
-              url: 'http://www.example.com'
-            })
-          ]
-        })
+              url: 'http://www.example.com',
+            }),
+          ],
+        }),
       ]);
 
       expect(template).to.deep.equal({
@@ -38,13 +38,13 @@ describe('GenericTemplate', () => {
                   {
                     type: 'web_url',
                     title: 'Button',
-                    url: 'http://www.example.com'
-                  }
-                ]
-              }
-            ]
-          }
-        }
+                    url: 'http://www.example.com',
+                  },
+                ],
+              },
+            ],
+          },
+        },
       });
     });
   });
