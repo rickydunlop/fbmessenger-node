@@ -1,12 +1,12 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import fetchMock from 'fetch-mock';
 
 import { Messenger } from '../lib/Messenger';
 
 const messenger = new Messenger({
   pageAccessToken: 'page_access_token',
 });
+
 messenger.lastMessage = {
   sender: {
     id: 'USER_ID',
@@ -15,7 +15,6 @@ messenger.lastMessage = {
     id: 'PAGE_ID',
   },
 };
-
 
 function generatePayload(key, payload) {
   const res = {
@@ -45,9 +44,7 @@ function generatePayload(key, payload) {
 describe('Messenger', () => {
   describe('new', () => {
     describe('with all attributes', () => {
-      it('initializes correctly', () => {
-        expect(messenger).to.be.ok;
-      });
+      it('initializes correctly', () => expect(messenger).to.be.ok);
     });
 
     describe('with an attribute missing', () => {
