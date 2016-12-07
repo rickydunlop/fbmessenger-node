@@ -187,10 +187,18 @@ describe('Messenger', () => {
   });
 
   describe('sender actions', () => {
+    const mock = sinon.spy(messenger.client, 'senderAction');
+
     it('calls correct method', () => {
-      const mock = sinon.spy(messenger.client, 'senderAction');
       messenger.senderAction('typing_on');
       expect(mock.callCount).to.equal(1);
+      expect(mock.calledWith('typing_on')).to.be.true;
+    });
+
+    it('accepts an id', () => {
+      messenger.senderAction('typing_on', 1234);
+      expect(mock.callCount).to.equal(2);
+      expect(mock.calledWith('typing_on', 1234)).to.be.true;
     });
   });
 
