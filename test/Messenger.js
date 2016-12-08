@@ -140,10 +140,16 @@ describe('Messenger', () => {
   });
 
   describe('get user', () => {
+    const mockGetUser = sinon.spy(messenger.client, 'getUser');
     it('calls get user', () => {
-      const mockGetUser = sinon.spy(messenger.client, 'getUser');
       messenger.getUser();
       expect(mockGetUser.callCount).to.equal(1);
+    });
+
+    it('calls get user with an ID', () => {
+      messenger.getUser(123);
+      expect(mockGetUser.callCount).to.equal(2);
+      expect(mockGetUser.calledWith(123)).to.equal(true);
     });
   });
 
