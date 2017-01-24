@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 import express from 'express';
 import bodyParser from 'body-parser';
 
@@ -19,17 +20,32 @@ import {
   Address,
   Summary,
   Adjustment,
-} from '../lib/Messenger';
-
-const path = require('path');
+} from '../src/Messenger';
 
 dotenv.config({ silent: true });
 
 const app = express();
 
-app.use(bodyParser.json());
+const verifyRequestSignature = (req, res, buf) => {
+  const signature = req.headers['x-hub-signature'];
+
+  if (!signature) {
+    throw new Error('Couldn\'t validate the signature.');
+  } else {
+    const elements = signature.split('=');
+    const signatureHash = elements[1];
+    const expectedHash = crypto.createHmac('sha1', process.env.APP_SECRET)
+                          .update(buf)
+                          .digest('hex');
+
+    if (signatureHash !== expectedHash) {
+      throw new Error('Couldn\'t validate the request signature.');
+    }
+  }
+};
+
+app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '/public')));
 
 const messenger = new Messenger({
   pageAccessToken: process.env.PAGE_ACCESS_TOKEN,
@@ -40,11 +56,9 @@ const WHITELISTED_DOMAINS = [
   'https://stackoverflow.com',
 ];
 
-function timeout(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-async function init_bot() {
+async function initBot() {
   messenger.addWhitelistedDomains(WHITELISTED_DOMAINS);
 
   // Greeting Text
@@ -58,24 +72,24 @@ async function init_bot() {
   console.log(`Greeting Text: ${JSON.stringify(getStartedResult)}`);
 
   // Persistent menu
-  const menu_help = new PersistentMenuItem({
+  const menuHelp = new PersistentMenuItem({
     type: 'postback',
     title: 'Help',
     payload: 'help',
   });
 
-  const menu_docs = new PersistentMenuItem({
+  const menuDocs = new PersistentMenuItem({
     type: 'web_url',
     title: 'Messenger Docs',
     url: 'https://developers.facebook.com/docs/messenger-platform',
   });
 
-  const menu = new PersistentMenu([menu_help, menu_docs]);
+  const menu = new PersistentMenu([menuHelp, menuDocs]);
   const persistentMenuResult = await messenger.setThreadSetting(menu);
   console.log(`Greeting Text: ${JSON.stringify(persistentMenuResult)}`);
 }
 
-function get_button(ratio) {
+function getButton(ratio) {
   return new Button({
     type: 'web_url',
     title: 'Stack Overflow',
@@ -84,7 +98,7 @@ function get_button(ratio) {
   });
 }
 
-function get_element(btn) {
+function getElement(btn) {
   return new Element({
     title: 'Template example',
     item_url: 'https://stackoverflow.com',
@@ -95,7 +109,8 @@ function get_element(btn) {
 }
 
 messenger.on('message', async (message) => {
-  console.log(`Message received: ${JSON.stringify(message)}`);
+  console.log(`Message received: ${JSON.stringify(message, true)}`);
+  const sender = message.sender.id;
 
   // Allow receiving locations
   if ('attachments' in message.message) {
@@ -105,7 +120,7 @@ messenger.on('message', async (message) => {
       const text = `${message.message.attachments[0].title}:
                     lat: ${message.message.attachments[0].payload.coordinates.lat},
                     long: ${message.message.attachments[0].payload.coordinates.long}`;
-      messenger.send({ text });
+      messenger.send({ text }, sender);
     }
 
     if (['audio', 'video', 'image', 'file'].includes(msgType)) {
@@ -120,29 +135,35 @@ messenger.on('message', async (message) => {
     msg = msg.toLowerCase();
 
     if (msg.includes('text')) {
-      messenger.send({ text: 'This is an example text message.' });
+      messenger.send({ text: 'This is an example text message.' }, sender);
     }
 
     if (msg.includes('image')) {
       const res = await messenger.send(new Image({
         url: 'https://unsplash.it/300/200/?random',
         is_reusable: true,
-      }));
+      }), sender);
       console.log(`Resuable attachment ID: ${res.attachment_id}`);
     }
 
     if (msg.includes('reuse')) {
-      messenger.send(new Image({ attachment_id: 947782652018100 }));
+      messenger.send(new Image({ attachment_id: 947782652018100 }), sender);
     }
 
     if (msg.includes('video')) {
-      messenger.send(new Video({ url: 'http://techslides.com/demos/sample-videos/small.mp4' }));
+      try {
+        await messenger.send(new Video({
+          url: 'https://s3.amazonaws.com/co-pilot-bot-assets/test/46MB.mp4',
+        }), sender);
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     if (msg.includes('payload')) {
       const pl = message.message.quick_reply.payload;
       const text = `User clicked button: ${msg}, Button payload is: ${pl}`;
-      messenger.send({ text });
+      messenger.send({ text }, sender);
     }
 
     if (msg.includes('bubble')) {
@@ -162,7 +183,7 @@ messenger.on('message', async (message) => {
             ],
           }),
         ],
-      ));
+      ), sender);
     }
 
     if (msg.includes('quick replies')) {
@@ -172,31 +193,31 @@ messenger.on('message', async (message) => {
       messenger.send(Object.assign(
         { text: 'This is an example with quick replies.' },
         qrs,
-      ));
+      ), sender);
     }
 
     if (msg.includes('compact')) {
-      const btn = get_button('compact');
-      const elem = get_element(btn);
-      messenger.send(new GenericTemplate([elem]));
+      const btn = getButton('compact');
+      const elem = getElement(btn);
+      messenger.send(new GenericTemplate([elem]), sender);
     }
 
     if (msg.includes('tall')) {
-      const btn = get_button('tall');
-      const elem = get_element(btn);
-      messenger.send(new GenericTemplate([elem]));
+      const btn = getButton('tall');
+      const elem = getElement(btn);
+      messenger.send(new GenericTemplate([elem]), sender);
     }
 
     if (msg.includes('full')) {
-      const btn = get_button('full');
-      const elem = get_element(btn);
-      messenger.send(new GenericTemplate([elem]));
+      const btn = getButton('full');
+      const elem = getElement(btn);
+      messenger.send(new GenericTemplate([elem]), sender);
     }
 
     if (msg.includes('multiple')) {
-      await messenger.send({ text: 'Message 1' });
+      await messenger.send({ text: 'Message 1' }, sender);
       await timeout(3000);
-      await messenger.send({ text: 'Message 2' });
+      await messenger.send({ text: 'Message 2' }, sender);
     }
 
     if (msg.includes('receipt')) {
@@ -237,7 +258,7 @@ messenger.on('message', async (message) => {
           }),
         ],
       });
-      const res = await messenger.send(template);
+      const res = await messenger.send(template, sender);
       console.log(res);
     }
   }
@@ -248,14 +269,15 @@ messenger.on('delivery', () => {
 });
 
 messenger.on('postback', (message) => {
+  const sender = message.sender.id;
   const payload = message.postback.payload;
   console.log(payload);
 
   if (payload === 'help') {
-    messenger.send({ text: 'A help message or template can go here.' });
+    messenger.send({ text: 'A help message or template can go here.' }, sender);
   } else if (payload === 'start') {
     const text = 'Try sending me one of these messages: text, image, video, reuse, bubble, "quick replies", compact, tall, full';
-    messenger.send({ text });
+    messenger.send({ text }, sender);
   }
 });
 
@@ -281,7 +303,7 @@ app.get('/webhook', (req, res) => {
 });
 
 app.get('/init', (req, res) => {
-  init_bot();
+  initBot();
   res.sendStatus(200);
 });
 

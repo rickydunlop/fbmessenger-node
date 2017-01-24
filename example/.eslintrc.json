@@ -1,10 +1,10 @@
 {
   "rules": {
-    "camelcase": [0, {"properties": "never"}],
     "no-console": 0
   },
   "env": {
-    "node": true
+    "node": true,
+    "es6": true
   },
   "extends": ["airbnb-base"],
   "parser": "babel-eslint",
