@@ -12,15 +12,15 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "babel-cli": "^6.16.0",
-    "babel-core": "^6.17.0",
-    "babel-preset-latest": "^6.16.0",
-    "body-parser": "^1.15.2",
-    "dotenv": "^2.0.0",
+    "babel-cli": "^6.22.2",
+    "babel-core": "^6.22.1",
+    "babel-preset-env": "^1.1.8",
+    "body-parser": "^1.16.0",
+    "dotenv": "^4.0.0",
     "express": "^4.14.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.0.0",
+    "babel-eslint": "^7.1.1",
     "nodemon": "^1.10.2"
   }
 }
