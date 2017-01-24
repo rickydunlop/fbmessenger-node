@@ -1,6 +1,4 @@
-import { expect } from 'chai';
-
-import Button from '../../lib/elements/Button';
+import Button from '../../src/elements/Button';
 
 describe('Button', () => {
   describe('new', () => {
@@ -12,7 +10,7 @@ describe('Button', () => {
           title: 'Example Title',
         });
 
-        expect(button).to.deep.equal({
+        expect(button).toEqual({
           type: 'web_url',
           url: 'http://www.example.com',
           title: 'Example Title',
@@ -28,7 +26,7 @@ describe('Button', () => {
           payload: 'EXAMPLE',
         });
 
-        expect(button).to.deep.equal({
+        expect(button).toEqual({
           type: 'postback',
           title: 'Example Title',
           payload: 'EXAMPLE',
@@ -45,7 +43,7 @@ describe('Button', () => {
           webview_height_ratio: 'tall',
         });
 
-        expect(button).to.deep.equal({
+        expect(button).toEqual({
           type: 'postback',
           title: 'Example Title',
           url: 'https://facebook.com',
@@ -64,7 +62,7 @@ describe('Button', () => {
           messenger_extensions: true,
         });
 
-        expect(button).to.deep.equal({
+        expect(button).toEqual({
           type: 'postback',
           title: 'Example Title',
           url: 'https://facebook.com',
@@ -84,7 +82,7 @@ describe('Button', () => {
           fallback_url: 'https://facebook.com',
         });
 
-        expect(button).to.deep.equal({
+        expect(button).toEqual({
           type: 'postback',
           title: 'Example Title',
           url: 'https://facebook.com',
@@ -104,7 +102,7 @@ describe('Button', () => {
             title: 'This title is too long and will throw an error',
             url: 'https://example.com',
           });
-        }).to.throw('Title cannot be longer 20 characters.');
+        }).toThrow('Title cannot be longer 20 characters.');
       });
     });
 
@@ -116,7 +114,7 @@ describe('Button', () => {
             title: 'Example Title',
             url: 'https://example.com',
           });
-        }).to.throw('Invalid button type provided.');
+        }).toThrow('Invalid button type provided.');
       });
     });
 
@@ -129,7 +127,7 @@ describe('Button', () => {
             url: 'https://example.com',
             webview_height_ratio: 'wrong',
           });
-        }).to.throw('Invalid webview_height_ratio provided.');
+        }).toThrow('Invalid webview_height_ratio provided.');
       });
     });
   });

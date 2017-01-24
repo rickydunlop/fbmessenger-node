@@ -1,8 +1,6 @@
-import { expect } from 'chai';
-
-import Element from '../../lib/elements/Element';
-import Button from '../../lib/elements/Button';
-import GenericTemplate from '../../lib/templates/GenericTemplate';
+import Element from '../../src/elements/Element';
+import Button from '../../src/elements/Button';
+import GenericTemplate from '../../src/templates/GenericTemplate';
 
 describe('GenericTemplate', () => {
   describe('new', () => {
@@ -23,7 +21,7 @@ describe('GenericTemplate', () => {
         }),
       ]);
 
-      expect(template).to.deep.equal({
+      expect(template).toEqual({
         attachment: {
           type: 'template',
           payload: {

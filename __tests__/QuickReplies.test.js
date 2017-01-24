@@ -1,7 +1,5 @@
-import { expect } from 'chai';
-
-import { QuickReply, QuickReplies } from '../lib/QuickReplies';
-import Text from '../lib/elements/Text';
+import { QuickReply, QuickReplies } from '../src/QuickReplies';
+import Text from '../src/elements/Text';
 
 describe('QuickReplies', () => {
   describe('when created', () => {
@@ -10,7 +8,7 @@ describe('QuickReplies', () => {
         const qr = new QuickReply({ title: 'Example', payload: 'payload' });
         const qrs = new QuickReplies([qr]);
 
-        expect(qrs).to.deep.equal({
+        expect(qrs).toEqual({
           quick_replies: [
             {
               title: 'Example',
@@ -29,7 +27,7 @@ describe('QuickReplies', () => {
         const text = new Text('Simple text message');
         const payload = Object.assign(text, qrs);
 
-        expect(payload).to.deep.equal({
+        expect(payload).toEqual({
           text: 'Simple text message',
           quick_replies: [
             {
@@ -47,7 +45,7 @@ describe('QuickReplies', () => {
       it('throws error', () => {
         expect(() => {
           new QuickReplies('payload');
-        }).to.throw('You must pass an array of QuickReply objects.');
+        }).toThrow('You must pass an array of QuickReply objects.');
       });
     });
 
@@ -55,7 +53,7 @@ describe('QuickReplies', () => {
       it('throws error', () => {
         expect(() => {
           new QuickReplies(new Array(11));
-        }).to.throw('You cannot have more than 10 quick replies.');
+        }).toThrow('You cannot have more than 10 quick replies.');
       });
     });
   });
@@ -67,7 +65,7 @@ describe('QuickReply', () => {
       it('returns proper object', () => {
         const qr = new QuickReply({ title: 'Example', payload: 'payload' });
 
-        expect(qr).to.deep.equal({
+        expect(qr).toEqual({
           content_type: 'text',
           title: 'Example',
           payload: 'payload',
@@ -79,7 +77,7 @@ describe('QuickReply', () => {
       it('returns proper object', () => {
         const qr = new QuickReply({ title: 'Example', payload: 'payload', image_url: 'http://test.com/image.jpg' });
 
-        expect(qr).to.deep.equal({
+        expect(qr).toEqual({
           content_type: 'text',
           title: 'Example',
           payload: 'payload',
@@ -92,7 +90,7 @@ describe('QuickReply', () => {
       it('returns valid object', () => {
         const qr = new QuickReply({ title: 'Location', content_type: 'location' });
 
-        expect(qr).to.deep.equal({
+        expect(qr).toEqual({
           title: 'Location',
           content_type: 'location',
         });
@@ -105,7 +103,7 @@ describe('QuickReply', () => {
       it('throws an error', () => {
         expect(() => {
           new QuickReply({ title: 'x'.repeat(21), payload: 'payload' });
-        }).to.throw('Title cannot be longer 20 characters.');
+        }).toThrow('Title cannot be longer 20 characters.');
       });
     });
 
@@ -113,7 +111,7 @@ describe('QuickReply', () => {
       it('throws an error', () => {
         expect(() => {
           new QuickReply({ title: 'Text', payload: 'x'.repeat(1001) });
-        }).to.throw('Payload cannot be longer 1000 characters.');
+        }).toThrow('Payload cannot be longer 1000 characters.');
       });
     });
 
@@ -121,7 +119,7 @@ describe('QuickReply', () => {
       it('throws an error', () => {
         expect(() => {
           new QuickReply({ title: 'Text', content_type: 'wrong' });
-        }).to.throw('Invalid content type provided.');
+        }).toThrow('Invalid content type provided.');
       });
     });
   });

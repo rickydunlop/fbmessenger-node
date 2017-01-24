@@ -1,11 +1,9 @@
-import { expect } from 'chai';
-
-import Element from '../../lib/elements/Element';
-import Button from '../../lib/elements/Button';
-import Address from '../../lib/elements/Address';
-import Summary from '../../lib/elements/Summary';
-import Adjustment from '../../lib/elements/Adjustment';
-import ReceiptTemplate from '../../lib/templates/ReceiptTemplate';
+import Element from '../../src/elements/Element';
+import Button from '../../src/elements/Button';
+import Address from '../../src/elements/Address';
+import Summary from '../../src/elements/Summary';
+import Adjustment from '../../src/elements/Adjustment';
+import ReceiptTemplate from '../../src/templates/ReceiptTemplate';
 
 describe('ReceiptTemplate', () => {
   describe('new', () => {
@@ -49,7 +47,7 @@ describe('ReceiptTemplate', () => {
         ],
       });
 
-      expect(template).to.deep.equal({
+      expect(template).toEqual({
         attachment: {
           type: 'template',
           payload: {
@@ -124,7 +122,7 @@ describe('ReceiptTemplate', () => {
         }),
       });
 
-      expect(template).to.deep.equal({
+      expect(template).toEqual({
         attachment: {
           type: 'template',
           payload: {

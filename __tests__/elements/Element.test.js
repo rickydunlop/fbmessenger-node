@@ -1,7 +1,5 @@
-import { expect } from 'chai';
-
-import Button from '../../lib/elements/Button';
-import Element from '../../lib/elements/Element';
+import Button from '../../src/elements/Button';
+import Element from '../../src/elements/Element';
 
 describe('Element', () => {
   describe('new', () => {
@@ -20,7 +18,7 @@ describe('Element', () => {
         ],
       });
 
-      expect(element).to.deep.equal({
+      expect(element).toEqual({
         title: 'Title',
         item_url: 'http://www.example.com',
         image_url: 'http://www.example.com',
@@ -42,7 +40,7 @@ describe('Element', () => {
         title: 'Title',
       });
 
-      expect(element).to.deep.equal({
+      expect(element).toEqual({
         title: 'Title',
         image_url: '',
         subtitle: '',

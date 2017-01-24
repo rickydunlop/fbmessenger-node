@@ -1,6 +1,4 @@
-import { expect } from 'chai';
-
-import DefaultAction from '../../lib/elements/DefaultAction';
+import DefaultAction from '../../src/elements/DefaultAction';
 
 describe('DefaultAction', () => {
   describe('new', () => {
@@ -10,7 +8,7 @@ describe('DefaultAction', () => {
           url: 'http://www.example.com',
         });
 
-        expect(da).to.deep.equal({
+        expect(da).toEqual({
           type: 'web_url',
           url: 'http://www.example.com',
         });
@@ -24,7 +22,7 @@ describe('DefaultAction', () => {
           webview_height_ratio: 'tall',
         });
 
-        expect(da).to.deep.equal({
+        expect(da).toEqual({
           type: 'web_url',
           url: 'https://facebook.com',
           webview_height_ratio: 'tall',
@@ -40,7 +38,7 @@ describe('DefaultAction', () => {
           messenger_extensions: true,
         });
 
-        expect(da).to.deep.equal({
+        expect(da).toEqual({
           type: 'web_url',
           url: 'https://facebook.com',
           webview_height_ratio: 'tall',
@@ -57,7 +55,7 @@ describe('DefaultAction', () => {
           fallback_url: 'https://facebook.com',
         });
 
-        expect(da).to.deep.equal({
+        expect(da).toEqual({
           type: 'web_url',
           url: 'https://facebook.com',
           webview_height_ratio: 'tall',
@@ -75,7 +73,7 @@ describe('DefaultAction', () => {
             url: 'https://example.com',
             webview_height_ratio: 'wrong',
           });
-        }).to.throw('Invalid webview_height_ratio provided.');
+        }).toThrow('Invalid webview_height_ratio provided.');
       });
     });
   });

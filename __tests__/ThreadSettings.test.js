@@ -1,17 +1,15 @@
-import { expect } from 'chai';
-
 import {
   GreetingText,
   GetStartedButton,
   PersistentMenu,
   PersistentMenuItem,
-} from '../lib/ThreadSettings';
+} from '../src/ThreadSettings';
 
 describe('Thread Settings', () => {
   describe('Greeting text', () => {
     it('returns proper object', () => {
       const text = new GreetingText('Welcome to My Company!');
-      expect(text).to.deep.equal({
+      expect(text).toEqual({
         setting_type: 'greeting',
         greeting: {
           text: 'Welcome to My Company!',
@@ -23,7 +21,7 @@ describe('Thread Settings', () => {
   describe('Get started button', () => {
     it('returns proper object', () => {
       const get_started = new GetStartedButton('USER_DEFINED_PAYLOAD');
-      expect(get_started).to.deep.equal({
+      expect(get_started).toEqual({
         setting_type: 'call_to_actions',
         thread_state: 'new_thread',
         call_to_actions: [
@@ -42,7 +40,7 @@ describe('Thread Settings', () => {
         title: 'Help',
         payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
       });
-      expect(item).to.deep.equal({
+      expect(item).toEqual({
         type: 'postback',
         title: 'Help',
         payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
@@ -55,7 +53,7 @@ describe('Thread Settings', () => {
         title: 'Help',
         url: 'http://facebook.com',
       });
-      expect(item).to.deep.equal({
+      expect(item).toEqual({
         type: 'web_url',
         title: 'Help',
         url: 'http://facebook.com',
@@ -70,7 +68,7 @@ describe('Thread Settings', () => {
         webview_height_ratio: 'full',
         messenger_extensions: true,
       });
-      expect(item).to.deep.equal({
+      expect(item).toEqual({
         type: 'web_url',
         title: 'Help',
         url: 'http://facebook.com',
@@ -86,7 +84,7 @@ describe('Thread Settings', () => {
         url: 'http://facebook.com',
         messenger_extensions: 'true',
       });
-      expect(item).to.deep.equal({
+      expect(item).toEqual({
         type: 'web_url',
         title: 'Help',
         url: 'http://facebook.com',
@@ -101,7 +99,7 @@ describe('Thread Settings', () => {
           title: 'Help',
           payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
         });
-      }).to.throw('Invalid type provided.');
+      }).toThrow('Invalid type provided.');
     });
 
     it('it errors on title too long', () => {
@@ -111,7 +109,7 @@ describe('Thread Settings', () => {
           title: 'x'.repeat(31),
           payload: 'DEVELOPER_DEFINED_PAYLOAD_FOR_HELP',
         });
-      }).to.throw('Title cannot be longer 30 characters.');
+      }).toThrow('Title cannot be longer 30 characters.');
     });
 
     it('it errors on payload too long', () => {
@@ -121,7 +119,7 @@ describe('Thread Settings', () => {
           title: 'title',
           payload: 'x'.repeat(1001),
         });
-      }).to.throw('Payload cannot be longer 1000 characters.');
+      }).toThrow('Payload cannot be longer 1000 characters.');
     });
 
     it('it errors if web_url and no url provided', () => {
@@ -130,7 +128,7 @@ describe('Thread Settings', () => {
           type: 'web_url',
           title: 'title',
         });
-      }).to.throw('`url` must be supplied for `web_url` type menu items.');
+      }).toThrow('`url` must be supplied for `web_url` type menu items.');
     });
 
     it('it errors if postback and no payload provided', () => {
@@ -139,7 +137,7 @@ describe('Thread Settings', () => {
           type: 'postback',
           title: 'title',
         });
-      }).to.throw('`payload` must be supplied for `postback` type menu items.');
+      }).toThrow('`payload` must be supplied for `postback` type menu items.');
     });
 
     it('it errors if incorrect webview_height_ratio is provided', () => {
@@ -150,7 +148,7 @@ describe('Thread Settings', () => {
           url: 'https://facebook.com',
           webview_height_ratio: 'wrong',
         });
-      }).to.throw('Invalid `webview_height_ratio` provided.');
+      }).toThrow('Invalid `webview_height_ratio` provided.');
     });
   });
 
@@ -169,7 +167,7 @@ describe('Thread Settings', () => {
       });
 
       const menu = new PersistentMenu([item_1, item_2]);
-      expect(menu).to.deep.equal({
+      expect(menu).toEqual({
         setting_type: 'call_to_actions',
         thread_state: 'existing_thread',
         call_to_actions: [
@@ -191,7 +189,7 @@ describe('Thread Settings', () => {
       it('throws error', () => {
         expect(() => {
           new PersistentMenu('payload');
-        }).to.throw('You must pass an array of PersistentMenuItem objects.');
+        }).toThrow('You must pass an array of PersistentMenuItem objects.');
       });
     });
 
@@ -199,7 +197,7 @@ describe('Thread Settings', () => {
       it('throws error', () => {
         expect(() => {
           new PersistentMenu(new Array(6));
-        }).to.throw('You cannot have more than 5 menu items.');
+        }).toThrow('You cannot have more than 5 menu items.');
       });
     });
   });

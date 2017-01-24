@@ -1,9 +1,7 @@
-import { expect } from 'chai';
-
-import Button from '../../lib/elements/Button';
-import Element from '../../lib/elements/Element';
-import DefaultAction from '../../lib/elements/DefaultAction';
-import ListTemplate from '../../lib/templates/ListTemplate';
+import Button from '../../src/elements/Button';
+import Element from '../../src/elements/Element';
+import DefaultAction from '../../src/elements/DefaultAction';
+import ListTemplate from '../../src/templates/ListTemplate';
 
 describe('ListTemplate', () => {
   describe('new', () => {
@@ -29,7 +27,7 @@ describe('ListTemplate', () => {
         ),
       });
 
-      expect(template).to.deep.equal({
+      expect(template).toEqual({
         attachment: {
           type: 'template',
           payload: {
@@ -101,7 +99,7 @@ describe('ListTemplate', () => {
               }),
             ],
           });
-        }).to.throw('You must have more than 2 elements in the template.');
+        }).toThrow('You must have more than 2 elements in the template.');
       });
     });
 
@@ -128,7 +126,7 @@ describe('ListTemplate', () => {
               }),
             ),
           });
-        }).to.throw('You cannot have more than 4 elements in the template.');
+        }).toThrow('You cannot have more than 4 elements in the template.');
       });
     });
 
@@ -138,7 +136,7 @@ describe('ListTemplate', () => {
           new ListTemplate({
             elements: 'invalid'
           });
-        }).to.throw('elements must be an array.');
+        }).toThrow('elements must be an array.');
       });
     });
 
@@ -182,7 +180,7 @@ describe('ListTemplate', () => {
               }),
             ],
           });
-        }).to.throw('Invalid top_element_style provided.');
+        }).toThrow('Invalid top_element_style provided.');
       });
     });
   });

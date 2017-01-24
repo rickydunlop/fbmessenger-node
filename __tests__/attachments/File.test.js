@@ -1,13 +1,11 @@
-import { expect } from 'chai';
-
-import File from '../../lib/attachments/File';
+import File from '../../src/attachments/File';
 
 describe('File', () => {
   describe('new', () => {
     it('returns an object', () => {
       const file = new File({ url: 'http://test.com/file.mp3' });
 
-      expect(file).to.deep.equal({
+      expect(file).toEqual({
         attachment: {
           type: 'file',
           payload: {
@@ -20,7 +18,7 @@ describe('File', () => {
     it('is reusable', () => {
       const file = new File({ url: 'http://test.com/file.pdf', is_reusable: true });
 
-      expect(file).to.deep.equal({
+      expect(file).toEqual({
         attachment: {
           type: 'file',
           payload: {
@@ -34,7 +32,7 @@ describe('File', () => {
     it('can be reused', () => {
       const file = new File({ attachment_id: 1234 });
 
-      expect(file).to.deep.equal({
+      expect(file).toEqual({
         attachment: {
           type: 'file',
           payload: {

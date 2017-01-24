@@ -1,13 +1,11 @@
-import { expect } from 'chai';
-
-import Video from '../../lib/attachments/Video';
+import Video from '../../src/attachments/Video';
 
 describe('Video', () => {
   describe('new', () => {
     it('returns an object', () => {
       const video = new Video({ url: 'http://test.com/video.mp4' });
 
-      expect(video).to.deep.equal({
+      expect(video).toEqual({
         attachment: {
           type: 'video',
           payload: {
@@ -20,7 +18,7 @@ describe('Video', () => {
     it('is reusable', () => {
       const video = new Video({ url: 'http://test.com/video.mp4', is_reusable: true });
 
-      expect(video).to.deep.equal({
+      expect(video).toEqual({
         attachment: {
           type: 'video',
           payload: {
@@ -34,7 +32,7 @@ describe('Video', () => {
     it('can be reused', () => {
       const video = new Video({ attachment_id: 1234 });
 
-      expect(video).to.deep.equal({
+      expect(video).toEqual({
         attachment: {
           type: 'video',
           payload: {
