@@ -1,5 +1,5 @@
 class ButtonTemplate {
-  constructor(text, buttons) {
+  constructor({ text, buttons }) {
     this.text = text;
 
     if (!Array.isArray(buttons)) {

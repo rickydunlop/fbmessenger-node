@@ -27,3 +27,9 @@ export const TOP_ELEMENT_STYLES = [
   'large',
   'compact',
 ];
+
+export const SENDER_ACTIONS = [
+  'mark_seen',
+  'typing_on',
+  'typing_off',
+];
