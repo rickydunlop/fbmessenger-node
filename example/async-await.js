@@ -93,7 +93,7 @@ function getButton(ratio) {
   return new Button({
     type: 'web_url',
     title: 'Stack Overflow',
-    url: 'https://bbc.co.uk',
+    url: 'https://stackoverflow.com',
     webview_height_ratio: ratio,
   });
 }
