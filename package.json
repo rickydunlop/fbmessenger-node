@@ -1,6 +1,6 @@
 {
   "name": "fbmessenger",
-  "version": "3.4.0",
+  "version": "4.0.0",
   "description": "A simple wrapper for Facebook Messenger Bots",
   "keywords": [
     "Facebook",
@@ -12,14 +12,11 @@
   ],
   "main": "./dist/Messenger.js",
   "scripts": {
-    "build": "babel lib --presets babel-preset-es2015 --out-dir dist",
+    "build": "babel src --out-dir dist",
     "coverage": "cross-env NODE_ENV=test nyc npm test",
     "prepublish": "npm run build",
-    "report": "NODE_ENV=test nyc --reporter=lcov npm test",
-    "start": "babel-node ./lib/Messenger.js",
-    "start:server": "nodemon --exec \"babel-node ./example/express-example.js\" --watch ./",
-    "test": "mocha --recursive --compilers js:babel-core/register",
-    "travis-coveralls": "NODE_ENV=test nyc npm test && nyc report --reporter=text-lcov | coveralls"
+    "test": "cross-env NODE_ENV=test jest",
+    "travis-coveralls": "npm run test && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
@@ -34,41 +31,23 @@
   },
   "homepage": "https://github.com/rickydunlop/fbmessenger-node#readme",
   "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-core": "^6.18.2",
-    "babel-eslint": "^7.1.0",
-    "babel-plugin-istanbul": "^3.0.0",
-    "babel-preset-es2015": "^6.18.0",
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "coveralls": "^2.11.14",
-    "cross-env": "^3.1.2",
-    "eslint": "^3.9.1",
+    "babel-cli": "^6.22.2",
+    "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
+    "babel-jest": "^18.0.0",
+    "babel-preset-env": "^1.1.8",
+    "coveralls": "^2.11.15",
+    "cross-env": "^3.1.4",
+    "eslint": "^3.14.0",
     "eslint-config-airbnb-base": "^11.0.1",
     "eslint-plugin-import": "^2.0.1",
-    "mocha": "^3.1.2",
-    "mocha-lcov-reporter": "^1.2.0",
-    "nock": "^9.0.2",
-    "nodemon": "^1.11.0",
-    "nyc": "^10.0.0",
-    "sinon": "^2.0.0-pre.3"
+    "jest": "^18.1.0",
+    "nock": "^9.0.2"
   },
   "dependencies": {
     "node-fetch": "^1.6.3"
   },
-  "nyc": {
-    "include": [
-      "lib/**/*.js"
-    ],
-    "require": [
-      "babel-register"
-    ],
-    "cache": true,
-    "reporter": [
-      "lcov",
-      "text-summary"
-    ],
-    "sourceMap": false,
-    "instrument": false
+  "jest": {
+    "collectCoverage": true
   }
 }
