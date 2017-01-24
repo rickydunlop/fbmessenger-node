@@ -110,7 +110,7 @@ function getElement(btn) {
 
 messenger.on('message', async (message) => {
   console.log(`Message received: ${JSON.stringify(message, true)}`);
-  const sender = message.sender.id;
+  const recipient = message.sender.id;
 
   // Allow receiving locations
   if ('attachments' in message.message) {
@@ -120,7 +120,7 @@ messenger.on('message', async (message) => {
       const text = `${message.message.attachments[0].title}:
                     lat: ${message.message.attachments[0].payload.coordinates.lat},
                     long: ${message.message.attachments[0].payload.coordinates.long}`;
-      messenger.send({ text }, sender);
+      messenger.send({ text }, recipient);
     }
 
     if (['audio', 'video', 'image', 'file'].includes(msgType)) {
@@ -135,26 +135,26 @@ messenger.on('message', async (message) => {
     msg = msg.toLowerCase();
 
     if (msg.includes('text')) {
-      messenger.send({ text: 'This is an example text message.' }, sender);
+      messenger.send({ text: 'This is an example text message.' }, recipient);
     }
 
     if (msg.includes('image')) {
       const res = await messenger.send(new Image({
         url: 'https://unsplash.it/300/200/?random',
         is_reusable: true,
-      }), sender);
+      }), recipient);
       console.log(`Resuable attachment ID: ${res.attachment_id}`);
     }
 
     if (msg.includes('reuse')) {
-      messenger.send(new Image({ attachment_id: 947782652018100 }), sender);
+      messenger.send(new Image({ attachment_id: 947782652018100 }), recipient);
     }
 
     if (msg.includes('video')) {
       try {
         await messenger.send(new Video({
           url: 'https://s3.amazonaws.com/co-pilot-bot-assets/test/46MB.mp4',
-        }), sender);
+        }), recipient);
       } catch (e) {
         console.error(e);
       }
@@ -163,7 +163,7 @@ messenger.on('message', async (message) => {
     if (msg.includes('payload')) {
       const pl = message.message.quick_reply.payload;
       const text = `User clicked button: ${msg}, Button payload is: ${pl}`;
-      messenger.send({ text }, sender);
+      messenger.send({ text }, recipient);
     }
 
     if (msg.includes('bubble')) {
@@ -183,7 +183,7 @@ messenger.on('message', async (message) => {
             ],
           }),
         ],
-      ), sender);
+      ), recipient);
     }
 
     if (msg.includes('quick replies')) {
@@ -193,31 +193,31 @@ messenger.on('message', async (message) => {
       messenger.send(Object.assign(
         { text: 'This is an example with quick replies.' },
         qrs,
-      ), sender);
+      ), recipient);
     }
 
     if (msg.includes('compact')) {
       const btn = getButton('compact');
       const elem = getElement(btn);
-      messenger.send(new GenericTemplate([elem]), sender);
+      messenger.send(new GenericTemplate([elem]), recipient);
     }
 
     if (msg.includes('tall')) {
       const btn = getButton('tall');
       const elem = getElement(btn);
-      messenger.send(new GenericTemplate([elem]), sender);
+      messenger.send(new GenericTemplate([elem]), recipient);
     }
 
     if (msg.includes('full')) {
       const btn = getButton('full');
       const elem = getElement(btn);
-      messenger.send(new GenericTemplate([elem]), sender);
+      messenger.send(new GenericTemplate([elem]), recipient);
     }
 
     if (msg.includes('multiple')) {
-      await messenger.send({ text: 'Message 1' }, sender);
+      await messenger.send({ text: 'Message 1' }, recipient);
       await timeout(3000);
-      await messenger.send({ text: 'Message 2' }, sender);
+      await messenger.send({ text: 'Message 2' }, recipient);
     }
 
     if (msg.includes('receipt')) {
@@ -258,7 +258,7 @@ messenger.on('message', async (message) => {
           }),
         ],
       });
-      const res = await messenger.send(template, sender);
+      const res = await messenger.send(template, recipient);
       console.log(res);
     }
   }
@@ -269,15 +269,15 @@ messenger.on('delivery', () => {
 });
 
 messenger.on('postback', (message) => {
-  const sender = message.sender.id;
+  const recipient = message.sender.id;
   const payload = message.postback.payload;
   console.log(payload);
 
   if (payload === 'help') {
-    messenger.send({ text: 'A help message or template can go here.' }, sender);
+    messenger.send({ text: 'A help message or template can go here.' }, recipient);
   } else if (payload === 'start') {
     const text = 'Try sending me one of these messages: text, image, video, reuse, bubble, "quick replies", compact, tall, full';
-    messenger.send({ text }, sender);
+    messenger.send({ text }, recipient);
   }
 });
 

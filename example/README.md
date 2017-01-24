@@ -1,5 +1,7 @@
 # fbmessenger example
 
+This is setup to run with Node >= 6
+
 Create a `.env` file that contains the following
 
 ```
