@@ -5,15 +5,14 @@
 [![npm](https://img.shields.io/npm/l/fbmessenger.svg?maxAge=2592000)]()
 
 A  library to integrate with the [Facebook Messenger Platform](https://developers.facebook.com/docs/messenger-platform).
-Based on [messenger-wrapper](https://github.com/justynjozwiak/messenger-wrapper/).
+
 
 ## Table of contents
-<!-- MarkdownTOC depth="2" autolink="true" autoanchor="true" bracket="round" -->
+<!-- MarkdownTOC depth="1" autolink="true" autoanchor="true" bracket="round" -->
 
 - [Installation](#installation)
 - [Express.js \(example usage\)](#expressjs-example-usage)
 - [Events](#events)
-- [Receiving messages](#receiving-messages)
 - [Sending messages](#sending-messages)
 - [Catching errors](#catching-errors)
 - [Getting user details](#getting-user-details)
@@ -34,6 +33,12 @@ Based on [messenger-wrapper](https://github.com/justynjozwiak/messenger-wrapper/
 ## Installation
 
 Execute this line in your app directory:
+
+```
+yarn add fbmessenger
+```
+
+or for npm
 
 ```
 npm install --save fbmessenger
@@ -57,8 +62,7 @@ const messenger = new Messenger({
 <a name="configuration-of-facebook-app"></a>
 ### Configuration of facebook app
 
-First of all visit this official [tutorial](https://developers.facebook.com/docs/messenger-platform/quickstart#steps]) and
-make sure you complete these 3 steps:
+First of all visit the official [tutorial](https://developers.facebook.com/docs/messenger-platform/quickstart#steps]) and make sure you complete these 3 steps:
 
 Steps:
 
@@ -89,23 +93,7 @@ messenger.on('message', (event) => {
   // put your logic here
 });
 
-messenger.on('delivery', (event) => {
-  // put your logic here
-});
-
 messenger.on('postback', (event) => {
-  // put your logic here
-});
-
-messenger.on('optin', (event) => {
-  // put your logic here
-});
-
-messenger.on('read', (event) => {
-  // put your logic here
-});
-
-messenger.on('account_linking', (event) => {
   // put your logic here
 });
 
@@ -130,7 +118,8 @@ app.post('/webhook', (req, res) => {
 <a name="events"></a>
 ## Events
 
-There are 6 types of events we can listen for:
+Events are triggered when Facebook posts to your webhook url.
+The following events can be listened for:
 
 - message
 - delivery
@@ -138,36 +127,51 @@ There are 6 types of events we can listen for:
 - read
 - account_linking
 - postback
+- referral
+- checkout_update
+- payment
 
-<a name="receiving-messages"></a>
-## Receiving messages
-
-<a name="event-listeners"></a>
-### Event Listeners
+<a name="listening-for-events"></a>
+### Listening for events
 
 ```javascript
-messenger.on('message', (event) => {
-	console.log(event);
+messenger.on(<event>, (message) => {
+	console.log(message);
 });
 ```
 
-Events are triggered when Facebook posts to your webhook url.
+_example console output_
 
+```javascript 
+{
+  sender: {
+    id: 1234,
+  },
+  recipient: {
+    id: 1234,
+  },
+  timestamp: 1457764197627,
+  message: {
+  	text: 'Hello World!'
+  }
+}
+```
 
 <a name="sending-messages"></a>
 ## Sending messages
 
-To send a message you can use the `send` method.
-All requests return a Promise (from node-fetch).
+Messages are sent using the `send(message, recipient)` method.
+It returns a Promise (from node-fetch).
 
-You can send a raw payload or to make it easier you can use the helper classes which are documented below.
+If replying to a user, the recipient can be obtained from `message.sender.id` in the event listener. Otherwise it should be a Facebook page scope ID from a database or other data store.
+
 
 <a name="example"></a>
-### Example
+### Send a simple text reply
 
 ```javascript
-messenger.on('message', () => {
-  messenger.send({ text: 'Hello' });
+messenger.on('message', (message) => {
+  messenger.send({ text: 'Hello' }, message.sender.id);
 });
 ```
 
@@ -183,14 +187,29 @@ messenger.send({ text: "Hello" })
   .catch(err => console.log(err));
 ```
 
+or if using async/await you can wrap your code in a try/catch block
+
+```javascript
+messenger.on('message', async (message) => {
+  try {
+	await messenger.send({ text: 'Hello' }, message.sender.id);
+  } catch (err) {
+  	console.error(err);
+  }
+});
+```
+
 <a name="getting-user-details"></a>
-## Getting user details
+## Get a user's details
 
 Example usage:
 
 ```javascript
-messenger.getUser().then((user) => {
-  messenger.send({ text: `Hey ${user.first_name} ${user.last_name}` });
+messenger.getUser()
+  .then((user) => {
+    messenger.send({ 
+  	  text: `Hey ${user.first_name} ${user.last_name}` 
+    }, message.sender.id);
 });
 ```
 
@@ -202,6 +221,7 @@ Returns object with user data:
 * `locale`
 * `timezone`
 * `gender`
+* `is_payment_enabled`
 
 
 <a name="elements"></a>
@@ -217,11 +237,10 @@ Example usage:
 ```javascript
 import { Text } from 'fbmessenger';
 
-messenger.send(new Text('Hello World!'));
+messenger.send(new Text('Hello World!'), message.sender.id);
 ```
 
-you can also just pass a simple object to the `send` method like this
-
+you can also just pass an object to the `send` method like this
 
 ```javascript
 { text: 'Hello World!' }
@@ -230,20 +249,10 @@ you can also just pass a simple object to the `send` method like this
 <a name="button"></a>
 ### Button
 
-- `type` (Allowed values)
-	- `web_url`
-	- `postback`
-	- `phone_number`
-	- `account_link`
-	- `account_unlink`
-- `title`
-- `url`
+[https://developers.facebook.com/docs/messenger-platform/send-api-reference/buttons](https://developers.facebook.com/docs/messenger-platform/send-api-reference/buttons)
 
 
-This element must be used with the Button, Generic or Receipt templates.
-
-
-#### Example usage (with ButtonTemplate):
+#### Example (with ButtonTemplate):
 
 ```javascript
 import {
@@ -254,11 +263,21 @@ import {
 messenger.send(new ButtonTemplate(
   'Hey user! Watch these buttons:',
   [
-    new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
-    new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
+    new Button({ 
+      type: 'web_url',
+      title: 'Web Url Button',
+      url: 'http://www.example.com', 
+    }),
+    new Button({ 
+      type: 'postback', 
+      title: 'Postback Button',
+      payload: 'POSTBACK_INFO',
+    }),
   ]
-));
+), message.sender.id);
 ```
+
+For more examples, check out the tests.
 
 <a name="element"></a>
 ### Element
@@ -280,8 +299,16 @@ new Element({
   image_url: 'http://www.example.com',
   subtitle: 'Subtitle',
   buttons: [
-    new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
-    new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
+    new Button({ 
+      type: 'web_url', 
+      title: 'Web Url Button', 
+      url: 'http://www.example.com',
+     }),
+    new Button({ 
+      type: 'postback', 
+      title: 'Postback Button', 
+      payload: 'POSTBACK_INFO',
+      })
   ]
 });
 ...
@@ -366,7 +393,9 @@ new Adjustment({
 ```javascript
 import { Image } from 'fbmessenger';
 
-messenger.send(new Image({ url: 'http://lorempixel.com/400/400/sports/1/' }));
+messenger.send(new Image({ 
+  url: 'http://lorempixel.com/400/400/sports/1/',
+}), message.sender.id);
 ```
 
 <a name="audio"></a>
@@ -379,7 +408,9 @@ messenger.send(new Image({ url: 'http://lorempixel.com/400/400/sports/1/' }));
 ```javascript
 import { Audio } from 'fbmessenger';
 
-messenger.send(new Audio({ url: 'http://example.com/audio.mp3' }));
+messenger.send(new Audio({ 
+  url: 'http://example.com/audio.mp3',
+}), message.sender.id);
 ```
 
 <a name="video"></a>
@@ -392,7 +423,9 @@ messenger.send(new Audio({ url: 'http://example.com/audio.mp3' }));
 ```javascript
 import { Video } from 'fbmessenger';
 
-messenger.send(new Video({ url: 'http://example.com/video.mp4' }));
+messenger.send(new Video({ 
+  url: 'http://example.com/video.mp4',
+}), message.sender.id);
 ```
 
 <a name="file"></a>
@@ -405,7 +438,9 @@ messenger.send(new Video({ url: 'http://example.com/video.mp4' }));
 ```javascript
 import { File } from 'fbmessenger';
 
-messenger.send(new File({ url: 'http://example.com/file.txt' }));
+messenger.send(new File({ 
+  url: 'http://example.com/file.txt',
+}), message.sender.id);
 ```
 
 <a name="reusable-attachments"></a>
@@ -418,13 +453,13 @@ const image = new Image({
   url: 'http://lorempixel.com/400/400/sports/1/',
   is_reusable: true
 });
-messenger.send(image);
+messenger.send(image, message.sender.id);
 ```
 
 You can then use the `attachment_id` from the response to send the same attachment again
 
 ```javascript
-messenger.send(new Image({ attachment_id: 12345 });
+messenger.send(new Image({ attachment_id: 12345 }, message.sender.id);
 ```
 
 <a name="templates"></a>
@@ -446,10 +481,18 @@ import {
 messenger.send(new ButtonTemplate(
   'Hey user! Watch these buttons:',
   [
-    new Button({ type: 'web_url', title: 'Web Url Button', url: 'http://www.example.com' }),
-    new Button({ type: 'postback', title: 'Postback Button', payload: 'POSTBACK_INFO' })
+    new Button({ 
+      type: 'web_url', 
+      title: 'Web Url Button', 
+      url: 'http://www.example.com',
+    }),
+    new Button({ 
+      type: 'postback', 
+      title: 'Postback Button', 
+      payload: 'POSTBACK_INFO', 
+    })
   ]
-));
+), message.sender.id);
 ```
 
 #### GenericTemplate
@@ -473,12 +516,16 @@ messenger.send(new GenericTemplate(
     image_url: 'http://www.example.com',
     subtitle: 'Subtitle',
     buttons: [
-      new Button({ type: 'web_url', title: 'Button', url: 'http://www.example.com' })
+      new Button({ 
+        type: 'web_url', 
+        title: 'Button', 
+        url: 'http://www.example.com',
+      }),
     ]
   }),
   ...
 ]
-));
+), message.sender.id);
 ```
 
 #### ReceiptTemplate
@@ -531,7 +578,7 @@ messenger.send(new ReceiptTemplate({
   adjustments: [
     new Adjustment('Adjustment', 20)
   ]
-});
+}), message.sender.id);
 ```
 
 <a name="thread-settings"></a>
@@ -613,7 +660,7 @@ Available actions are
 - `mark_seen`
 
 ```javascript
-messenger.senderAction('typing_on');
+messenger.senderAction('typing_on', message.sender.id);
 ```
 
 <a name="quick-replies"></a>
@@ -622,15 +669,21 @@ messenger.senderAction('typing_on');
 Quick Replies work with all message types including text message, image and template attachments.
 
 ```javascript
-const reply1 = new QuickReply({ title: 'Example', payload: 'payload' });
-const reply2 = new QuickReply({ title: 'Location', content_type: 'location' });
+const reply1 = new QuickReply({ 
+  title: 'Example', 
+  payload: 'payload',
+});
+const reply2 = new QuickReply({ 
+  title: 'Location', 
+  content_type: 'location',
+});
 const quick_replies = new QuickReplies([reply1, reply2]);
 
 const text = new Text('A simple text message')
 
 const payload = Object.assign(text, quick_replies)
 
-messenger.send(payload)
+messenger.send(payload, message.sender.id)
 ```
 
 <a name="whitelisted-domains"></a>
@@ -699,6 +752,6 @@ messenger.on('message', () => {
         ]
       }
     }
-  });
+  }, message.sender.id);
 });
 ```
