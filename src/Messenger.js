@@ -186,6 +186,10 @@ class Messenger extends EventEmitter {
   }
 
   getUser(id) {
+    if (!id) {
+      throw new Error('A user ID is required.');
+    }
+
     const url = this.buildURL(id, {
       fields: 'first_name,last_name,profile_pic,locale,timezone,gender,is_payment_enabled',
     });
@@ -194,6 +198,10 @@ class Messenger extends EventEmitter {
   }
 
   send(payload, id) {
+    if (!id) {
+      throw new Error('A user ID is required.');
+    }
+
     const url = this.buildURL('me/messages');
     const body = {
       recipient: { id },
@@ -206,6 +214,10 @@ class Messenger extends EventEmitter {
   senderAction(senderAction, id) {
     if (SENDER_ACTIONS.indexOf(senderAction) === -1) {
       throw new Error('Invalid sender_action provided.');
+    }
+
+    if (!id) {
+      throw new Error('A user ID is required.');
     }
 
     const url = this.buildURL('me/messages');
