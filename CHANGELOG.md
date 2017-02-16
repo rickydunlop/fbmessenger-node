@@ -2,8 +2,8 @@
 ## 4.0.0
 
  * **Breaking Change**
-  * Removed lastMessage due to race conditions, you must explicitly pass the
-   recipient user id to `send`, `getUser` and `senderAction`.
+  * Removed `Messenger.lastMessage` as it caused race conditions, you must explicitly pass the
+   recipient's user id to `send`, `getUser` and `senderAction`.
   * MessengerClient merged into Messenger class
   * Button template signature has changed for consistency with other elements
  * **New Feature**
@@ -12,7 +12,7 @@
   * Added Changelog
   * Added support for `referral`, `checkout_update` and `payment` events
  * **Internal**
-  * Tests switched from Mocha to Jest 
+  * Tests switched from Mocha to Jest
   * Updated dependencies
   * Updated examples
   * Renamed `lib` directory to `src`

@@ -7,6 +7,10 @@
 A  library to integrate with the [Facebook Messenger Platform](https://developers.facebook.com/docs/messenger-platform).
 
 
+**Notice:**
+Please read the [CHANGELOG](CHANGELOG.md) if upgrading to v4.
+Every message you send must pass the recipients id
+
 ## Table of contents
 <!-- MarkdownTOC depth="1" autolink="true" autoanchor="true" bracket="round" -->
 
@@ -142,7 +146,7 @@ messenger.on(<event>, (message) => {
 
 _example console output_
 
-```javascript 
+```javascript
 {
   sender: {
     id: 1234,
@@ -207,8 +211,8 @@ Example usage:
 ```javascript
 messenger.getUser()
   .then((user) => {
-    messenger.send({ 
-  	  text: `Hey ${user.first_name} ${user.last_name}` 
+    messenger.send({
+  	  text: `Hey ${user.first_name} ${user.last_name}`
     }, message.sender.id);
 });
 ```
@@ -263,13 +267,13 @@ import {
 messenger.send(new ButtonTemplate(
   'Hey user! Watch these buttons:',
   [
-    new Button({ 
+    new Button({
       type: 'web_url',
       title: 'Web Url Button',
-      url: 'http://www.example.com', 
+      url: 'http://www.example.com',
     }),
-    new Button({ 
-      type: 'postback', 
+    new Button({
+      type: 'postback',
       title: 'Postback Button',
       payload: 'POSTBACK_INFO',
     }),
@@ -299,14 +303,14 @@ new Element({
   image_url: 'http://www.example.com',
   subtitle: 'Subtitle',
   buttons: [
-    new Button({ 
-      type: 'web_url', 
-      title: 'Web Url Button', 
+    new Button({
+      type: 'web_url',
+      title: 'Web Url Button',
       url: 'http://www.example.com',
      }),
-    new Button({ 
-      type: 'postback', 
-      title: 'Postback Button', 
+    new Button({
+      type: 'postback',
+      title: 'Postback Button',
       payload: 'POSTBACK_INFO',
       })
   ]
@@ -393,7 +397,7 @@ new Adjustment({
 ```javascript
 import { Image } from 'fbmessenger';
 
-messenger.send(new Image({ 
+messenger.send(new Image({
   url: 'http://lorempixel.com/400/400/sports/1/',
 }), message.sender.id);
 ```
@@ -408,7 +412,7 @@ messenger.send(new Image({
 ```javascript
 import { Audio } from 'fbmessenger';
 
-messenger.send(new Audio({ 
+messenger.send(new Audio({
   url: 'http://example.com/audio.mp3',
 }), message.sender.id);
 ```
@@ -423,7 +427,7 @@ messenger.send(new Audio({
 ```javascript
 import { Video } from 'fbmessenger';
 
-messenger.send(new Video({ 
+messenger.send(new Video({
   url: 'http://example.com/video.mp4',
 }), message.sender.id);
 ```
@@ -438,7 +442,7 @@ messenger.send(new Video({
 ```javascript
 import { File } from 'fbmessenger';
 
-messenger.send(new File({ 
+messenger.send(new File({
   url: 'http://example.com/file.txt',
 }), message.sender.id);
 ```
@@ -481,15 +485,15 @@ import {
 messenger.send(new ButtonTemplate(
   'Hey user! Watch these buttons:',
   [
-    new Button({ 
-      type: 'web_url', 
-      title: 'Web Url Button', 
+    new Button({
+      type: 'web_url',
+      title: 'Web Url Button',
       url: 'http://www.example.com',
     }),
-    new Button({ 
-      type: 'postback', 
-      title: 'Postback Button', 
-      payload: 'POSTBACK_INFO', 
+    new Button({
+      type: 'postback',
+      title: 'Postback Button',
+      payload: 'POSTBACK_INFO',
     })
   ]
 ), message.sender.id);
@@ -516,9 +520,9 @@ messenger.send(new GenericTemplate(
     image_url: 'http://www.example.com',
     subtitle: 'Subtitle',
     buttons: [
-      new Button({ 
-        type: 'web_url', 
-        title: 'Button', 
+      new Button({
+        type: 'web_url',
+        title: 'Button',
         url: 'http://www.example.com',
       }),
     ]
@@ -669,12 +673,12 @@ messenger.senderAction('typing_on', message.sender.id);
 Quick Replies work with all message types including text message, image and template attachments.
 
 ```javascript
-const reply1 = new QuickReply({ 
-  title: 'Example', 
+const reply1 = new QuickReply({
+  title: 'Example',
   payload: 'payload',
 });
-const reply2 = new QuickReply({ 
-  title: 'Location', 
+const reply2 = new QuickReply({
+  title: 'Location',
   content_type: 'location',
 });
 const quick_replies = new QuickReplies([reply1, reply2]);
