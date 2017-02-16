@@ -128,6 +128,72 @@ describe('Messenger', () => {
       messenger.handle(payload);
       expect(eventHandler.mock.calls.length).toEqual(1);
     });
+
+    it('Handles referrals', () => {
+      messenger.on('referral', eventHandler);
+
+      const payload = generatePayload('referral', {
+        ref: '<REF DATA PASSED IN M.ME PARAM>',
+        source: 'SHORTLINK',
+        type: 'OPEN_THREAD',
+      });
+
+      messenger.handle(payload);
+      expect(eventHandler.mock.calls.length).toEqual(1);
+    });
+
+    it('Handles payments', () => {
+      messenger.on('payment', eventHandler);
+
+      const payload = generatePayload('payment', {
+        payload: 'DEVELOPER_DEFINED_PAYLOAD',
+        requested_user_info: {
+          shipping_address: {
+            street_1: '1 Hacker Way',
+            street_2: '',
+            city: 'MENLO PARK',
+            state: 'CA',
+            country: 'US',
+            postal_code: 94025,
+          },
+          contact_name: 'Peter Chang',
+          contact_email: 'peter@anemailprovider.com',
+          contact_phone: '+15105551234',
+        },
+        payment_credential: {
+          provider_type: 'stripe',
+          charge_id: 'ch_18tmdBEoNIH3FPJHa60ep123',
+          fb_payment_id: 123456789,
+        },
+        amount: {
+          currency: 'USD',
+          amount: 29.62,
+        },
+        shipping_option_id: 123,
+      });
+
+      messenger.handle(payload);
+      expect(eventHandler.mock.calls.length).toEqual(1);
+    });
+
+    it('Handles checkout update', () => {
+      messenger.on('checkout_update', eventHandler);
+
+      const payload = generatePayload('checkout_update', {
+        payload: 'DEVELOPER_DEFINED_PAYLOAD',
+        shipping_address: {
+          street_1: '1 Hacker Way',
+          street_2: '',
+          city: 'MENLO PARK',
+          state: 'CA',
+          country: 'US',
+          postal_code: 94025,
+        },
+      });
+
+      messenger.handle(payload);
+      expect(eventHandler.mock.calls.length).toEqual(1);
+    });
   });
 
   describe('getUser', () => {
@@ -150,6 +216,12 @@ describe('Messenger', () => {
           done(e);
         }
       });
+    });
+
+    it('should throw error if no ID given', () => {
+      expect(() => {
+        messenger.getUser();
+      }).toThrow('A user ID is required.');
     });
   });
 
@@ -181,6 +253,12 @@ describe('Messenger', () => {
         }
       });
     });
+
+    it('should throw error if no ID given', () => {
+      expect(() => {
+        messenger.send(payload);
+      }).toThrow('A user ID is required.');
+    });
   });
 
   describe('sender actions', () => {
@@ -209,6 +287,12 @@ describe('Messenger', () => {
       expect(() => {
         messenger.senderAction('wrong', 'USER_ID');
       }).toThrow('Invalid sender_action provided.');
+    });
+
+    it('should throw error if no ID given', () => {
+      expect(() => {
+        messenger.senderAction('typing_on');
+      }).toThrow('A user ID is required.');
     });
   });
 

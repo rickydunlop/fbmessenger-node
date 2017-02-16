@@ -99,6 +99,7 @@ class Messenger extends EventEmitter {
   }
 
   static handleError(result) {
+    /* istanbul ignore if */
     if ({}.hasOwnProperty.call(result, 'error')) {
       switch (result.error.code) {
         case 4:
