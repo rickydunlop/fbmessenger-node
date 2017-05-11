@@ -2,7 +2,7 @@ import Summary from '../../src/elements/Summary';
 
 describe('Summary', () => {
   describe('new', () => {
-    it('returns proper object', () => {
+    it('returns valid object', () => {
       const summary = new Summary({
         subtotal: 75.00,
         shipping_cost: 4.95,
@@ -18,7 +18,7 @@ describe('Summary', () => {
       });
     });
 
-    it('returns proper object when just total_cost is passed', () => {
+    it('returns valid object when just total_cost is passed', () => {
       const summary = new Summary({
         total_cost: 56.14,
       });

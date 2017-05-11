@@ -25,6 +25,8 @@ export const QUICK_REPLY_TYPES = [
 
 export const QUICK_REPLY_LIMIT = 11;
 
+export const TEXT_LIMIT = 640;
+
 export const TOP_ELEMENT_STYLES = [
   'large',
   'compact',
