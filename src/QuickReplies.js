@@ -1,4 +1,4 @@
-import { QUICK_REPLY_TYPES } from './constants';
+import { QUICK_REPLY_TYPES, QUICK_REPLY_LIMIT } from './constants';
 
 class QuickReply {
   constructor({ title, payload = '', content_type = 'text', image_url = '' }) {
@@ -42,8 +42,8 @@ class QuickReplies {
       throw new Error('You must pass an array of QuickReply objects.');
     }
 
-    if (quickReplies.length > 10) {
-      throw new Error('You cannot have more than 10 quick replies.');
+    if (quickReplies.length > QUICK_REPLY_LIMIT) {
+      throw new Error(`You cannot have more than ${QUICK_REPLY_LIMIT} quick replies.`);
     }
 
     this.quickReplies = quickReplies;

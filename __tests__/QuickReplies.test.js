@@ -1,4 +1,5 @@
 import { QuickReply, QuickReplies } from '../src/QuickReplies';
+import { QUICK_REPLY_LIMIT } from '../src/constants';
 import Text from '../src/elements/Text';
 
 describe('QuickReplies', () => {
@@ -52,8 +53,8 @@ describe('QuickReplies', () => {
     describe('too many items', () => {
       it('throws error', () => {
         expect(() => {
-          new QuickReplies(new Array(11));
-        }).toThrow('You cannot have more than 10 quick replies.');
+          new QuickReplies(new Array(QUICK_REPLY_LIMIT + 1));
+        }).toThrow(`You cannot have more than ${QUICK_REPLY_LIMIT} quick replies.`);
       });
     });
   });

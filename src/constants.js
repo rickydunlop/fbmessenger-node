@@ -23,6 +23,8 @@ export const QUICK_REPLY_TYPES = [
   'location',
 ];
 
+export const QUICK_REPLY_LIMIT = 11;
+
 export const TOP_ELEMENT_STYLES = [
   'large',
   'compact',
