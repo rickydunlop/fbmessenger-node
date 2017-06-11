@@ -37,3 +37,8 @@ export const SENDER_ACTIONS = [
   'typing_on',
   'typing_off',
 ];
+
+export const IMAGE_ASPECT_RATIO_TYPES = [
+  'horizontal',
+  'square',
+];

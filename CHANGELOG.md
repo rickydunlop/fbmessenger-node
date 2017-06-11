@@ -1,4 +1,10 @@
 # Changelog
+
+## 5.0.0
+
+* **Breaking Change**
+  * Generic Template now expects an object instead of an array of elements
+
 ## 4.0.0
 
  * **Breaking Change**
