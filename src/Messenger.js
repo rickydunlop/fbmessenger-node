@@ -233,6 +233,14 @@ class Messenger extends EventEmitter {
     return this.post(url, body);
   }
 
+  messageAttachment(payload) {
+    const url = this.buildURL('me/message_attachments');
+    const body = {
+      message: payload,
+    };
+    return this.post(url, body);
+  }
+
   setThreadSetting(payload) {
     const url = this.buildURL('me/thread_settings');
 

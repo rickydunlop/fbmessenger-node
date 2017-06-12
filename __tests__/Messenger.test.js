@@ -1,6 +1,7 @@
 import nock from 'nock';
 
 import { Messenger } from '../src/Messenger';
+import Image from '../src/attachments/Image';
 
 const messenger = new Messenger({
   pageAccessToken: 'PAGE_ACCESS_TOKEN',
@@ -319,6 +320,28 @@ describe('Messenger', () => {
       expect(() => {
         messenger.senderAction('typing_on');
       }).toThrow('A user ID is required.');
+    });
+  });
+
+  describe('Attachment Upload API', () => {
+    beforeEach(() => {
+      nock('https://graph.facebook.com')
+        .post('/v2.8/me/message_attachments?access_token=PAGE_ACCESS_TOKEN')
+        .reply(200, {
+          attachment_id: '1854626884821032',
+        });
+    });
+
+    it('can upload a message attachments', (done) => {
+      const payload = new Image({ url: 'http://test.com/image.jpg', is_reusable: true });
+      messenger.messageAttachment(payload).then((resp) => {
+        try {
+          expect(resp).toHaveProperty('attachment_id');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
     });
   });
 

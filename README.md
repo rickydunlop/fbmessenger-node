@@ -467,6 +467,19 @@ You can then use the `attachment_id` from the response to send the same attachme
 messenger.send(new Image({ attachment_id: 12345 }, message.sender.id);
 ```
 
+### Attachment Upload API
+
+```javascript
+const image = new Image({
+  url: 'http://lorempixel.com/400/400/sports/1/',
+  is_reusable: true
+});
+messenger.messageAttachment(image);
+```
+
+This will return a reusable attachment ID.
+
+
 <a name="templates"></a>
 ## Templates
 
