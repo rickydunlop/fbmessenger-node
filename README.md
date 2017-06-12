@@ -729,6 +729,13 @@ messenger.removeWhitelistedDomain('http://example.com');
 messenger.removeWhitelistedDomains(['http://example.com', 'http://example2.com']);
 ```
 
+## Messenger Code API
+
+```javascript
+messenger.messengerCode({ size: 1000 });
+messenger.messengerCode({ ref: 'MY_REF' });
+```
+
 <a name="subscribing-an-app-to-a-page"></a>
 ## Subscribing an app to a page
 

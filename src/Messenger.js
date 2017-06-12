@@ -241,6 +241,27 @@ class Messenger extends EventEmitter {
     return this.post(url, body);
   }
 
+  messengerCode({ type = 'standard', size = 1000, ref = '' }) {
+    const url = this.buildURL('me/messenger_codes');
+    if (size < 100 || size > 2000) {
+      throw new Error('Size Supported range: 100-2000 px');
+    }
+
+    const body = {
+      type,
+      size,
+    };
+
+    if (ref) {
+      const isValid = /^[\w+/=\-.:]{1,250}$/.test(ref);
+      if (!isValid) {
+        throw new Error(`Invalid ref provided: ${ref}`);
+      }
+      body.data = { ref };
+    }
+    return this.post(url, body);
+  }
+
   setThreadSetting(payload) {
     const url = this.buildURL('me/thread_settings');
 

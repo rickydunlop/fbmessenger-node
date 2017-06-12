@@ -345,6 +345,56 @@ describe('Messenger', () => {
     });
   });
 
+  describe('Messenger Code API', () => {
+    beforeEach(() => {
+      nock('https://graph.facebook.com')
+        .post('/v2.8/me/messenger_codes?access_token=PAGE_ACCESS_TOKEN')
+        .reply(200, {
+          uri: 'YOUR_CODE_URL_HERE',
+        });
+    });
+
+    it('can generate a code', (done) => {
+      messenger.messengerCode({ size: 1000 }).then((resp) => {
+        try {
+          expect(resp).toHaveProperty('uri');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
+    it('can generate a parametric code', (done) => {
+      messenger.messengerCode({ size: 1000, ref: 'REF' }).then((resp) => {
+        try {
+          expect(resp).toHaveProperty('uri');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
+    it('should throw error if the ref is invalid', () => {
+      expect(() => {
+        messenger.messengerCode({ ref: '£REF' });
+      }).toThrow('Invalid ref provided: £REF');
+    });
+
+    it('should throw error if the size is too small', () => {
+      expect(() => {
+        messenger.messengerCode({ size: 50 });
+      }).toThrow('Size Supported range: 100-2000 px');
+    });
+
+    it('should throw error if the size is too big', () => {
+      expect(() => {
+        messenger.messengerCode({ size: 3000 });
+      }).toThrow('Size Supported range: 100-2000 px');
+    });
+  });
+
   describe('Subscribe app to a page', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')

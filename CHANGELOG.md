@@ -6,6 +6,7 @@
   * Generic Template now expects an object instead of an array of elements
   * **New Feature**
    * Support for Attachment Upload API
+   * Added support for Messenger Code API
    * Added support for `pre_checkout` event
 
 ## 4.0.0
