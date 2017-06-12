@@ -21,6 +21,7 @@ import ReceiptTemplate from './templates/ReceiptTemplate';
 import ListTemplate from './templates/ListTemplate';
 
 import {
+  FB_API_VERSION,
   SENDER_ACTIONS,
 } from './constants';
 
@@ -94,7 +95,7 @@ class Messenger extends EventEmitter {
     const obj = {
       protocol: 'https',
       host: 'graph.facebook.com',
-      pathname: `/v2.8/${pathname}`,
+      pathname: `/${FB_API_VERSION}/${pathname}`,
       query,
     };
 

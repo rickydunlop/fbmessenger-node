@@ -4,10 +4,12 @@
 
 * **Breaking Change**
   * Generic Template now expects an object instead of an array of elements
-  * **New Feature**
+* **New Feature**
    * Support for Attachment Upload API
    * Added support for Messenger Code API
    * Added support for `pre_checkout` event
+ * **Internal**
+  * Facebook API version changed to constant for consistency
 
 ## 4.0.0
 

@@ -1,6 +1,7 @@
 import nock from 'nock';
 
 import { Messenger } from '../src/Messenger';
+import { FB_API_VERSION } from '../src/constants';
 import Image from '../src/attachments/Image';
 
 const messenger = new Messenger({
@@ -264,7 +265,7 @@ describe('Messenger', () => {
 
     it('returns JSON', (done) => {
       nock('https://graph.facebook.com')
-        .post('/v2.8/me/messages?access_token=PAGE_ACCESS_TOKEN')
+        .post(`/${FB_API_VERSION}/me/messages?access_token=PAGE_ACCESS_TOKEN`)
         .reply(200, {
           recipient_id: '1008372609250235',
           message_id: 'mid.1456970487936:c34767dfe57ee6e339',
@@ -291,7 +292,7 @@ describe('Messenger', () => {
   describe('sender actions', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')
-      .post('/v2.8/me/messages?access_token=PAGE_ACCESS_TOKEN')
+      .post(`/${FB_API_VERSION}/me/messages?access_token=PAGE_ACCESS_TOKEN`)
       .reply(200, {
         recipient_id: 'USER_ID',
         message_id: 'mid.1456970487936:c34767dfe57ee6e339',
@@ -326,7 +327,7 @@ describe('Messenger', () => {
   describe('Attachment Upload API', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')
-        .post('/v2.8/me/message_attachments?access_token=PAGE_ACCESS_TOKEN')
+        .post(`/${FB_API_VERSION}/me/message_attachments?access_token=PAGE_ACCESS_TOKEN`)
         .reply(200, {
           attachment_id: '1854626884821032',
         });
@@ -348,7 +349,7 @@ describe('Messenger', () => {
   describe('Messenger Code API', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')
-        .post('/v2.8/me/messenger_codes?access_token=PAGE_ACCESS_TOKEN')
+        .post(`/${FB_API_VERSION}/me/messenger_codes?access_token=PAGE_ACCESS_TOKEN`)
         .reply(200, {
           uri: 'YOUR_CODE_URL_HERE',
         });
@@ -398,7 +399,7 @@ describe('Messenger', () => {
   describe('Subscribe app to a page', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')
-        .post('/v2.8/me/subscribed_apps?access_token=PAGE_ACCESS_TOKEN')
+        .post(`/${FB_API_VERSION}/me/subscribed_apps?access_token=PAGE_ACCESS_TOKEN`)
         .reply(200, {
           result: true,
         });
@@ -419,12 +420,12 @@ describe('Messenger', () => {
   describe('Thread settings', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')
-        .post('/v2.8/me/thread_settings?access_token=PAGE_ACCESS_TOKEN')
+        .post(`/${FB_API_VERSION}/me/thread_settings?access_token=PAGE_ACCESS_TOKEN`)
         .reply(200, {
           result: true,
         });
       nock('https://graph.facebook.com')
-        .delete('/v2.8/me/thread_settings?access_token=PAGE_ACCESS_TOKEN')
+        .delete(`/${FB_API_VERSION}/me/thread_settings?access_token=PAGE_ACCESS_TOKEN`)
         .reply(200, {
           result: true,
         });
@@ -603,7 +604,7 @@ describe('Messenger', () => {
     describe('linkAccount', () => {
       it('can link an account', (done) => {
         nock('https://graph.facebook.com')
-          .get('/v2.8/me?fields=recipient&account_linking_token=ACCOUNT_LINKING_TOKEN&access_token=PAGE_ACCESS_TOKEN')
+          .get(`/${FB_API_VERSION}/me?fields=recipient&account_linking_token=ACCOUNT_LINKING_TOKEN&access_token=PAGE_ACCESS_TOKEN`)
           .reply(200, {
             id: 'PAGE_ID',
             recipient: 'PSID',
@@ -624,7 +625,7 @@ describe('Messenger', () => {
     describe('unlinkAccount', () => {
       it('can unlink an account', (done) => {
         nock('https://graph.facebook.com')
-          .post('/v2.8/me/unlink_accounts?access_token=PAGE_ACCESS_TOKEN')
+          .post(`/${FB_API_VERSION}/me/unlink_accounts?access_token=PAGE_ACCESS_TOKEN`)
           .reply(200, {
             result: 'unlink account success',
           });
