@@ -194,6 +194,32 @@ describe('Messenger', () => {
       messenger.handle(payload);
       expect(eventHandler.mock.calls.length).toEqual(1);
     });
+
+    it('Handles pre checkout', () => {
+      messenger.on('pre_checkout', eventHandler);
+
+      const payload = generatePayload('pre_checkout', {
+        payload: 'xyz',
+        requested_user_info: {
+          shipping_address: {
+            street_1: '1 Hacker Way',
+            street_2: '',
+            city: 'MENLO PARK',
+            state: 'CA',
+            country: 'US',
+            postal_code: 94025,
+          },
+          contact_name: 'Tao Jiang',
+        },
+        amount: {
+          currency: 'USD',
+          amount: 29.62,
+        },
+      });
+
+      messenger.handle(payload);
+      expect(eventHandler.mock.calls.length).toEqual(1);
+    });
   });
 
   describe('getUser', () => {

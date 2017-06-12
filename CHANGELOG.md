@@ -4,6 +4,8 @@
 
 * **Breaking Change**
   * Generic Template now expects an object instead of an array of elements
+  * **New Feature**
+   * Added support for `pre_checkout` event
 
 ## 4.0.0
 

@@ -79,6 +79,9 @@ class Messenger extends EventEmitter {
         if (message.checkout_update) {
           this.emit('checkout_update', message);
         }
+        if (message.pre_checkout) {
+          this.emit('pre_checkout', message);
+        }
       });
     });
   }

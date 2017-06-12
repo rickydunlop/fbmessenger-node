@@ -134,6 +134,7 @@ The following events can be listened for:
 - referral
 - checkout_update
 - payment
+- pre_checkout
 
 <a name="listening-for-events"></a>
 ### Listening for events
