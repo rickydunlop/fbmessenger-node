@@ -117,8 +117,10 @@ class Messenger extends EventEmitter {
               throw new Error('Attachment size exceeds allowable limit.');
             case 2018001:
               throw new Error('No matching user found.');
+            case 2018034:
+              throw new Error('Message cannot be empty.');
             default:
-              throw new Error('Invalid fbid.');
+              throw new Error(result.error.message);
           }
         case 10:
           switch (result.error.subcode) {
@@ -137,15 +139,14 @@ class Messenger extends EventEmitter {
             case 2018021:
               throw new Error('Requires phone matching access fee to be paid by this page unless the recipient user is an admin, developer, or tester of the app.');
             default:
-              break;
+              throw new Error(result.error.message || 'Unknown error occurred.');
           }
-          break;
         case 190:
           throw new Error('Invalid OAuth access token.');
         case 10303:
           throw new Error('Invalid account_linking_token.');
         default:
-          throw new Error('Unknown error occurred.');
+          throw new Error(result.error.message || 'Unknown error occurred.');
       }
     }
     return result;
