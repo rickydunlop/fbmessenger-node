@@ -139,15 +139,14 @@ class Messenger extends EventEmitter {
             case 2018021:
               throw new Error('Requires phone matching access fee to be paid by this page unless the recipient user is an admin, developer, or tester of the app.');
             default:
-              throw new Error(result.error.message || "Unknown error occurred.");
+              throw new Error(result.error.message || 'Unknown error occurred.');
           }
-          break;
         case 190:
           throw new Error('Invalid OAuth access token.');
         case 10303:
           throw new Error('Invalid account_linking_token.');
         default:
-          throw new Error(result.error.message || "Unknown error occurred.");
+          throw new Error(result.error.message || 'Unknown error occurred.');
       }
     }
     return result;

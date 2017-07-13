@@ -15,6 +15,7 @@
     "build": "babel src --out-dir dist",
     "coverage": "cross-env NODE_ENV=test nyc npm test",
     "prepublish": "npm run build",
+    "lint": "eslint src/",
     "test": "cross-env NODE_ENV=test jest",
     "travis-coveralls": "npm run test && cat ./coverage/lcov.info | coveralls"
   },

@@ -5,4 +5,7 @@ node_js:
 install:
   - npm install -g babel-cli
   - npm install
+script:
+  - npm run lint
+  - npm test
 after_success: npm run travis-coveralls
