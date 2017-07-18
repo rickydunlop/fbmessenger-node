@@ -8,8 +8,7 @@ A  library to integrate with the [Facebook Messenger Platform](https://developer
 
 
 **Notice:**
-Please read the [CHANGELOG](CHANGELOG.md) if upgrading to v4.
-Every message you send must pass the recipients id
+Please see the [CHANGELOG](CHANGELOG.md) for any breaking changes.
 
 ## Table of contents
 <!-- MarkdownTOC depth="1" autolink="true" autoanchor="true" bracket="round" -->
