@@ -3,26 +3,35 @@ import EventEmitter from 'events';
 import * as NodeUrl from 'url';
 import fetch from 'node-fetch';
 
-import Text from './elements/Text';
-import Button from './elements/Button';
-import Address from './elements/Address';
-import Element from './elements/Element';
-import Summary from './elements/Summary';
-import Adjustment from './elements/Adjustment';
-import DefaultAction from './elements/DefaultAction';
-import Image from './attachments/Image';
-import Audio from './attachments/Audio';
-import Video from './attachments/Video';
-import File from './attachments/File';
+import {
+  Text,
+  Button,
+  Address,
+  Element,
+  Summary,
+  Adjustment,
+  DefaultAction,
+} from './elements';
 
-import ButtonTemplate from './templates/ButtonTemplate';
-import GenericTemplate from './templates/GenericTemplate';
-import ReceiptTemplate from './templates/ReceiptTemplate';
-import ListTemplate from './templates/ListTemplate';
+import {
+  Image,
+  Audio,
+  Video,
+  File,
+} from './attachments';
+
+import {
+  ButtonTemplate,
+  GenericTemplate,
+  ReceiptTemplate,
+  ListTemplate,
+} from './templates';
 
 import {
   FB_API_VERSION,
   SENDER_ACTIONS,
+  GET_STARTED_LIMIT,
+  WHITELISTED_DOMAIN_MAX,
 } from './constants';
 
 import {
@@ -35,7 +44,7 @@ import {
   GetStartedButton,
   PersistentMenu,
   PersistentMenuItem,
-} from './ThreadSettings';
+} from './messenger_profile';
 
 
 class Messenger extends EventEmitter {
@@ -195,8 +204,19 @@ class Messenger extends EventEmitter {
       throw new Error('A user ID is required.');
     }
 
+    const fields = [
+      'first_name',
+      'last_name',
+      'profile_pic',
+      'locale',
+      'timezone',
+      'gender',
+      'is_payment_enabled',
+      'last_ad_referral',
+    ].join(',');
+
     const url = this.buildURL(id, {
-      fields: 'first_name,last_name,profile_pic,locale,timezone,gender,is_payment_enabled',
+      fields,
     });
 
     return this.get(url);
@@ -263,105 +283,252 @@ class Messenger extends EventEmitter {
     return this.post(url, body);
   }
 
-  setThreadSetting(payload) {
-    const url = this.buildURL('me/thread_settings');
-
-    return this.post(url, payload);
-  }
-
+  /**
+  * Subscribes an app to a page
+  * @return {Object} JSON Response object
+  */
   subscribeAppToPage() {
     const url = this.buildURL('me/subscribed_apps');
-
     return this.post(url);
   }
 
-  deleteThreadSetting(body) {
-    const url = this.buildURL('me/thread_settings');
-
-    return this.delete(url, body);
+  /**
+   * Read multiple Messenger Profile properties at the same time
+   * @param  {Mixed} props Array or comma separated list of properties to read
+   * @return {Object} JSON Response object
+   */
+  getMessengerProfile(props) {
+    let fields = props;
+    if (Array.isArray(props)) {
+      fields = props.join();
+    }
+    const url = this.buildURL('me/messenger_profile', { fields });
+    return this.get(url, fields);
   }
 
-  deleteGetStarted() {
-    return this.deleteThreadSetting({
-      setting_type: 'call_to_actions',
-      thread_state: 'new_thread',
-    });
+  /**
+   * Set multiple Messenger Profile properties at the same time
+   * @param {Array} payload Property names and their new settings
+   * @return {Object} JSON Response object
+   */
+  setMessengerProfile(payload) {
+    const url = this.buildURL('me/messenger_profile');
+    return this.post(url, payload);
   }
 
-  deleteGreetingText() {
-    return this.deleteThreadSetting({
-      setting_type: 'greeting',
-    });
-  }
-
-  deletePersistentMenu() {
-    return this.deleteThreadSetting({
-      setting_type: 'call_to_actions',
-      thread_state: 'existing_thread',
-    });
-  }
-
-  linkAccount(accountLinkingToken) {
-    const url = this.buildURL('me', {
-      fields: 'recipient',
-      account_linking_token: accountLinkingToken,
-    });
-
-    return this.get(url);
-  }
-
-  unlinkAccount(psid) {
-    const url = this.buildURL('me/unlink_accounts');
-    const body = { psid };
-
-    return this.post(url, body);
-  }
-
-  updateWhitelistedDomains(action_type, domains) {
-    if (!Array.isArray(domains)) {
-      throw new Error('An array of domains must be provided');
+  /**
+   * Delete multiple Messenger Profile properties at the same time
+   * @param  {Array} payload Properties to be deleted
+   * @return {Object} JSON Response object
+   */
+  deleteMessengerProfile(fields) {
+    let payload = fields;
+    if (!Array.isArray(fields)) {
+      payload = [fields];
     }
 
-    const url = this.buildURL('me/thread_settings');
-    const body = {
-      setting_type: 'domain_whitelisting',
-      domain_action_type: action_type,
-      whitelisted_domains: domains,
+    const url = this.buildURL('me/messenger_profile');
+    return this.delete(url, { payload });
+  }
+
+  /**
+   * Ses the Get Started Button
+   * @param {string} payload Payload that will be sent back to your webhook
+   * @return {Object} JSON Response object
+   */
+  setGetStarted(payload) {
+    if (payload.length > GET_STARTED_LIMIT) {
+      throw new Error(`Get Started payload limit is ${GET_STARTED_LIMIT}.`);
+    }
+    const params = {
+      get_started: { payload },
     };
-
-    return this.post(url, body);
+    return this.setMessengerProfile(params);
   }
 
-  addWhitelistedDomain(domain) {
-    if (!domain) {
-      throw new Error('A domain must be provided');
-    }
-
-    return this.updateWhitelistedDomains('add', [domain]);
+  /**
+   * Deletes the get started button
+   * @return {Object} JSON Response object
+   */
+  deleteGetStarted() {
+    return this.deleteMessengerProfile(['get_started']);
   }
 
-  addWhitelistedDomains(domains) {
-    if (!domains) {
-      throw new Error('An array of domains must be provided');
+  /**
+   * Sets the Greeting Text
+   * @param {Array} payload Array of Greeting text objects
+   * @return {Object} JSON Response object
+   */
+  setGreetingText(greetings) {
+    let payload = greetings;
+    if (!Array.isArray(greetings)) {
+      payload = [greetings];
     }
 
-    return this.updateWhitelistedDomains('add', domains);
+    const hasDefault = payload.some(x => x.locale === 'default');
+    if (!hasDefault) {
+      throw new Error('You must provide a default locale');
+    }
+    const params = {
+      greeting: payload,
+    };
+    return this.setMessengerProfile(params);
   }
 
-  removeWhitelistedDomain(domain) {
-    if (!domain) {
-      throw new Error('A domain must be provided');
-    }
-
-    return this.updateWhitelistedDomains('remove', [domain]);
+  /**
+   * Deletes the greeting text
+   * @return {Object} JSON Response object
+   */
+  deleteGreetingText() {
+    return this.deleteMessengerProfile(['greeting']);
   }
 
-  removeWhitelistedDomains(domains) {
-    if (!domains) {
-      throw new Error('An array of domains must be provided');
+  /**
+   * Sets whitelisted domains
+   * @param {Array} payload Domains to whitelist
+   * @return {Object} JSON Response object
+   */
+  setDomainWhitelist(payload) {
+    if (!payload) {
+      throw new Error('A domain must be provided.');
+    }
+    if (payload.length > WHITELISTED_DOMAIN_MAX) {
+      throw new Error(`You may only whitelist ${WHITELISTED_DOMAIN_MAX} domains.`);
+    }
+    const params = {
+      whitelisted_domains: payload,
+    };
+    return this.setMessengerProfile(params);
+  }
+
+  /**
+   * Deletes whitelisted domains
+   * @return {Object} JSON Response object
+   */
+  deleteDomainWhitelist() {
+    return this.deleteMessengerProfile(['whitelisted_domains']);
+  }
+
+  /**
+   * Sets the persistent menu
+   * @param {Object} payload Target Audience settings
+   * @return {Object} JSON Response object
+   */
+  setPersistentMenu(menus) {
+    let payload = menus;
+    if (!Array.isArray(menus)) {
+      payload = [menus];
     }
 
-    return this.updateWhitelistedDomains('remove', domains);
+    const hasDefault = payload.some(x => x.locale === 'default');
+    if (!hasDefault) {
+      throw new Error('You must provide a default locale');
+    }
+
+    const params = {
+      persistent_menu: payload,
+    };
+    return this.setMessengerProfile(params);
+  }
+
+  /**
+   * Deletes the persistent menu
+   * @return {Object} JSON Response object
+   */
+  deletePersistentMenu() {
+    return this.deleteMessengerProfile(['persistent_menu']);
+  }
+
+  /**
+   * Sets an account linking url
+   * @param {string} payload Account linking URL
+   * @return {Object} JSON Response object
+   */
+  setAccountLinkingURL(payload) {
+    if (!payload) {
+      throw new Error('A URL must be provided.');
+    }
+    const params = {
+      account_linking_url: payload,
+    };
+    return this.setMessengerProfile(params);
+  }
+
+  /**
+   * Deletes the account linking URL
+   * @return {Object} JSON Response object
+   */
+  deleteAccountLinkingURL() {
+    return this.deleteMessengerProfile(['account_linking_url']);
+  }
+
+  /**
+   * Sets payment settings
+   * @param {Object} payload Target Audience settings
+   * @return {Object} JSON Response object
+   */
+  setPaymentSettings(payload) {
+    if (!payload) {
+      throw new Error('Payment settings must be provided.');
+    }
+    const params = {
+      payment_settings: payload,
+    };
+    return this.setMessengerProfile(params);
+  }
+
+  /**
+   * Deletes payment settings
+   * @return {Object} JSON Response object
+   */
+  deletePaymentSettings() {
+    return this.deleteMessengerProfile(['payment_settings']);
+  }
+
+  /**
+   * Sets the target audience
+   * @param {Object} payload Target Audience settings
+   * @return {Object} JSON Response object
+   */
+  setTargetAudience(payload) {
+    if (!payload) {
+      throw new Error('A target audience must be provided.');
+    }
+    const params = {
+      target_audience: payload,
+    };
+    return this.setMessengerProfile(params);
+  }
+  /**
+   * Deletes the target audience
+   * @return {Object} JSON Response object
+   */
+  deleteTargetAudience() {
+    return this.deleteMessengerProfile(['target_audience']);
+  }
+
+  /**
+   * Sets the home url
+   * See: https://developers.facebook.com/docs/messenger-platform/messenger-profile/home-url
+   * @param {Object} payload Home URL settings
+   * @return {Object} JSON Response object
+   */
+  setHomeURL(payload) {
+    if (!payload) {
+      throw new Error('A URL must be provided.');
+    }
+    const params = {
+      home_url: payload,
+    };
+    return this.setMessengerProfile(params);
+  }
+
+  /**
+   * Deletes the home URL
+   * @return {Object} JSON Response object
+   */
+  deleteHomeURL() {
+    return this.deleteMessengerProfile(['home_url']);
   }
 }
 

@@ -1,14 +1,21 @@
 import nock from 'nock';
 
 import { Messenger } from '../src/Messenger';
-import { FB_API_VERSION } from '../src/constants';
+import {
+  FB_API_VERSION,
+  GET_STARTED_LIMIT,
+  WHITELISTED_DOMAIN_MAX,
+ } from '../src/constants';
+import {
+  GreetingText,
+} from '../src/messenger_profile';
 import Image from '../src/attachments/Image';
 
 const messenger = new Messenger({
   pageAccessToken: 'PAGE_ACCESS_TOKEN',
 });
 
-function generatePayload(key, payload) {
+const generatePayload = (key, payload) => {
   const res = {
     object: 'page',
     entry: [
@@ -31,10 +38,10 @@ function generatePayload(key, payload) {
   };
   res.entry[0].messaging[0][key] = payload;
   return res;
-}
+};
 
 describe('Messenger', () => {
-  describe('new', () => {
+  describe('Create', () => {
     describe('with all attributes', () => {
       it('initializes correctly', () => expect(messenger).toBeTruthy());
     });
@@ -224,7 +231,7 @@ describe('Messenger', () => {
     });
   });
 
-  describe('getUser', () => {
+  describe('User', () => {
     it('returns JSON', (done) => {
       nock('https://graph.facebook.com')
         .get(/USER_ID/)
@@ -253,7 +260,7 @@ describe('Messenger', () => {
     });
   });
 
-  describe('send', () => {
+  describe('Send', () => {
     const payload = {
       recipient: {
         id: 'USER_ID',
@@ -289,7 +296,7 @@ describe('Messenger', () => {
     });
   });
 
-  describe('sender actions', () => {
+  describe('Sender actions', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')
       .post(`/${FB_API_VERSION}/me/messages?access_token=PAGE_ACCESS_TOKEN`)
@@ -417,226 +424,346 @@ describe('Messenger', () => {
     });
   });
 
-  describe('Thread settings', () => {
-    beforeEach(() => {
-      nock('https://graph.facebook.com')
-        .post(`/${FB_API_VERSION}/me/thread_settings?access_token=PAGE_ACCESS_TOKEN`)
-        .reply(200, {
-          result: true,
-        });
-      nock('https://graph.facebook.com')
-        .delete(`/${FB_API_VERSION}/me/thread_settings?access_token=PAGE_ACCESS_TOKEN`)
-        .reply(200, {
-          result: true,
-        });
-    });
+  describe('Messenger Profile', () => {
+    describe('Network calls', () => {
+      const successResponse = { result: 'success' };
+      const getStartedPayload = {
+        get_started: {
+          payload: 'GET_STARTED_PAYLOAD',
+        },
+      };
+      beforeEach(() => {
+        nock('https://graph.facebook.com')
+          .get(`/${FB_API_VERSION}/me/messenger_profile`)
+          .query({
+            fields: 'get_started',
+            access_token: 'PAGE_ACCESS_TOKEN',
+          })
+          .reply(200, getStartedPayload);
+      });
 
-    describe('setThreadSetting', () => {
-      it('can set greeting text', (done) => {
+      it('can read profile settings', (done) => {
+        messenger.getMessengerProfile('get_started').then((res) => {
+          try {
+            expect(res).toEqual(getStartedPayload);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        });
+      });
+
+      it('will convert array params to comma separated string', (done) => {
+        const fields = [
+          'get_started',
+        ];
+        messenger.getMessengerProfile(fields).then((res) => {
+          try {
+            expect(res).toEqual(successResponse);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        });
+      });
+
+      it('can set profile settings', (done) => {
         const payload = {
-          setting_type: 'greeting',
-          greeting: {
-            text: 'Welcome to My Company!',
+          get_started: {
+            payload: 'GET_STARTED_PAYLOAD',
           },
         };
-        messenger.setThreadSetting(payload).then((resp) => {
-          try {
-            expect(resp).toHaveProperty('result');
-            done();
-          } catch (e) {
-            done(e);
-          }
-        });
-      });
-    });
 
-    describe('deleteGetStarted', () => {
-      it('can delete the get started button', (done) => {
-        messenger.deleteGetStarted().then((resp) => {
-          try {
-            expect(resp).toHaveProperty('result');
-            done();
-          } catch (e) {
-            done(e);
-          }
-        });
-      });
-    });
-
-    describe('deleteGreetingText', () => {
-      it('can delete the greeting text', (done) => {
-        messenger.deleteGreetingText().then((resp) => {
-          try {
-            expect(resp).toHaveProperty('result');
-            done();
-          } catch (e) {
-            done(e);
-          }
-        });
-      });
-    });
-
-    describe('deletePersistentMenu', () => {
-      it('can delete the persistent menu', (done) => {
-        messenger.deletePersistentMenu().then((resp) => {
-          try {
-            expect(resp).toHaveProperty('result');
-            done();
-          } catch (e) {
-            done(e);
-          }
-        });
-      });
-    });
-
-    describe('whitelisted domains', () => {
-      const domain = 'https://facebook.com';
-      const domains = [
-        'https://facebook.com',
-        'https://developers.facebook.com',
-      ];
-
-      describe('Adding domains', () => {
-        it('should throw an error if domain not given', () => {
-          expect(() => {
-            messenger.addWhitelistedDomain();
-          }).toThrowError('A domain must be provided');
-        });
-
-        it('supports adding a single domain', (done) => {
-          messenger.addWhitelistedDomain(domain).then((resp) => {
-            try {
-              expect(resp).toHaveProperty('result');
-              done();
-            } catch (e) {
-              done(e);
-            }
-          });
-        });
-
-        it('should throw an error if no params given', () => {
-          expect(() => {
-            messenger.addWhitelistedDomains();
-          }).toThrowError('An array of domains must be provided');
-        });
-
-        it('supports adding multiple domains', (done) => {
-          messenger.addWhitelistedDomains(domains).then((resp) => {
-            try {
-              expect(resp).toHaveProperty('result');
-              done();
-            } catch (e) {
-              done(e);
-            }
-          });
-        });
-      });
-
-      describe('Removing domains', () => {
-        it('should throw an error if domain not given', () => {
-          expect(() => {
-            messenger.removeWhitelistedDomain();
-          }).toThrowError('A domain must be provided');
-        });
-
-        it('supports removing a single domain', (done) => {
-          messenger.removeWhitelistedDomain(domain).then((resp) => {
-            try {
-              expect(resp).toHaveProperty('result');
-              done();
-            } catch (e) {
-              done(e);
-            }
-          });
-        });
-
-        it('should throw an error if no params given when removing', () => {
-          expect(() => {
-            messenger.removeWhitelistedDomains();
-          }).toThrowError('An array of domains must be provided');
-        });
-
-        it('supports removing multiple domains', (done) => {
-          messenger.removeWhitelistedDomains(domains).then((resp) => {
-            try {
-              expect(resp).toHaveProperty('result');
-              done();
-            } catch (e) {
-              done(e);
-            }
-          });
-        });
-      });
-
-      describe('updateWhitelistedDomains', () => {
-        it('should throw an error if domains is not an array', () => {
-          expect(() => {
-            messenger.updateWhitelistedDomains(domain);
-          }).toThrowError('An array of domains must be provided');
-        });
-
-        it('works', (done) => {
-          messenger.updateWhitelistedDomains('add', domains).then((resp) => {
-            try {
-              expect(resp).toHaveProperty('result');
-              done();
-            } catch (e) {
-              done(e);
-            }
-          });
-        });
-
-        it('can remove a whitelisted domain', (done) => {
-          messenger.updateWhitelistedDomains('remove', domains).then((resp) => {
-            try {
-              expect(resp).toHaveProperty('result');
-              done();
-            } catch (e) {
-              done(e);
-            }
-          });
-        });
-      });
-    });
-  });
-
-  describe('Account linking', () => {
-    describe('linkAccount', () => {
-      it('can link an account', (done) => {
         nock('https://graph.facebook.com')
-          .get(`/${FB_API_VERSION}/me?fields=recipient&account_linking_token=ACCOUNT_LINKING_TOKEN&access_token=PAGE_ACCESS_TOKEN`)
-          .reply(200, {
-            id: 'PAGE_ID',
-            recipient: 'PSID',
-          });
+          .post(`/${FB_API_VERSION}/me/messenger_profile`)
+          .query({
+            access_token: 'PAGE_ACCESS_TOKEN',
+          })
+          .reply(200, successResponse);
 
-        messenger.linkAccount('ACCOUNT_LINKING_TOKEN').then((resp) => {
+        messenger.setMessengerProfile(payload).then((res) => {
           try {
-            expect(resp).toHaveProperty('id');
-            expect(resp).toHaveProperty('recipient');
+            expect(res).toEqual(successResponse);
             done();
           } catch (e) {
             done(e);
           }
         });
       });
+
+      describe('delete', () => {
+        beforeEach(() => {
+          nock('https://graph.facebook.com')
+            .delete(`/${FB_API_VERSION}/me/messenger_profile?access_token=PAGE_ACCESS_TOKEN`)
+            .reply(200, successResponse);
+        });
+
+        it('can delete profile settings', (done) => {
+          messenger.deleteMessengerProfile(['get_started']).then((res) => {
+            try {
+              expect(res).toEqual(successResponse);
+              done();
+            } catch (e) {
+              done(e);
+            }
+          });
+        });
+
+        it('converts params to an array', (done) => {
+          messenger.deleteMessengerProfile('get_started').then((res) => {
+            try {
+              expect(res).toEqual(successResponse);
+              done();
+            } catch (e) {
+              done(e);
+            }
+          });
+        });
+      });
     });
 
-    describe('unlinkAccount', () => {
-      it('can unlink an account', (done) => {
-        nock('https://graph.facebook.com')
-          .post(`/${FB_API_VERSION}/me/unlink_accounts?access_token=PAGE_ACCESS_TOKEN`)
-          .reply(200, {
-            result: 'unlink account success',
-          });
+    describe('Methods', () => {
+      let mockGetMessengerProfile;
+      let mockSetMessengerProfile;
+      let mockDeleteMessengerProfile;
 
-        messenger.unlinkAccount('psid').then((resp) => {
-          try {
-            expect(resp).toHaveProperty('result');
-            done();
-          } catch (e) {
-            done(e);
-          }
+      beforeEach(() => {
+        mockGetMessengerProfile = jest.fn();
+        mockSetMessengerProfile = jest.fn();
+        mockDeleteMessengerProfile = jest.fn();
+        messenger.getMessengerProfile = mockGetMessengerProfile;
+        messenger.setMessengerProfile = mockSetMessengerProfile;
+        messenger.deleteMessengerProfile = mockDeleteMessengerProfile;
+      });
+
+      describe('Get Started', () => {
+        it('can set the payload', () => {
+          const payload = 'USER_DEFINED_PAYLOAD';
+          messenger.setGetStarted(payload);
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+        });
+
+        it('can delete the button', () => {
+          messenger.deleteGetStarted();
+          expect(mockDeleteMessengerProfile.mock.calls.length).toBe(1);
+          expect(mockDeleteMessengerProfile.mock.calls[0][0]).toEqual(['get_started']);
+        });
+
+        it('should throw an error if the payload is too long', () => {
+          expect(() => {
+            const payload = 'x'.repeat(1001);
+            messenger.setGetStarted(payload);
+          }).toThrowError(`Get Started payload limit is ${GET_STARTED_LIMIT}.`);
+        });
+      });
+
+      describe('Greeting Text', () => {
+        it('can set the greeting text', () => {
+          const greeting = new GreetingText({ text: 'Welcome to My Company!' });
+          messenger.setGreetingText([greeting]);
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+        });
+
+        it('converts single greeting to an array', () => {
+          const greeting = new GreetingText({ text: 'Welcome to My Company!' });
+          messenger.setGreetingText(greeting);
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+          expect(mockSetMessengerProfile.mock.calls[0][0]).toEqual({
+            greeting: [
+              { text: 'Welcome to My Company!', locale: 'default' },
+            ],
+          });
+        });
+
+        it('can delete the greeting text', () => {
+          messenger.deleteGreetingText();
+          expect(mockDeleteMessengerProfile.mock.calls.length).toBe(1);
+          expect(mockDeleteMessengerProfile.mock.calls[0][0]).toEqual(['greeting']);
+        });
+
+        it('should throw an error if no default locale is provided', () => {
+          expect(() => {
+            const greeting = {
+              text: 'Text',
+              locale: 'en_US',
+            };
+            messenger.setGreetingText([greeting]);
+          }).toThrowError('You must provide a default locale');
+        });
+      });
+
+      describe('whitelisted domains', () => {
+        it('can set a domain whitelist', () => {
+          const domains = [
+            'https://facebook.com',
+          ];
+          messenger.setDomainWhitelist(domains);
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+        });
+
+        it('should throw an error if no parameters are supplied', () => {
+          expect(() => {
+            messenger.setDomainWhitelist();
+          }).toThrowError('A domain must be provided.');
+        });
+
+        it('should throw an error if too many domains are provided', () => {
+          expect(() => {
+            const maxDomains = Array(WHITELISTED_DOMAIN_MAX + 1).fill('http://example.com');
+            messenger.setDomainWhitelist(maxDomains);
+          }).toThrowError(`You may only whitelist ${WHITELISTED_DOMAIN_MAX} domains.`);
+        });
+
+        it('can delete a domain whitelist', () => {
+          messenger.deleteDomainWhitelist();
+          expect(mockDeleteMessengerProfile.mock.calls.length).toBe(1);
+          expect(mockDeleteMessengerProfile.mock.calls[0][0]).toEqual(['whitelisted_domains']);
+        });
+      });
+
+      describe('home url', () => {
+        it('can set a home url', () => {
+          messenger.setHomeURL('https://facebook.com');
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+        });
+
+        it('should throw an error if no parameters are supplied', () => {
+          expect(() => {
+            messenger.setHomeURL();
+          }).toThrowError('A URL must be provided.');
+        });
+
+        it('can delete a home url', () => {
+          messenger.deleteHomeURL();
+          expect(mockDeleteMessengerProfile.mock.calls.length).toBe(1);
+          expect(mockDeleteMessengerProfile.mock.calls[0][0]).toEqual(['home_url']);
+        });
+      });
+
+      describe('target audience', () => {
+        it('can set the target audience', () => {
+          messenger.setTargetAudience({
+            audience_type: 'custom',
+            countries: {
+              whitelist: ['US', 'CA'],
+            },
+          });
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+        });
+
+        it('should throw an error if no parameters are supplied', () => {
+          expect(() => {
+            messenger.setTargetAudience();
+          }).toThrowError('A target audience must be provided.');
+        });
+
+        it('can delete a target audience', () => {
+          messenger.deleteTargetAudience();
+          expect(mockDeleteMessengerProfile.mock.calls.length).toBe(1);
+          expect(mockDeleteMessengerProfile.mock.calls[0][0]).toEqual(['target_audience']);
+        });
+      });
+
+      describe('payment settings', () => {
+        it('can set the payment settings', () => {
+          messenger.setPaymentSettings({
+            public_key: 'YOUR_PUBLIC_KEY',
+            testers: [
+              12345678,
+            ],
+          });
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+        });
+
+        it('should throw an error if no parameters are supplied', () => {
+          expect(() => {
+            messenger.setPaymentSettings();
+          }).toThrowError('Payment settings must be provided.');
+        });
+
+        it('can delete payment settings', () => {
+          messenger.deletePaymentSettings();
+          expect(mockDeleteMessengerProfile.mock.calls.length).toBe(1);
+          expect(mockDeleteMessengerProfile.mock.calls[0][0]).toEqual(['payment_settings']);
+        });
+      });
+
+      describe('account linking url', () => {
+        it('can set the account linking url', () => {
+          const url = 'https://example.com/oauth?response_type=code&client_id=1234567890&scope=basic';
+          messenger.setAccountLinkingURL(url);
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+        });
+
+        it('should throw an error if no parameters are supplied', () => {
+          expect(() => {
+            messenger.setAccountLinkingURL();
+          }).toThrowError('A URL must be provided.');
+        });
+
+        it('can delete account linking url', () => {
+          messenger.deleteAccountLinkingURL();
+          expect(mockDeleteMessengerProfile.mock.calls.length).toBe(1);
+          expect(mockDeleteMessengerProfile.mock.calls[0][0]).toEqual(['account_linking_url']);
+        });
+      });
+
+      describe('persistent menu', () => {
+        it('can set the persistent menu', () => {
+          const menu = [{
+            locale: 'default',
+            call_to_actions: [
+              {
+                type: 'web_url',
+                title: 'Help',
+                url: 'http://facebook.com',
+              },
+            ],
+          }];
+          messenger.setPersistentMenu(menu);
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+        });
+
+        it('should convert a single menu into an array', () => {
+          const menu = {
+            locale: 'default',
+            call_to_actions: [
+              {
+                type: 'web_url',
+                title: 'Help',
+                url: 'http://facebook.com',
+              },
+            ],
+          };
+          messenger.setPersistentMenu(menu);
+          expect(mockSetMessengerProfile.mock.calls.length).toBe(1);
+        });
+
+        it('should throw an error if no default locale is provided', () => {
+          expect(() => {
+            const item = [
+              {
+                call_to_actions: [
+                  {
+                    type: 'web_url',
+                    title: 'Help',
+                    url: 'http://facebook.com',
+                  },
+                ],
+              },
+              {
+                locale: 'zh_CN',
+                composer_input_disabled: false,
+              },
+            ];
+            messenger.setPersistentMenu(item);
+          }).toThrowError('You must provide a default locale');
+        });
+
+        it('can delete persistent menu', () => {
+          messenger.deletePersistentMenu();
+          expect(mockDeleteMessengerProfile.mock.calls.length).toBe(1);
+          expect(mockDeleteMessengerProfile.mock.calls[0][0]).toEqual(['persistent_menu']);
         });
       });
     });
