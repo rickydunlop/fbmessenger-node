@@ -84,7 +84,12 @@ Steps:
 This is basic usage within an express.js application. For more detailed example look [here](https://github.com/rickydunlop/fbmessenger/blob/master/example/express-example.js).
 
 ```javascript
+import bodyParser from 'body-parser';
 import { Messenger } from 'fbmessenger';
+
+// Configuring Body Parser middleware to parse the incoming JSON and Url-encoded data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Initialize Messenger
 const messenger = new Messenger({
@@ -116,6 +121,33 @@ app.post('/webhook', (req, res) => {
   res.sendStatus(200);
   messenger.handle(req.body);
 });
+```
+
+<a name="verifying-requests"></a>
+## Verifying Requests
+
+It's important but not fundamental to verify each request that your application receives to make sure that who is calling your `/webhook` endpoint is **Facebook** and not some other person. That could be done by through verifying the **Signature Hash** that **Facebook** sends on every request. You will need to have your `APP_SECRET` in hands for performing such verification.
+
+```javascript
+// Function that verifies the signature hash
+const verifyRequestSignature = (req, res, buf) => {
+    const signature = req.headers['x-hub-signature'];
+
+    if (!signature) {
+        throw new Error('Couldn\'t validate the signature.');
+    } else {
+        const elements = signature.split('=');
+        const signatureHash = elements[1];
+        const expectedHash = crypto.createHmac('sha1', process.env.APP_SECRET).update(buf).digest('hex');
+
+        if (signatureHash !== expectedHash) {
+            throw new Error('Couldn\'t validate the request signature.');
+        }
+    }
+};
+
+// Pass a function that verifies the signature instead of just calling app.use(bodyParser.json())
+app.use(bodyParser.json({ verify: verifyRequestSignature });
 ```
 
 <a name="events"></a>
