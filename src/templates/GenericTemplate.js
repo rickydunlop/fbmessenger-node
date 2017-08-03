@@ -9,17 +9,14 @@ class GenericTemplate extends BaseTemplate {
       throw new Error('Invalid image aspect ratio type provided.');
     }
 
-    this.image_aspect_ratio = image_aspect_ratio;
-    this.sharable = sharable;
-
     return {
       attachment: {
         type: 'template',
         payload: {
           template_type: 'generic',
-          sharable: this.sharable,
-          image_aspect_ratio: this.image_aspect_ratio,
-          elements: this.elements,
+          sharable,
+          image_aspect_ratio,
+          elements,
         },
       },
     };

@@ -2,10 +2,11 @@ import {
   TOP_ELEMENT_STYLES,
   LIST_TEMPLATE_MIN_ELEMENTS,
   LIST_TEMPLATE_MAX_ELEMENTS,
+  LIST_TEMPLATE_MAX_BUTTONS,
 } from '../constants';
 
 class ListTemplate {
-  constructor({ elements, top_element_style = 'large' }) {
+  constructor({ elements, buttons = [], top_element_style = 'large', sharable = true }) {
     if (!Array.isArray(elements)) {
       throw new Error('elements must be an array.');
     }
@@ -22,16 +23,19 @@ class ListTemplate {
       throw new Error('Invalid top_element_style provided.');
     }
 
-    this.elements = elements;
-    this.top_element_style = top_element_style;
+    if (buttons && buttons.length > 1) {
+      throw new Error(`You can have a maximum of ${LIST_TEMPLATE_MAX_BUTTONS} button`);
+    }
 
     return {
       attachment: {
         type: 'template',
         payload: {
           template_type: 'list',
-          top_element_style: this.top_element_style,
-          elements: this.elements,
+          top_element_style,
+          elements,
+          sharable,
+          buttons,
         },
       },
     };

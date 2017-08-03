@@ -24,3 +24,15 @@ export const SENDER_ACTIONS = ['mark_seen', 'typing_on', 'typing_off'];
 export const IMAGE_ASPECT_RATIO_TYPES = ['horizontal', 'square'];
 export const LIST_TEMPLATE_MIN_ELEMENTS = 2;
 export const LIST_TEMPLATE_MAX_ELEMENTS = 4;
+export const LIST_TEMPLATE_MAX_BUTTONS = 1;
+export const OPEN_GRAPH_MAX_BUTTONS = 3;
+export const TAGS = [
+  'SHIPPING_UPDATE',
+  'RESERVATION_UPDATE',
+  'ISSUE_RESOLUTION',
+  'APPOINTMENT_UPDATE',
+  'GAME_EVENT',
+  'TRANSPORTATION_UPDATE',
+  'FEATURE_FUNCTIONALITY_UPDATE',
+  'TICKET_UPDATE',
+];

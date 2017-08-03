@@ -7,9 +7,12 @@
   * Changed babel to support Node 6 as minimum version
 * **New Feature**
    * Support for Attachment Upload API
-   * Supports new Messenger Profile API
+   * Support for new Messenger Profile API
    * Added support for Messenger Code API
    * Added support for `pre_checkout` event
+   * Added Open Graph template
+   * Supports message tags
+   * NLP can be enabled/disabled
  * **Internal**
   * Facebook API version moved to constants file for consistency
 

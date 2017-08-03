@@ -289,10 +289,35 @@ describe('Messenger', () => {
       });
     });
 
-    it('should throw error if no ID given', () => {
+    it('allows a tag to be included', (done) => {
+      nock('https://graph.facebook.com')
+        .post(`/${FB_API_VERSION}/me/messages?access_token=PAGE_ACCESS_TOKEN`)
+        .reply(200, {
+          recipient_id: '1008372609250235',
+          message_id: 'mid.1456970487936:c34767dfe57ee6e339',
+        });
+
+      messenger.send(payload, 'USER_ID', 'SHIPPING_UPDATE').then((resp) => {
+        try {
+          expect(resp).toHaveProperty('recipient_id');
+          expect(resp).toHaveProperty('message_id');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
+    it('errors if no ID given', () => {
       expect(() => {
         messenger.send(payload);
       }).toThrow('A user ID is required.');
+    });
+
+    it('errors if given an invalid tag', () => {
+      expect(() => {
+        messenger.send(payload, 'USER_ID', 'WRONG_TAG');
+      }).toThrow('Invalid tag provided.');
     });
   });
 
@@ -414,6 +439,43 @@ describe('Messenger', () => {
 
     it('can subscribe an app to a page', (done) => {
       messenger.subscribeAppToPage().then((resp) => {
+        try {
+          expect(resp).toHaveProperty('result');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+  });
+
+  describe('NLP', () => {
+    beforeEach(() => {
+      nock('https://graph.facebook.com')
+        .post(`/${FB_API_VERSION}/me/nlp_configs?nlp_enabled=true&access_token=PAGE_ACCESS_TOKEN`)
+        .reply(200, {
+          result: true,
+        });
+      nock('https://graph.facebook.com')
+        .post(`/${FB_API_VERSION}/me/nlp_configs?nlp_enabled=true&custom_token=token&access_token=PAGE_ACCESS_TOKEN`)
+        .reply(200, {
+          result: true,
+        });
+    });
+
+    it('can enable nlp', (done) => {
+      messenger.setNLP(true).then((resp) => {
+        try {
+          expect(resp).toHaveProperty('result');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
+    it('can set custom token', (done) => {
+      messenger.setNLP(true, 'token').then((resp) => {
         try {
           expect(resp).toHaveProperty('result');
           done();

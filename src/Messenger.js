@@ -32,6 +32,7 @@ import {
   SENDER_ACTIONS,
   GET_STARTED_LIMIT,
   WHITELISTED_DOMAIN_MAX,
+  TAGS,
 } from './constants';
 
 import {
@@ -222,9 +223,12 @@ class Messenger extends EventEmitter {
     return this.get(url);
   }
 
-  send(payload, id) {
+  send(payload, id, tag = '') {
     if (!id) {
       throw new Error('A user ID is required.');
+    }
+    if (tag && TAGS.indexOf(tag) === -1) {
+      throw new Error('Invalid tag provided.');
     }
 
     const url = this.buildURL('me/messages');
@@ -232,6 +236,10 @@ class Messenger extends EventEmitter {
       recipient: { id },
       message: payload,
     };
+
+    if (tag) {
+      body.tag = tag;
+    }
 
     return this.post(url, body);
   }
@@ -281,6 +289,20 @@ class Messenger extends EventEmitter {
       body.data = { ref };
     }
     return this.post(url, body);
+  }
+
+  /**
+   * Enable/Disable NLP
+   * @param {boolean} value True or false
+   */
+  setNLP(value, custom_token = '') {
+    const nlp_enabled = Boolean(value);
+    const params = { nlp_enabled };
+    if (custom_token) {
+      params.custom_token = custom_token;
+    }
+    const url = this.buildURL('me/nlp_configs', params);
+    return this.post(url);
   }
 
   /**

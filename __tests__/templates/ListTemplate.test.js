@@ -5,6 +5,7 @@ import ListTemplate from '../../src/templates/ListTemplate';
 import {
   LIST_TEMPLATE_MIN_ELEMENTS,
   LIST_TEMPLATE_MAX_ELEMENTS,
+  LIST_TEMPLATE_MAX_BUTTONS,
 } from '../../src/constants';
 
 const element = new Element({
@@ -37,6 +38,8 @@ describe('ListTemplate', () => {
           payload: {
             template_type: 'list',
             top_element_style: 'large',
+            sharable: true,
+            buttons: [],
             elements: [
               {
                 title: 'Title',
@@ -97,6 +100,17 @@ describe('ListTemplate', () => {
             elements: Array(5).fill(element),
           });
         }).toThrow(`You cannot have more than ${LIST_TEMPLATE_MAX_ELEMENTS} elements.`);
+      });
+    });
+
+    describe('with too many buttons', () => {
+      it('will throw an error', () => {
+        expect(() => {
+          new ListTemplate({
+            elements: Array(2).fill(element),
+            buttons: Array(LIST_TEMPLATE_MAX_BUTTONS + 1).fill('x'),
+          });
+        }).toThrow(`You can have a maximum of ${LIST_TEMPLATE_MAX_BUTTONS} button`);
       });
     });
 
