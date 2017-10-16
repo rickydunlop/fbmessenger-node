@@ -1,4 +1,6 @@
 # fbmessenger
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/rickydunlop/fbmessenger-node.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/rickydunlop/fbmessenger-node.svg?branch=master)](https://travis-ci.org/rickydunlop/fbmessenger-node)
 [![Coverage Status](https://coveralls.io/repos/github/rickydunlop/fbmessenger-node/badge.svg?branch=master)](https://coveralls.io/github/rickydunlop/fbmessenger-node?branch=master)
 [![npm version](https://img.shields.io/npm/v/fbmessenger.svg?style=flat)](https://www.npmjs.com/package/fbmessenger)
