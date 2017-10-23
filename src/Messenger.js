@@ -434,7 +434,7 @@ class Messenger extends EventEmitter {
 
   /**
    * Sets the persistent menu
-   * @param {Object} payload Target Audience settings
+   * @param {Object} payload PersistentMenu settings
    * @return {Object} JSON Response object
    */
   setPersistentMenu(menus) {
