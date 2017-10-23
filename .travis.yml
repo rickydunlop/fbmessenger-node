@@ -3,9 +3,9 @@ node_js:
   - '6'
   - '8'
 install:
-  - npm install -g babel-cli
-  - npm install
+  - yarn global add babel-cli
+  - yarn
 script:
-  - npm run lint
-  - npm test
-after_success: npm run travis-coveralls
+  - yarn run lint
+  - yarn test
+after_success: yarn run travis-coveralls
