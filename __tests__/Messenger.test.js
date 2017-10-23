@@ -5,7 +5,7 @@ import {
   FB_API_VERSION,
   GET_STARTED_LIMIT,
   WHITELISTED_DOMAIN_MAX,
- } from '../src/constants';
+} from '../src/constants';
 import {
   GreetingText,
 } from '../src/messenger_profile';
@@ -324,11 +324,11 @@ describe('Messenger', () => {
   describe('Sender actions', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')
-      .post(`/${FB_API_VERSION}/me/messages?access_token=PAGE_ACCESS_TOKEN`)
-      .reply(200, {
-        recipient_id: 'USER_ID',
-        message_id: 'mid.1456970487936:c34767dfe57ee6e339',
-      });
+        .post(`/${FB_API_VERSION}/me/messages?access_token=PAGE_ACCESS_TOKEN`)
+        .reply(200, {
+          recipient_id: 'USER_ID',
+          message_id: 'mid.1456970487936:c34767dfe57ee6e339',
+        });
     });
 
     it('return JSON', (done) => {
@@ -388,7 +388,7 @@ describe('Messenger', () => {
     });
 
     it('can generate a code', (done) => {
-      messenger.messengerCode({ size: 1000 }).then((resp) => {
+      messenger.messengerCode({ image_size: 1000 }).then((resp) => {
         try {
           expect(resp).toHaveProperty('uri');
           done();
@@ -399,7 +399,7 @@ describe('Messenger', () => {
     });
 
     it('can generate a parametric code', (done) => {
-      messenger.messengerCode({ size: 1000, ref: 'REF' }).then((resp) => {
+      messenger.messengerCode({ image_size: 1000, ref: 'REF' }).then((resp) => {
         try {
           expect(resp).toHaveProperty('uri');
           done();
@@ -417,13 +417,13 @@ describe('Messenger', () => {
 
     it('should throw error if the size is too small', () => {
       expect(() => {
-        messenger.messengerCode({ size: 50 });
+        messenger.messengerCode({ image_size: 50 });
       }).toThrow('Size Supported range: 100-2000 px');
     });
 
     it('should throw error if the size is too big', () => {
       expect(() => {
-        messenger.messengerCode({ size: 3000 });
+        messenger.messengerCode({ image_size: 3000 });
       }).toThrow('Size Supported range: 100-2000 px');
     });
   });
@@ -501,13 +501,13 @@ describe('Messenger', () => {
             fields: 'get_started',
             access_token: 'PAGE_ACCESS_TOKEN',
           })
-          .reply(200, getStartedPayload);
+          .reply(200, successResponse);
       });
 
       it('can read profile settings', (done) => {
         messenger.getMessengerProfile('get_started').then((res) => {
           try {
-            expect(res).toEqual(getStartedPayload);
+            expect(res).toEqual(successResponse);
             done();
           } catch (e) {
             done(e);
