@@ -4,7 +4,7 @@
 
 * **Breaking Change**
   * Generic Template now expects an object instead of an array of elements
-  * Changed babel to support Node 6 as minimum version
+  * Node 6 is now the minimum supported version
 * **New Feature**
    * Support for Attachment Upload API
    * Support for new Messenger Profile API
