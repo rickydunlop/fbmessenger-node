@@ -489,11 +489,6 @@ describe('Messenger', () => {
   describe('Messenger Profile', () => {
     describe('Network calls', () => {
       const successResponse = { result: 'success' };
-      const getStartedPayload = {
-        get_started: {
-          payload: 'GET_STARTED_PAYLOAD',
-        },
-      };
       beforeEach(() => {
         nock('https://graph.facebook.com')
           .get(`/${FB_API_VERSION}/me/messenger_profile`)
