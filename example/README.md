@@ -18,9 +18,5 @@ APP_SECRET=<your app secret>
 
     yarn start
 
-## Run async version
-
-  yarn run start:async
-
 
 You can use a tool like [ngrok](https://ngrok.com/) to tunnel connections to your localhost to make testing simple. Just set the Facebook app's webhook url to the https url that ngrok generates for you.
