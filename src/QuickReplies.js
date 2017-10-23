@@ -1,7 +1,9 @@
 import { QUICK_REPLY_TYPES, QUICK_REPLY_LIMIT } from './constants';
 
 class QuickReply {
-  constructor({ title, payload = '', content_type = 'text', image_url = '' }) {
+  constructor({
+    title, payload = '', content_type = 'text', image_url = '',
+  }) {
     if (QUICK_REPLY_TYPES.indexOf(content_type) === -1) {
       throw new Error('Invalid content type provided.');
     }

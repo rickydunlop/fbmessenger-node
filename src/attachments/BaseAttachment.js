@@ -1,5 +1,7 @@
 class BaseAttachment {
-  constructor({ type, url, is_reusable, attachment_id }) {
+  constructor({
+    type, url, is_reusable, attachment_id,
+  }) {
     this.type = type;
     this.url = url;
     this.is_reusable = is_reusable;

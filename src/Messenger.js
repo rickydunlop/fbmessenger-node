@@ -173,8 +173,8 @@ class Messenger extends EventEmitter {
         'Content-Type': 'application/json',
       },
     })
-    .then(response => response.json())
-    .then(res => this.constructor.handleError(res));
+      .then(response => response.json())
+      .then(res => this.constructor.handleError(res));
   }
 
   post(url, body = {}) {
@@ -185,8 +185,8 @@ class Messenger extends EventEmitter {
       },
       body: JSON.stringify(body),
     })
-    .then(response => response.json())
-    .then(res => this.constructor.handleError(res));
+      .then(response => response.json())
+      .then(res => this.constructor.handleError(res));
   }
 
   delete(url, body) {
@@ -197,8 +197,8 @@ class Messenger extends EventEmitter {
       },
       body: JSON.stringify(body),
     })
-    .then(response => response.json())
-    .then(res => this.constructor.handleError(res));
+      .then(response => response.json())
+      .then(res => this.constructor.handleError(res));
   }
 
   getUser(id) {
@@ -271,15 +271,15 @@ class Messenger extends EventEmitter {
     return this.post(url, body);
   }
 
-  messengerCode({ type = 'standard', size = 1000, ref = '' }) {
+  messengerCode({ type = 'standard', image_size = 1000, ref = '' } = {}) {
     const url = this.buildURL('me/messenger_codes');
-    if (size < 100 || size > 2000) {
+    if (image_size < 100 || image_size > 2000) {
       throw new Error('Size Supported range: 100-2000 px');
     }
 
     const body = {
       type,
-      size,
+      image_size,
     };
 
     if (ref) {
@@ -289,6 +289,7 @@ class Messenger extends EventEmitter {
       }
       body.data = { ref };
     }
+
     return this.post(url, body);
   }
 

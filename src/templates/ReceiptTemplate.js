@@ -1,7 +1,9 @@
 class ReceiptTemplate {
-  constructor({ recipient_name, order_number, currency, payment_method,
-                elements, summary, timestamp = '', order_url = '', address = '',
-                adjustments = [] }) {
+  constructor({
+    recipient_name, order_number, currency, payment_method,
+    elements, summary, timestamp = '', order_url = '', address = '',
+    adjustments = [],
+  }) {
     this.recipient_name = recipient_name;
     this.order_number = order_number;
     this.currency = currency;

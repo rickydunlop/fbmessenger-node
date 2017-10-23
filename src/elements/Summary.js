@@ -1,5 +1,7 @@
 class Summary {
-  constructor({ total_cost, subtotal = '', shipping_cost = '', total_tax = '' }) {
+  constructor({
+    total_cost, subtotal = '', shipping_cost = '', total_tax = '',
+  }) {
     this.total_cost = total_cost;
     this.subtotal = subtotal;
     this.shipping_cost = shipping_cost;

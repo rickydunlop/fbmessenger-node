@@ -1,5 +1,7 @@
 class Address {
-  constructor({ street_1, city, postal_code, state, country, street_2 = '' }) {
+  constructor({
+    street_1, city, postal_code, state, country, street_2 = '',
+  }) {
     this.street_1 = street_1;
     this.city = city;
     this.postal_code = postal_code;

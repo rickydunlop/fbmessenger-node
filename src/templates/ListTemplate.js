@@ -6,7 +6,9 @@ import {
 } from '../constants';
 
 class ListTemplate {
-  constructor({ elements, buttons = [], top_element_style = 'large', sharable = true }) {
+  constructor({
+    elements, buttons = [], top_element_style = 'large', sharable = true,
+  }) {
     if (!Array.isArray(elements)) {
       throw new Error('elements must be an array.');
     }
