@@ -10,8 +10,7 @@ A  library to integrate with the [Facebook Messenger Platform](https://developer
 
 
 **Notice:**
-Please read the [CHANGELOG](CHANGELOG.md) if upgrading to v4.
-Every message you send must pass the recipients id
+Please see the [CHANGELOG](CHANGELOG.md) for any breaking changes.
 
 ## Table of contents
 <!-- MarkdownTOC depth="1" autolink="true" autoanchor="true" bracket="round" -->
@@ -168,6 +167,7 @@ The following events can be listened for:
 - referral
 - checkout_update
 - payment
+- pre_checkout
 
 <a name="listening-for-events"></a>
 ### Listening for events
@@ -500,6 +500,19 @@ You can then use the `attachment_id` from the response to send the same attachme
 messenger.send(new Image({ attachment_id: 12345 }, message.sender.id);
 ```
 
+### Attachment Upload API
+
+```javascript
+const image = new Image({
+  url: 'http://lorempixel.com/400/400/sports/1/',
+  is_reusable: true
+});
+messenger.messageAttachment(image);
+```
+
+This will return a reusable attachment ID.
+
+
 <a name="templates"></a>
 ## Templates
 
@@ -747,6 +760,13 @@ messenger.removeWhitelistedDomain('http://example.com');
 
 // Multiple
 messenger.removeWhitelistedDomains(['http://example.com', 'http://example2.com']);
+```
+
+## Messenger Code API
+
+```javascript
+messenger.messengerCode({ size: 1000 });
+messenger.messengerCode({ ref: 'MY_REF' });
 ```
 
 <a name="subscribing-an-app-to-a-page"></a>

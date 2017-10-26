@@ -11,12 +11,12 @@ import {
   Video,
   GenericTemplate,
   GreetingText,
-  GetStartedButton,
   PersistentMenuItem,
   PersistentMenu,
   QuickReply,
   QuickReplies,
   ReceiptTemplate,
+  ListTemplate,
   Address,
   Summary,
   Adjustment,
@@ -35,8 +35,8 @@ const verifyRequestSignature = (req, res, buf) => {
     const elements = signature.split('=');
     const signatureHash = elements[1];
     const expectedHash = crypto.createHmac('sha1', process.env.APP_SECRET)
-                          .update(buf)
-                          .digest('hex');
+      .update(buf)
+      .digest('hex');
 
     if (signatureHash !== expectedHash) {
       throw new Error('Couldn\'t validate the request signature.');
@@ -58,55 +58,72 @@ const WHITELISTED_DOMAINS = [
 
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-async function initBot() {
-  messenger.addWhitelistedDomains(WHITELISTED_DOMAINS);
+const initBot = async () => {
+  try {
+    messenger.setDomainWhitelist(WHITELISTED_DOMAINS);
 
-  // Greeting Text
-  const greetingText = new GreetingText('Welcome to the bot demo.');
-  const greetingTextResult = await messenger.setThreadSetting(greetingText);
-  console.log(`Greeting Text: ${JSON.stringify(greetingTextResult)}`);
+    // Greeting Text
+    const greetingText = new GreetingText({ text: 'Welcome to the bot demo.' });
+    const greetingTextResult = await messenger.setGreetingText(greetingText);
+    console.log(`Greeting Text: ${JSON.stringify(greetingTextResult)}`);
 
-  // Get Started Button
-  const getStarted = new GetStartedButton('start');
-  const getStartedResult = await messenger.setThreadSetting(getStarted);
-  console.log(`Greeting Text: ${JSON.stringify(getStartedResult)}`);
+    // Get Started Button
+    const getStartedResult = await messenger.setGetStarted('START');
+    console.log(`Get Started: ${JSON.stringify(getStartedResult)}`);
 
-  // Persistent menu
-  const menuHelp = new PersistentMenuItem({
-    type: 'postback',
-    title: 'Help',
-    payload: 'help',
-  });
+    // Persistent menu
+    const menuFAQ = new PersistentMenuItem({
+      type: 'web_url',
+      title: 'FAQS',
+      url: 'https://developers.facebook.com/docs/messenger-platform/faq',
+    });
 
-  const menuDocs = new PersistentMenuItem({
-    type: 'web_url',
-    title: 'Messenger Docs',
-    url: 'https://developers.facebook.com/docs/messenger-platform',
-  });
+    const menuReference = new PersistentMenuItem({
+      type: 'web_url',
+      title: 'Reference',
+      url: 'https://developers.facebook.com/docs/messenger-platform/reference',
+    });
 
-  const menu = new PersistentMenu([menuHelp, menuDocs]);
-  const persistentMenuResult = await messenger.setThreadSetting(menu);
-  console.log(`Greeting Text: ${JSON.stringify(persistentMenuResult)}`);
-}
+    const menuHelp = new PersistentMenuItem({
+      title: 'Help',
+      type: 'nested',
+      call_to_actions: [
+        menuFAQ,
+        menuReference,
+      ],
+    });
 
-function getButton(ratio) {
-  return new Button({
-    type: 'web_url',
-    title: 'Stack Overflow',
-    url: 'https://stackoverflow.com',
-    webview_height_ratio: ratio,
-  });
-}
+    const menuDocs = new PersistentMenuItem({
+      type: 'web_url',
+      title: 'Messenger Docs',
+      url: 'https://developers.facebook.com/docs/messenger-platform',
+    });
 
-function getElement(btn) {
-  return new Element({
-    title: 'Template example',
-    item_url: 'https://stackoverflow.com',
-    image_url: 'http://placehold.it/300x300',
-    subtitle: 'Subtitle',
-    buttons: [btn],
-  });
-}
+    const menu = new PersistentMenu({
+      locale: 'default',
+      call_to_actions: [menuHelp, menuDocs],
+    });
+    const persistentMenuResult = await messenger.setPersistentMenu(menu);
+    console.log(`PersistentMenu: ${JSON.stringify(persistentMenuResult)}`);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const getButton = ratio => new Button({
+  type: 'web_url',
+  title: 'Stack Overflow',
+  url: 'https://stackoverflow.com',
+  webview_height_ratio: ratio,
+});
+
+const getElement = btn => new Element({
+  title: 'Template example',
+  item_url: 'https://stackoverflow.com',
+  image_url: 'http://placehold.it/300x300',
+  subtitle: 'Subtitle',
+  buttons: [btn],
+});
 
 messenger.on('message', async (message) => {
   console.log(`Message received: ${JSON.stringify(message, true)}`);
@@ -120,7 +137,7 @@ messenger.on('message', async (message) => {
       const text = `${message.message.attachments[0].title}:
                     lat: ${message.message.attachments[0].payload.coordinates.lat},
                     long: ${message.message.attachments[0].payload.coordinates.long}`;
-      messenger.send({ text }, recipient);
+      await messenger.send({ text }, recipient);
     }
 
     if (['audio', 'video', 'image', 'file'].includes(msgType)) {
@@ -135,7 +152,7 @@ messenger.on('message', async (message) => {
     msg = msg.toLowerCase();
 
     if (msg.includes('text')) {
-      messenger.send({ text: 'This is an example text message.' }, recipient);
+      await messenger.send({ text: 'This is an example text message.' }, recipient);
     }
 
     if (msg.includes('image')) {
@@ -147,13 +164,13 @@ messenger.on('message', async (message) => {
     }
 
     if (msg.includes('reuse')) {
-      messenger.send(new Image({ attachment_id: 947782652018100 }), recipient);
+      await messenger.send(new Image({ attachment_id: 947782652018100 }), recipient);
     }
 
     if (msg.includes('video')) {
       try {
         await messenger.send(new Video({
-          url: 'https://s3.amazonaws.com/co-pilot-bot-assets/test/46MB.mp4',
+          url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
         }), recipient);
       } catch (e) {
         console.error(e);
@@ -163,34 +180,69 @@ messenger.on('message', async (message) => {
     if (msg.includes('payload')) {
       const pl = message.message.quick_reply.payload;
       const text = `User clicked button: ${msg}, Button payload is: ${pl}`;
-      messenger.send({ text }, recipient);
+      await messenger.send({ text }, recipient);
+    }
+
+    if (msg.includes('code')) {
+      const result = await messenger.messengerCode();
+      await messenger.send({ text: result.uri }, recipient);
+    }
+
+    if (msg.includes('nlp')) {
+      const result = await messenger.setNLP(true);
+      await messenger.send({ text: result.success }, recipient);
+    }
+
+    if (msg.includes('list')) {
+      const element1 = new Element({
+        title: 'BBC news',
+        subtitle: 'Catch up on the latest news',
+        image_url: 'https://unsplash.it/300/200/?random',
+        default_action: {
+          type: 'web_url',
+          url: 'https://bbc.co.uk/news',
+        },
+      });
+      const element2 = new Element({
+        title: 'BBC weather',
+        subtitle: 'See the weather forecast',
+        default_action: {
+          type: 'web_url',
+          url: 'https://bbc.co.uk/weather',
+        },
+      });
+      const elements = [element1, element2];
+      const template = new ListTemplate({
+        top_element_style: 'large',
+        elements,
+      });
+      await messenger.send(template, recipient);
     }
 
     if (msg.includes('bubble')) {
-      messenger.send(new GenericTemplate(
-        [
-          new Element({
-            title: 'Example bubble',
-            item_url: 'http://www.bbc.co.uk',
-            image_url: 'https://unsplash.it/300/200/?random',
-            subtitle: 'Opens bbc.co.uk',
-            buttons: [
-              new Button({
-                type: 'web_url',
-                title: 'BBC',
-                url: 'http://www.bbc.co.uk',
-              }),
-            ],
+      const element = new Element({
+        title: 'Example bubble',
+        item_url: 'http://www.bbc.co.uk',
+        image_url: 'https://unsplash.it/300/200/?random',
+        subtitle: 'Opens bbc.co.uk',
+        buttons: [
+          new Button({
+            type: 'web_url',
+            title: 'BBC',
+            url: 'http://www.bbc.co.uk',
           }),
         ],
-      ), recipient);
+      });
+      await messenger.send(new GenericTemplate({
+        elements: [element],
+      }), recipient);
     }
 
     if (msg.includes('quick replies')) {
       const qr1 = new QuickReply({ title: 'Location', content_type: 'location' });
       const qr2 = new QuickReply({ title: 'Payload', payload: 'QUICK_REPLY_PAYLOAD' });
       const qrs = new QuickReplies([qr1, qr2]);
-      messenger.send(Object.assign(
+      await messenger.send(Object.assign(
         { text: 'This is an example with quick replies.' },
         qrs,
       ), recipient);
@@ -199,19 +251,19 @@ messenger.on('message', async (message) => {
     if (msg.includes('compact')) {
       const btn = getButton('compact');
       const elem = getElement(btn);
-      messenger.send(new GenericTemplate([elem]), recipient);
+      await messenger.send(new GenericTemplate([elem]), recipient);
     }
 
     if (msg.includes('tall')) {
       const btn = getButton('tall');
       const elem = getElement(btn);
-      messenger.send(new GenericTemplate([elem]), recipient);
+      await messenger.send(new GenericTemplate([elem]), recipient);
     }
 
     if (msg.includes('full')) {
       const btn = getButton('full');
       const elem = getElement(btn);
-      messenger.send(new GenericTemplate([elem]), recipient);
+      await messenger.send(new GenericTemplate([elem]), recipient);
     }
 
     if (msg.includes('multiple')) {
@@ -270,13 +322,14 @@ messenger.on('delivery', () => {
 
 messenger.on('postback', (message) => {
   const recipient = message.sender.id;
-  const payload = message.postback.payload;
-  console.log(payload);
+  const { payload } = message.postback;
+  console.log(`Payload received: ${payload}`);
 
   if (payload === 'help') {
     messenger.send({ text: 'A help message or template can go here.' }, recipient);
-  } else if (payload === 'start') {
-    const text = 'Try sending me one of these messages: text, image, video, reuse, bubble, "quick replies", compact, tall, full';
+  } else if (payload === 'START') {
+    const text = `Try sending me a message containing one of these keywords:
+text, image, video, reuse, bubble, "quick replies", list, compact, tall, full, nlp, code, or multiple`;
     messenger.send({ text }, recipient);
   }
 });
@@ -302,8 +355,8 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-app.get('/init', (req, res) => {
-  initBot();
+app.get('/init', async (req, res) => {
+  await initBot();
   res.sendStatus(200);
 });
 

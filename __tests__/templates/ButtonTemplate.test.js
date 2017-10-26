@@ -1,5 +1,6 @@
 import Button from '../../src/elements/Button';
 import ButtonTemplate from '../../src/templates/ButtonTemplate';
+import { TEXT_LIMIT } from '../../src/constants';
 
 describe('ButtonTemplate', () => {
   describe('new', () => {
@@ -12,7 +13,7 @@ describe('ButtonTemplate', () => {
       });
     });
 
-    it('returns proper object', () => {
+    it('returns valid object', () => {
       const text = 'Hello user!';
       const buttons = [button];
       const template = new ButtonTemplate({ text, buttons });
@@ -40,6 +41,14 @@ describe('ButtonTemplate', () => {
       expect(() => {
         new ButtonTemplate({ text, buttons });
       }).toThrow('buttons must be an array.');
+    });
+
+    it('errors if text is too long', () => {
+      const text = 'x'.repeat(TEXT_LIMIT + 1);
+      const buttons = [button];
+      expect(() => {
+        new ButtonTemplate({ text, buttons });
+      }).toThrow(`Text cannot be longer ${TEXT_LIMIT} characters.`);
     });
   });
 });

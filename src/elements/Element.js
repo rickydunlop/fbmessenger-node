@@ -7,7 +7,7 @@ class Element {
     quantity = '',
     price = '',
     currency = '',
-    buttons = [],
+    buttons = '',
     default_action = '',
   }) {
     this.title = title;
@@ -42,7 +42,7 @@ class Element {
       res.price = this.price;
     }
 
-    if (this.buttons.length) {
+    if (this.buttons) {
       res.buttons = this.buttons;
     }
 

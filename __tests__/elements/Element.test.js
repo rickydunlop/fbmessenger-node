@@ -3,7 +3,7 @@ import Element from '../../src/elements/Element';
 
 describe('Element', () => {
   describe('new', () => {
-    it('returns proper object', () => {
+    it('returns valid object', () => {
       const element = new Element({
         title: 'Title',
         item_url: 'http://www.example.com',
