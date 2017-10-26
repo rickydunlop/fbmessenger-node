@@ -13,9 +13,11 @@
   "main": "./dist/Messenger.js",
   "scripts": {
     "build": "babel src --out-dir dist",
+    "commitmsg": "commitlint -e $GIT_PARAMS",
     "coverage": "cross-env NODE_ENV=test nyc npm test",
     "prepublish": "npm run build",
     "lint": "eslint src/",
+    "release": "standard-version",
     "test": "cross-env NODE_ENV=test jest",
     "travis-coveralls": "npm run test && cat ./coverage/lcov.info | coveralls"
   },
@@ -42,10 +44,13 @@
     "eslint": "^4.9.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
+    "husky": "^0.14.3",
     "jest": "^21.0.1",
     "nock": "^9.0.25"
   },
   "dependencies": {
+    "@commitlint/cli": "^4.2.2",
+    "@commitlint/config-angular": "^4.2.1",
     "node-fetch": "^1.7.3"
   },
   "jest": {
