@@ -43,7 +43,7 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
     "jest": "^21.0.1",
-    "nock": "^9.0.24"
+    "nock": "^9.0.25"
   },
   "dependencies": {
     "node-fetch": "^1.7.3"
