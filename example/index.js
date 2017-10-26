@@ -58,7 +58,7 @@ const WHITELISTED_DOMAINS = [
 
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-async function initBot() {
+const initBot = async () => {
   try {
     messenger.setDomainWhitelist(WHITELISTED_DOMAINS);
 
@@ -72,10 +72,25 @@ async function initBot() {
     console.log(`Get Started: ${JSON.stringify(getStartedResult)}`);
 
     // Persistent menu
+    const menuFAQ = new PersistentMenuItem({
+      type: 'web_url',
+      title: 'FAQS',
+      url: 'https://developers.facebook.com/docs/messenger-platform/faq',
+    });
+
+    const menuReference = new PersistentMenuItem({
+      type: 'web_url',
+      title: 'Reference',
+      url: 'https://developers.facebook.com/docs/messenger-platform/reference',
+    });
+
     const menuHelp = new PersistentMenuItem({
-      type: 'postback',
       title: 'Help',
-      payload: 'help',
+      type: 'nested',
+      call_to_actions: [
+        menuFAQ,
+        menuReference,
+      ],
     });
 
     const menuDocs = new PersistentMenuItem({
@@ -93,26 +108,22 @@ async function initBot() {
   } catch (e) {
     console.log(e);
   }
-}
+};
 
-function getButton(ratio) {
-  return new Button({
-    type: 'web_url',
-    title: 'Stack Overflow',
-    url: 'https://stackoverflow.com',
-    webview_height_ratio: ratio,
-  });
-}
+const getButton = ratio => new Button({
+  type: 'web_url',
+  title: 'Stack Overflow',
+  url: 'https://stackoverflow.com',
+  webview_height_ratio: ratio,
+});
 
-function getElement(btn) {
-  return new Element({
-    title: 'Template example',
-    item_url: 'https://stackoverflow.com',
-    image_url: 'http://placehold.it/300x300',
-    subtitle: 'Subtitle',
-    buttons: [btn],
-  });
-}
+const getElement = btn => new Element({
+  title: 'Template example',
+  item_url: 'https://stackoverflow.com',
+  image_url: 'http://placehold.it/300x300',
+  subtitle: 'Subtitle',
+  buttons: [btn],
+});
 
 messenger.on('message', async (message) => {
   console.log(`Message received: ${JSON.stringify(message, true)}`);
@@ -175,6 +186,11 @@ messenger.on('message', async (message) => {
     if (msg.includes('code')) {
       const result = await messenger.messengerCode();
       await messenger.send({ text: result.uri }, recipient);
+    }
+
+    if (msg.includes('nlp')) {
+      const result = await messenger.setNLP(true);
+      await messenger.send({ text: result.success }, recipient);
     }
 
     if (msg.includes('list')) {
@@ -307,12 +323,13 @@ messenger.on('delivery', () => {
 messenger.on('postback', (message) => {
   const recipient = message.sender.id;
   const { payload } = message.postback;
-  console.log(payload);
+  console.log(`Payload received: ${payload}`);
 
   if (payload === 'help') {
     messenger.send({ text: 'A help message or template can go here.' }, recipient);
   } else if (payload === 'START') {
-    const text = 'Try sending me one of these messages: text, image, video, reuse, bubble, "quick replies", compact, tall, full';
+    const text = `Try sending me a message containing one of these keywords:
+text, image, video, reuse, bubble, "quick replies", list, compact, tall, full, nlp, code, or multiple`;
     messenger.send({ text }, recipient);
   }
 });
@@ -338,8 +355,8 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-app.get('/init', (req, res) => {
-  initBot();
+app.get('/init', async (req, res) => {
+  await initBot();
   res.sendStatus(200);
 });
 

@@ -215,7 +215,7 @@ class Messenger extends EventEmitter {
       'gender',
       'is_payment_enabled',
       'last_ad_referral',
-    ].join(',');
+    ].join();
 
     const url = this.buildURL(id, {
       fields,
