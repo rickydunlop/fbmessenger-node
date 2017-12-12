@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@commitlint/cli": "^5.0.0",
-    "@commitlint/config-angular": "^4.2.1",
+    "@commitlint/config-angular": "^5.0.0",
     "node-fetch": "^1.7.3"
   },
   "jest": {
