@@ -49,7 +49,7 @@
     "nock": "^9.0.25"
   },
   "dependencies": {
-    "@commitlint/cli": "^5.0.0",
+    "@commitlint/cli": "^6.0.0",
     "@commitlint/config-angular": "^5.0.0",
     "node-fetch": "^1.7.3"
   },
