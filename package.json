@@ -51,7 +51,7 @@
   "dependencies": {
     "@commitlint/cli": "^6.0.0",
     "@commitlint/config-angular": "^6.0.2",
-    "node-fetch": "^1.7.3"
+    "node-fetch": "^2.0.0"
   },
   "jest": {
     "collectCoverage": true
