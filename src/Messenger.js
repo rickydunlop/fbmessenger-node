@@ -59,41 +59,43 @@ class Messenger extends EventEmitter {
     this.pageAccessToken = opts.pageAccessToken;
   }
 
-  handle(payload) {
+	handle(payload) {
     const entries = payload.entry;
-    entries.forEach((entry) => {
-      entry.messaging.forEach((message) => {
-        if (message.message) {
-          this.emit('message', message);
-        }
-        if (message.delivery) {
-          this.emit('delivery', message);
-        }
-        if (message.read) {
-          this.emit('read', message);
-        }
-        if (message.postback) {
-          this.emit('postback', message);
-        }
-        if (message.account_linking) {
-          this.emit('account_linking', message);
-        }
-        if (message.optin) {
-          this.emit('optin', message);
-        }
-        if (message.referral) {
-          this.emit('referral', message);
-        }
-        if (message.payment) {
-          this.emit('payment', message);
-        }
-        if (message.checkout_update) {
-          this.emit('checkout_update', message);
-        }
-        if (message.pre_checkout) {
-          this.emit('pre_checkout', message);
-        }
-      });
+    entries.forEach(entry => {
+      if (entry.messaging && entry.messaging.length > 0) {
+        entry.messaging.forEach(message => {
+          if (message.message) {
+            this.emit('message', message);
+          }
+          if (message.delivery) {
+            this.emit('delivery', message);
+          }
+          if (message.read) {
+            this.emit('read', message);
+          }
+          if (message.postback) {
+            this.emit('postback', message);
+          }
+          if (message.account_linking) {
+            this.emit('account_linking', message);
+          }
+          if (message.optin) {
+            this.emit('optin', message);
+          }
+          if (message.referral) {
+            this.emit('referral', message);
+          }
+          if (message.payment) {
+            this.emit('payment', message);
+          }
+          if (message.checkout_update) {
+            this.emit('checkout_update', message);
+          }
+          if (message.pre_checkout) {
+            this.emit('pre_checkout', message);
+          }
+        });
+      }
     });
   }
 
