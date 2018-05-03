@@ -229,7 +229,7 @@ class Messenger extends EventEmitter {
       throw new Error('A user ID is required.');
     }
     if (tag && TAGS.indexOf(tag) === -1) {
-      throw new Error('Invalid tag provided.');
+      console.warn('Invalid tag provided, check https://developers.facebook.com/docs/messenger-platform/send-messages/message-tags',tag);
     }
 
     const url = this.buildURL('me/messages');
