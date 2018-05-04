@@ -166,39 +166,36 @@ class Messenger extends EventEmitter {
     return result;
   }
 
-  get(url) {
-    return fetch(url, {
+  async get(url) {
+    const res = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-    })
-      .then(response => response.json())
-      .then(res => this.constructor.handleError(res));
+    });
+    return this.constructor.handleError(await res.json());
   }
 
-  post(url, body = {}) {
-    return fetch(url, {
+  async post(url, body = {}) {
+    const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-    })
-      .then(response => response.json())
-      .then(res => this.constructor.handleError(res));
+    });
+    return this.constructor.handleError(await res.json());
   }
 
-  delete(url, body) {
-    return fetch(url, {
+  async delete(url, body) {
+    const res = await fetch(url, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-    })
-      .then(response => response.json())
-      .then(res => this.constructor.handleError(res));
+    });
+    return this.constructor.handleError(await res.json());
   }
 
   getUser(id) {
@@ -217,10 +214,7 @@ class Messenger extends EventEmitter {
       'last_ad_referral',
     ].join();
 
-    const url = this.buildURL(id, {
-      fields,
-    });
-
+    const url = this.buildURL(id, { fields });
     return this.get(url);
   }
 
