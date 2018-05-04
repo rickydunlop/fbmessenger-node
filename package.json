@@ -25,9 +25,11 @@
     "type": "git",
     "url": "git+https://github.com/rickydunlop/fbmessenger-node.git"
   },
-  "contributors": {
-    "name": "Ricky Dunlop"
-  },
+  "contributors": [
+    {
+      "name": "Ricky Dunlop"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rickydunlop/fbmessenger-node/issues"
@@ -35,23 +37,23 @@
   "homepage": "https://github.com/rickydunlop/fbmessenger-node#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.1",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.3",
     "babel-jest": "^22.0.0",
     "babel-preset-env": "^1.6.1",
-    "coveralls": "^3.0.0",
-    "cross-env": "^5.1.0",
-    "eslint": "^4.9.0",
+    "coveralls": "^3.0.1",
+    "cross-env": "^5.1.4",
+    "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-import": "^2.11.0",
     "husky": "^0.14.3",
     "jest": "^22.0.0",
-    "nock": "^9.0.25"
+    "nock": "^9.2.5"
   },
   "dependencies": {
     "@commitlint/cli": "^6.0.0",
-    "@commitlint/config-angular": "^6.0.2",
-    "node-fetch": "^1.7.3"
+    "@commitlint/config-conventional": "^6.1.3",
+    "node-fetch": "^2.1.2"
   },
   "jest": {
     "collectCoverage": true
