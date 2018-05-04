@@ -1,3 +1,20 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="5.0.1"></a>
+## [5.0.1](https://github.com/rickydunlop/fbmessenger-node/compare/v5.0.0...v5.0.1) (2018-05-04)
+
+
+### Bug Fixes
+
+* **package:** update [@commitlint](https://github.com/commitlint)/cli to version 5.0.0 ([#27](https://github.com/rickydunlop/fbmessenger-node/issues/27)) ([5590080](https://github.com/rickydunlop/fbmessenger-node/commit/5590080))
+* **package:** update [@commitlint](https://github.com/commitlint)/cli to version 6.0.0 ([fc70cee](https://github.com/rickydunlop/fbmessenger-node/commit/fc70cee))
+* **package:** update [@commitlint](https://github.com/commitlint)/config-angular to version 5.0.0 ([#28](https://github.com/rickydunlop/fbmessenger-node/issues/28)) ([b3da475](https://github.com/rickydunlop/fbmessenger-node/commit/b3da475))
+* **package:** update [@commitlint](https://github.com/commitlint)/config-angular to version 6.0.2 ([3614253](https://github.com/rickydunlop/fbmessenger-node/commit/3614253))
+
+
+
 # Changelog
 
 ## 5.0.0
