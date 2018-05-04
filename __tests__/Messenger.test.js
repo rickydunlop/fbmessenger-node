@@ -6,9 +6,7 @@ import {
   GET_STARTED_LIMIT,
   WHITELISTED_DOMAIN_MAX,
 } from '../src/constants';
-import {
-  GreetingText,
-} from '../src/messenger_profile';
+import { GreetingText } from '../src/messenger_profile';
 import Image from '../src/attachments/Image';
 
 const messenger = new Messenger({
@@ -313,12 +311,6 @@ describe('Messenger', () => {
         messenger.send(payload);
       }).toThrow('A user ID is required.');
     });
-
-    it('errors if given an invalid tag', () => {
-      expect(() => {
-        messenger.send(payload, 'USER_ID', 'WRONG_TAG');
-      }).toThrow('Invalid tag provided.');
-    });
   });
 
   describe('Sender actions', () => {
@@ -331,7 +323,7 @@ describe('Messenger', () => {
         });
     });
 
-    it('return JSON', (done) => {
+    it('returns JSON', (done) => {
       messenger.senderAction('typing_on', 'USER_ID').then((resp) => {
         try {
           expect(resp).toHaveProperty('recipient_id');
@@ -409,6 +401,17 @@ describe('Messenger', () => {
       });
     });
 
+    it('uses defaults if no params are passed', (done) => {
+      messenger.messengerCode().then((resp) => {
+        try {
+          expect(resp).toHaveProperty('uri');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
     it('should throw error if the ref is invalid', () => {
       expect(() => {
         messenger.messengerCode({ ref: '£REF' });
@@ -452,12 +455,12 @@ describe('Messenger', () => {
   describe('NLP', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')
-        .post(`/${FB_API_VERSION}/me/nlp_configs?nlp_enabled=true&access_token=PAGE_ACCESS_TOKEN`)
+        .post(`/${FB_API_VERSION}/me/nlp_configs?access_token=PAGE_ACCESS_TOKEN&nlp_enabled=true`)
         .reply(200, {
           result: true,
         });
       nock('https://graph.facebook.com')
-        .post(`/${FB_API_VERSION}/me/nlp_configs?nlp_enabled=true&custom_token=token&access_token=PAGE_ACCESS_TOKEN`)
+        .post(`/${FB_API_VERSION}/me/nlp_configs?access_token=PAGE_ACCESS_TOKEN&nlp_enabled=true&custom_token=token`)
         .reply(200, {
           result: true,
         });

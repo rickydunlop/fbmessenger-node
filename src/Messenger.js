@@ -1,7 +1,6 @@
 import EventEmitter from 'events';
 
-import * as NodeUrl from 'url';
-import fetch from 'node-fetch';
+import axios from 'axios';
 
 import {
   Text,
@@ -32,7 +31,6 @@ import {
   SENDER_ACTIONS,
   GET_STARTED_LIMIT,
   WHITELISTED_DOMAIN_MAX,
-  TAGS,
 } from './constants';
 
 import {
@@ -47,7 +45,6 @@ import {
   PersistentMenuItem,
 } from './messenger_profile';
 
-
 class Messenger extends EventEmitter {
   constructor(opts = {}) {
     super();
@@ -57,6 +54,12 @@ class Messenger extends EventEmitter {
     }
 
     this.pageAccessToken = opts.pageAccessToken;
+    this.api = axios.create({
+      baseURL: `https://graph.facebook.com/${FB_API_VERSION}`,
+      params: {
+        access_token: this.pageAccessToken,
+      },
+    });
   }
 
   handle(payload) {
@@ -95,21 +98,6 @@ class Messenger extends EventEmitter {
         }
       });
     });
-  }
-
-  buildURL(pathname, queryParams) {
-    const defaultqueryParams = {
-      access_token: this.pageAccessToken,
-    };
-    const query = Object.assign({}, queryParams, defaultqueryParams);
-    const obj = {
-      protocol: 'https',
-      host: 'graph.facebook.com',
-      pathname: `/${FB_API_VERSION}/${pathname}`,
-      query,
-    };
-
-    return NodeUrl.format(obj);
   }
 
   static handleError(result) {
@@ -166,36 +154,20 @@ class Messenger extends EventEmitter {
     return result;
   }
 
-  async get(url) {
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return this.constructor.handleError(await res.json());
+  async get(url, config = {}) {
+    const res = await this.api.get(url, config);
+    return this.constructor.handleError(res.data);
   }
 
-  async post(url, body = {}) {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    return this.constructor.handleError(await res.json());
+  async post(url, config = {}) {
+    const params = Object.assign({ method: 'post' }, config);
+    const res = await this.api.request(url, params);
+    return this.constructor.handleError(res.data);
   }
 
-  async delete(url, body) {
-    const res = await fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    return this.constructor.handleError(await res.json());
+  async delete(url, config) {
+    const res = await this.api.delete(url, config);
+    return this.constructor.handleError(res.data);
   }
 
   getUser(id) {
@@ -203,7 +175,7 @@ class Messenger extends EventEmitter {
       throw new Error('A user ID is required.');
     }
 
-    const fields = [
+    const params = [
       'first_name',
       'last_name',
       'profile_pic',
@@ -214,29 +186,24 @@ class Messenger extends EventEmitter {
       'last_ad_referral',
     ].join();
 
-    const url = this.buildURL(id, { fields });
-    return this.get(url);
+    return this.get(`/${id}`, { params });
   }
 
-  send(payload, id, tag = '') {
+  send(payload, id, tag = null) {
     if (!id) {
       throw new Error('A user ID is required.');
     }
-    if (tag && TAGS.indexOf(tag) === -1) {
-      throw new Error('Invalid tag provided.');
-    }
 
-    const url = this.buildURL('me/messages');
-    const body = {
+    const data = {
       recipient: { id },
       message: payload,
     };
 
     if (tag) {
-      body.tag = tag;
+      data.tag = tag;
     }
 
-    return this.post(url, body);
+    return this.post('/me/messages', { data });
   }
 
   senderAction(senderAction, id) {
@@ -248,30 +215,27 @@ class Messenger extends EventEmitter {
       throw new Error('A user ID is required.');
     }
 
-    const url = this.buildURL('me/messages');
-    const body = {
+    const data = {
       recipient: { id },
       sender_action: senderAction,
     };
 
-    return this.post(url, body);
+    return this.post('/me/messages', { data });
   }
 
   messageAttachment(payload) {
-    const url = this.buildURL('me/message_attachments');
-    const body = {
+    const data = {
       message: payload,
     };
-    return this.post(url, body);
+    return this.post('/me/message_attachments', { data });
   }
 
   messengerCode({ type = 'standard', image_size = 1000, ref = '' } = {}) {
-    const url = this.buildURL('me/messenger_codes');
     if (image_size < 100 || image_size > 2000) {
       throw new Error('Size Supported range: 100-2000 px');
     }
 
-    const body = {
+    const data = {
       type,
       image_size,
     };
@@ -281,10 +245,10 @@ class Messenger extends EventEmitter {
       if (!isValid) {
         throw new Error(`Invalid ref provided: ${ref}`);
       }
-      body.data = { ref };
+      data.data = { ref };
     }
 
-    return this.post(url, body);
+    return this.post('/me/messenger_codes', { data });
   }
 
   /**
@@ -297,8 +261,7 @@ class Messenger extends EventEmitter {
     if (custom_token) {
       params.custom_token = custom_token;
     }
-    const url = this.buildURL('me/nlp_configs', params);
-    return this.post(url);
+    return this.post('/me/nlp_configs', { params });
   }
 
   /**
@@ -306,8 +269,7 @@ class Messenger extends EventEmitter {
   * @return {Object} JSON Response object
   */
   subscribeAppToPage() {
-    const url = this.buildURL('me/subscribed_apps');
-    return this.post(url);
+    return this.post('/me/subscribed_apps');
   }
 
   /**
@@ -320,18 +282,16 @@ class Messenger extends EventEmitter {
     if (Array.isArray(props)) {
       fields = props.join();
     }
-    const url = this.buildURL('me/messenger_profile', { fields });
-    return this.get(url, fields);
+    return this.get('/me/messenger_profile', { params: { fields } });
   }
 
   /**
    * Set multiple Messenger Profile properties at the same time
-   * @param {Array} payload Property names and their new settings
+   * @param {Array} data Property names and their new settings
    * @return {Object} JSON Response object
    */
-  setMessengerProfile(payload) {
-    const url = this.buildURL('me/messenger_profile');
-    return this.post(url, payload);
+  setMessengerProfile(data) {
+    return this.post('/me/messenger_profile', { data });
   }
 
   /**
@@ -340,13 +300,12 @@ class Messenger extends EventEmitter {
    * @return {Object} JSON Response object
    */
   deleteMessengerProfile(fields) {
-    let payload = fields;
+    let data = fields;
     if (!Array.isArray(fields)) {
-      payload = [fields];
+      data = [fields];
     }
 
-    const url = this.buildURL('me/messenger_profile');
-    return this.delete(url, { payload });
+    return this.delete('/me/messenger_profile', { data });
   }
 
   /**
@@ -358,10 +317,8 @@ class Messenger extends EventEmitter {
     if (payload.length > GET_STARTED_LIMIT) {
       throw new Error(`Get Started payload limit is ${GET_STARTED_LIMIT}.`);
     }
-    const params = {
-      get_started: { payload },
-    };
-    return this.setMessengerProfile(params);
+    const data = { get_started: { payload } };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -374,7 +331,7 @@ class Messenger extends EventEmitter {
 
   /**
    * Sets the Greeting Text
-   * @param {Array} payload Array of Greeting text objects
+   * @param {Array} greetings Array of Greeting text objects
    * @return {Object} JSON Response object
    */
   setGreetingText(greetings) {
@@ -387,10 +344,8 @@ class Messenger extends EventEmitter {
     if (!hasDefault) {
       throw new Error('You must provide a default locale');
     }
-    const params = {
-      greeting: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { greeting: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -413,10 +368,8 @@ class Messenger extends EventEmitter {
     if (payload.length > WHITELISTED_DOMAIN_MAX) {
       throw new Error(`You may only whitelist ${WHITELISTED_DOMAIN_MAX} domains.`);
     }
-    const params = {
-      whitelisted_domains: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { whitelisted_domains: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -429,7 +382,7 @@ class Messenger extends EventEmitter {
 
   /**
    * Sets the persistent menu
-   * @param {Object} payload PersistentMenu settings
+   * @param {Object} menus PersistentMenu settings
    * @return {Object} JSON Response object
    */
   setPersistentMenu(menus) {
@@ -443,10 +396,8 @@ class Messenger extends EventEmitter {
       throw new Error('You must provide a default locale');
     }
 
-    const params = {
-      persistent_menu: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { persistent_menu: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -466,10 +417,8 @@ class Messenger extends EventEmitter {
     if (!payload) {
       throw new Error('A URL must be provided.');
     }
-    const params = {
-      account_linking_url: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { account_linking_url: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -489,10 +438,8 @@ class Messenger extends EventEmitter {
     if (!payload) {
       throw new Error('Payment settings must be provided.');
     }
-    const params = {
-      payment_settings: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { payment_settings: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -512,10 +459,8 @@ class Messenger extends EventEmitter {
     if (!payload) {
       throw new Error('A target audience must be provided.');
     }
-    const params = {
-      target_audience: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { target_audience: payload };
+    return this.setMessengerProfile(data);
   }
   /**
    * Deletes the target audience
@@ -535,10 +480,8 @@ class Messenger extends EventEmitter {
     if (!payload) {
       throw new Error('A URL must be provided.');
     }
-    const params = {
-      home_url: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { home_url: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
