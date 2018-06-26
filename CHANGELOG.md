@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.0.2"></a>
+## [5.0.2](https://github.com/rickydunlop/fbmessenger-node/compare/v5.0.1...v5.0.2) (2018-06-26)
+
+
+### Bug Fixes
+
+* export opengraph element and template ([1e78fa7](https://github.com/rickydunlop/fbmessenger-node/commit/1e78fa7)), closes [#42](https://github.com/rickydunlop/fbmessenger-node/issues/42)
+
+
+
 <a name="5.0.1"></a>
 ## [5.0.1](https://github.com/rickydunlop/fbmessenger-node/compare/v5.0.0...v5.0.1) (2018-05-04)
 
