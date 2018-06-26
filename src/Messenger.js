@@ -44,7 +44,6 @@ import {
 
 import {
   GreetingText,
-  GetStartedButton,
   PersistentMenu,
   PersistentMenuItem,
 } from './messenger_profile';
@@ -525,6 +524,7 @@ class Messenger extends EventEmitter {
     };
     return this.setMessengerProfile(params);
   }
+
   /**
    * Deletes the target audience
    * @return {Object} JSON Response object
@@ -580,7 +580,6 @@ export {
   QuickReplies,
   QuickReply,
   GreetingText,
-  GetStartedButton,
   PersistentMenu,
   PersistentMenuItem,
 };
