@@ -11,6 +11,7 @@ import {
   Summary,
   Adjustment,
   DefaultAction,
+  OpenGraphElement,
 } from './elements';
 
 import {
@@ -25,6 +26,7 @@ import {
   GenericTemplate,
   ReceiptTemplate,
   ListTemplate,
+  OpenGraphTemplate,
 } from './templates';
 
 import {
@@ -564,6 +566,7 @@ export {
   Summary,
   Adjustment,
   DefaultAction,
+  OpenGraphElement,
   Element,
   Image,
   Audio,
@@ -573,6 +576,7 @@ export {
   GenericTemplate,
   ReceiptTemplate,
   ListTemplate,
+  OpenGraphTemplate,
   QuickReplies,
   QuickReply,
   GreetingText,
