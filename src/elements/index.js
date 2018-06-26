@@ -5,6 +5,7 @@ import Element from './Element';
 import Summary from './Summary';
 import Adjustment from './Adjustment';
 import DefaultAction from './DefaultAction';
+import OpenGraphElement from './OpenGraphElement';
 
 export {
   Text,
@@ -14,4 +15,5 @@ export {
   Summary,
   Adjustment,
   DefaultAction,
+  OpenGraphElement,
 };
