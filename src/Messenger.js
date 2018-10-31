@@ -11,6 +11,7 @@ import {
   Summary,
   Adjustment,
   DefaultAction,
+  OpenGraphElement,
 } from './elements';
 
 import {
@@ -25,6 +26,7 @@ import {
   GenericTemplate,
   ReceiptTemplate,
   ListTemplate,
+  OpenGraphTemplate,
 } from './templates';
 
 import {
@@ -42,7 +44,6 @@ import {
 
 import {
   GreetingText,
-  GetStartedButton,
   PersistentMenu,
   PersistentMenuItem,
 } from './messenger_profile';
@@ -525,6 +526,7 @@ class Messenger extends EventEmitter {
     };
     return this.setMessengerProfile(params);
   }
+
   /**
    * Deletes the target audience
    * @return {Object} JSON Response object
@@ -566,6 +568,7 @@ export {
   Summary,
   Adjustment,
   DefaultAction,
+  OpenGraphElement,
   Element,
   Image,
   Audio,
@@ -575,10 +578,10 @@ export {
   GenericTemplate,
   ReceiptTemplate,
   ListTemplate,
+  OpenGraphTemplate,
   QuickReplies,
   QuickReply,
   GreetingText,
-  GetStartedButton,
   PersistentMenu,
   PersistentMenuItem,
 };

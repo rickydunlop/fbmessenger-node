@@ -388,7 +388,7 @@ describe('Messenger', () => {
     });
 
     it('can generate a code', (done) => {
-      messenger.messengerCode({ image_size: 1000 }).then((resp) => {
+      messenger.messengerCode().then((resp) => {
         try {
           expect(resp).toHaveProperty('uri');
           done();
