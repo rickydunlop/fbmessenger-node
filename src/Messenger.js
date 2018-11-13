@@ -206,7 +206,7 @@ class Messenger extends EventEmitter {
     if (!id) {
       throw new Error('A user ID is required.');
     }
-    
+
     const fieldsArray = fields || [
       'first_name',
       'last_name',
@@ -216,8 +216,8 @@ class Messenger extends EventEmitter {
       'gender',
       'is_payment_enabled',
       'last_ad_referral',
-    ]
-    
+    ];
+
     const fieldsToRequest = fieldsArray.join();
 
     const url = this.buildURL(id, {
