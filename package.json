@@ -14,6 +14,7 @@
   "scripts": {
     "build": "babel src --out-dir dist",
     "commitmsg": "commitlint -e $GIT_PARAMS",
+    "postinstall": "npm run build",
     "coverage": "cross-env NODE_ENV=test nyc npm test",
     "prepublish": "npm run build",
     "lint": "eslint src/",
