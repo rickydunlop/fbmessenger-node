@@ -202,12 +202,12 @@ class Messenger extends EventEmitter {
       .then(res => this.constructor.handleError(res));
   }
 
-  getUser(id) {
+  getUser(id, fields) {
     if (!id) {
       throw new Error('A user ID is required.');
     }
-
-    const fields = [
+    
+    const fieldsArray = fields || [
       'first_name',
       'last_name',
       'profile_pic',
@@ -216,10 +216,12 @@ class Messenger extends EventEmitter {
       'gender',
       'is_payment_enabled',
       'last_ad_referral',
-    ].join();
+    ]
+    
+    const fieldsToRequest = fieldsArray.join();
 
     const url = this.buildURL(id, {
-      fields,
+      fieldsToRequest,
     });
 
     return this.get(url);
