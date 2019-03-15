@@ -14,12 +14,7 @@ import {
   OpenGraphElement,
 } from './elements';
 
-import {
-  Image,
-  Audio,
-  Video,
-  File,
-} from './attachments';
+import { Image, Audio, Video, File } from './attachments';
 
 import {
   ButtonTemplate,
@@ -37,17 +32,9 @@ import {
   TAGS,
 } from './constants';
 
-import {
-  QuickReplies,
-  QuickReply,
-} from './QuickReplies';
+import { QuickReplies, QuickReply } from './QuickReplies';
 
-import {
-  GreetingText,
-  PersistentMenu,
-  PersistentMenuItem,
-} from './messenger_profile';
-
+import { GreetingText, PersistentMenu, PersistentMenuItem } from './messenger_profile';
 
 class Messenger extends EventEmitter {
   constructor(opts = {}) {
@@ -60,7 +47,7 @@ class Messenger extends EventEmitter {
     this.pageAccessToken = opts.pageAccessToken;
   }
 
-	handle(payload) {
+  handle(payload) {
     const entries = payload.entry;
     entries.forEach(entry => {
       if (entry.messaging && entry.messaging.length > 0) {
@@ -142,19 +129,29 @@ class Messenger extends EventEmitter {
         case 10:
           switch (result.error.subcode) {
             case 2018065:
-              throw new Error('This message is sent outside of allowed window. You need page_messaging_subscriptions permission to be able to do it.');
+              throw new Error(
+                'This message is sent outside of allowed window. You need page_messaging_subscriptions permission to be able to do it.',
+              );
             case 2018108:
             default:
-              throw new Error('This Person Cannot Receive Messages: This person isn\'t receiving messages from you right now.');
+              throw new Error(
+                "This Person Cannot Receive Messages: This person isn't receiving messages from you right now.",
+              );
           }
         case 200:
           switch (result.error.subcode) {
             case 2018028:
-              throw new Error('Cannot message users who are not admins, developers or testers of the app until pages_messaging permission is reviewed and the app is live.');
+              throw new Error(
+                'Cannot message users who are not admins, developers or testers of the app until pages_messaging permission is reviewed and the app is live.',
+              );
             case 2018027:
-              throw new Error('Cannot message users who are not admins, developers or testers of the app until pages_messaging_phone_number permission is reviewed and the app is live.');
+              throw new Error(
+                'Cannot message users who are not admins, developers or testers of the app until pages_messaging_phone_number permission is reviewed and the app is live.',
+              );
             case 2018021:
-              throw new Error('Requires phone matching access fee to be paid by this page unless the recipient user is an admin, developer, or tester of the app.');
+              throw new Error(
+                'Requires phone matching access fee to be paid by this page unless the recipient user is an admin, developer, or tester of the app.',
+              );
             default:
               throw new Error(result.error.message || 'Unknown error occurred.');
           }
@@ -216,8 +213,6 @@ class Messenger extends EventEmitter {
       'locale',
       'timezone',
       'gender',
-      'is_payment_enabled',
-      'last_ad_referral',
     ].join();
 
     const url = this.buildURL(id, {
@@ -311,9 +306,9 @@ class Messenger extends EventEmitter {
   }
 
   /**
-  * Subscribes an app to a page
-  * @return {Object} JSON Response object
-  */
+   * Subscribes an app to a page
+   * @return {Object} JSON Response object
+   */
   subscribeAppToPage() {
     const url = this.buildURL('me/subscribed_apps');
     return this.post(url);
