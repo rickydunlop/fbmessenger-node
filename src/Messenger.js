@@ -10,9 +10,9 @@ import {
 
 class Messenger extends EventEmitter {
   constructor({
-    pageAccessToken=null,
-    axiosConfig=null,
-    apiVersion='v3.2',
+    pageAccessToken = null,
+    axiosConfig = null,
+    apiVersion = 'v3.2',
   } = {}) {
     super();
 
@@ -88,11 +88,9 @@ class Messenger extends EventEmitter {
       'profile_pic',
     ];
 
-    return this.api.get(`/${id}`, { 
-      params: {
-        fields: fieldsArray.join() }
-      }
-    );
+    return this.api.get(`/${id}`, {
+      params: { fields: fieldsArray.join() },
+    });
   }
 
   send(payload, id, tag = null) {
