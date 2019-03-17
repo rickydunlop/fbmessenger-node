@@ -1,4 +1,3 @@
-export const FB_API_VERSION = 'v3.0';
 export const BUTTON_TYPES = [
   'web_url',
   'postback',

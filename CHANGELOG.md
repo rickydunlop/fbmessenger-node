@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.0.3"></a>
+## [5.0.3](https://github.com/rickydunlop/fbmessenger-node/compare/v5.0.2...v5.0.3) (2018-11-13)
+
+
+### Bug Fixes
+
+* **package:** update [@commitlint](https://github.com/commitlint)/cli to version 7.0.0 ([#40](https://github.com/rickydunlop/fbmessenger-node/issues/40)) ([92cb3fb](https://github.com/rickydunlop/fbmessenger-node/commit/92cb3fb))
+* **package:** update [@commitlint](https://github.com/commitlint)/config-angular to version 7.0.1 ([9751461](https://github.com/rickydunlop/fbmessenger-node/commit/9751461)), closes [#39](https://github.com/rickydunlop/fbmessenger-node/issues/39)
+* **packages:** update dependencies ([9feff5c](https://github.com/rickydunlop/fbmessenger-node/commit/9feff5c))
+
+
+
+<a name="5.0.2"></a>
+## [5.0.2](https://github.com/rickydunlop/fbmessenger-node/compare/v5.0.1...v5.0.2) (2018-06-26)
+
+
+### Bug Fixes
+
+* export opengraph element and template ([1e78fa7](https://github.com/rickydunlop/fbmessenger-node/commit/1e78fa7)), closes [#42](https://github.com/rickydunlop/fbmessenger-node/issues/42)
+
+
+
 <a name="5.0.1"></a>
 ## [5.0.1](https://github.com/rickydunlop/fbmessenger-node/compare/v5.0.0...v5.0.1) (2018-05-04)
 

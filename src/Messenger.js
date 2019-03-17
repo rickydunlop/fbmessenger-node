@@ -2,64 +2,37 @@ import EventEmitter from 'events';
 
 import axios from 'axios';
 
+import processErrorsInResponse from './processErrorsInResponse';
 import {
-  Text,
-  Button,
-  Address,
-  Element,
-  Summary,
-  Adjustment,
-  DefaultAction,
-} from './elements';
-
-import {
-  Image,
-  Audio,
-  Video,
-  File,
-} from './attachments';
-
-import {
-  ButtonTemplate,
-  GenericTemplate,
-  ReceiptTemplate,
-  ListTemplate,
-} from './templates';
-
-import {
-  FB_API_VERSION,
   SENDER_ACTIONS,
   GET_STARTED_LIMIT,
   WHITELISTED_DOMAIN_MAX,
 } from './constants';
 
-import {
-  QuickReplies,
-  QuickReply,
-} from './QuickReplies';
-
-import {
-  GreetingText,
-  GetStartedButton,
-  PersistentMenu,
-  PersistentMenuItem,
-} from './messenger_profile';
-
 class Messenger extends EventEmitter {
-  constructor(opts = {}) {
+  constructor({
+    pageAccessToken=null,
+    axiosConfig=null,
+    apiVersion='v3.2',
+  } = {}) {
     super();
 
-    if (!Object.prototype.hasOwnProperty.call(opts, 'pageAccessToken')) {
-      throw new Error('PAGE_ACCESS_TOKEN is missing.');
+    if (!pageAccessToken) {
+      throw new Error('A pageAccessToken is required.');
     }
 
-    this.pageAccessToken = opts.pageAccessToken;
     this.api = axios.create({
-      baseURL: `https://graph.facebook.com/${FB_API_VERSION}`,
+      baseURL: `https://graph.facebook.com/${apiVersion}`,
       params: {
-        access_token: this.pageAccessToken,
+        access_token: pageAccessToken,
       },
     });
+
+    if (axiosConfig) {
+      this.api.defaults = axiosConfig;
+    }
+
+    this.api.interceptors.response.use(processErrorsInResponse);
   }
 
   handle(payload) {
@@ -100,93 +73,27 @@ class Messenger extends EventEmitter {
     });
   }
 
-  static handleError(result) {
-    /* istanbul ignore if */
-    if ({}.hasOwnProperty.call(result, 'error')) {
-      switch (result.error.code) {
-        case 4:
-          if (result.error.subcode === 2018022) {
-            throw new Error('Too many send requests to phone numbers.');
-          }
-          break;
-        case 1200:
-          throw new Error('Temporary send message failure. Please try again later.');
-        case 613:
-          throw new Error('Calls to this API have exceeded the rate limit.');
-        case 100:
-          switch (result.error.subcode) {
-            case 2018109:
-              throw new Error('Attachment size exceeds allowable limit.');
-            case 2018001:
-              throw new Error('No matching user found.');
-            case 2018034:
-              throw new Error('Message cannot be empty.');
-            default:
-              throw new Error(result.error.message);
-          }
-        case 10:
-          switch (result.error.subcode) {
-            case 2018065:
-              throw new Error('This message is sent outside of allowed window. You need page_messaging_subscriptions permission to be able to do it.');
-            case 2018108:
-            default:
-              throw new Error('This Person Cannot Receive Messages: This person isn\'t receiving messages from you right now.');
-          }
-        case 200:
-          switch (result.error.subcode) {
-            case 2018028:
-              throw new Error('Cannot message users who are not admins, developers or testers of the app until pages_messaging permission is reviewed and the app is live.');
-            case 2018027:
-              throw new Error('Cannot message users who are not admins, developers or testers of the app until pages_messaging_phone_number permission is reviewed and the app is live.');
-            case 2018021:
-              throw new Error('Requires phone matching access fee to be paid by this page unless the recipient user is an admin, developer, or tester of the app.');
-            default:
-              throw new Error(result.error.message || 'Unknown error occurred.');
-          }
-        case 190:
-          throw new Error('Invalid OAuth access token.');
-        case 10303:
-          throw new Error('Invalid account_linking_token.');
-        default:
-          throw new Error(result.error.message || 'Unknown error occurred.');
-      }
-    }
-    return result;
-  }
-
-  async get(url, config = {}) {
-    const res = await this.api.get(url, config);
-    return this.constructor.handleError(res.data);
-  }
-
-  async post(url, config = {}) {
-    const params = Object.assign({ method: 'post' }, config);
-    const res = await this.api.request(url, params);
-    return this.constructor.handleError(res.data);
-  }
-
-  async delete(url, config) {
-    const res = await this.api.delete(url, config);
-    return this.constructor.handleError(res.data);
-  }
-
-  getUser(id) {
+  getUser(id, fields) {
     if (!id) {
       throw new Error('A user ID is required.');
     }
 
-    const params = [
+    if (fields && !Array.isArray(fields)) {
+      throw new Error('Fields must be an array.');
+    }
+
+    const fieldsArray = fields || [
+      'name',
       'first_name',
       'last_name',
       'profile_pic',
-      'locale',
-      'timezone',
-      'gender',
-      'is_payment_enabled',
-      'last_ad_referral',
-    ].join();
+    ];
 
-    return this.get(`/${id}`, { params });
+    return this.api.get(`/${id}`, { 
+      params: {
+        fields: fieldsArray.join() }
+      }
+    );
   }
 
   send(payload, id, tag = null) {
@@ -203,7 +110,7 @@ class Messenger extends EventEmitter {
       data.tag = tag;
     }
 
-    return this.post('/me/messages', { data });
+    return this.api.post('/me/messages', { data });
   }
 
   senderAction(senderAction, id) {
@@ -220,14 +127,14 @@ class Messenger extends EventEmitter {
       sender_action: senderAction,
     };
 
-    return this.post('/me/messages', { data });
+    return this.api.post('/me/messages', { data });
   }
 
   messageAttachment(payload) {
     const data = {
       message: payload,
     };
-    return this.post('/me/message_attachments', { data });
+    return this.api.post('/me/message_attachments', { data });
   }
 
   messengerCode({ type = 'standard', image_size = 1000, ref = '' } = {}) {
@@ -248,7 +155,7 @@ class Messenger extends EventEmitter {
       data.data = { ref };
     }
 
-    return this.post('/me/messenger_codes', { data });
+    return this.api.post('/me/messenger_codes', { data });
   }
 
   /**
@@ -261,7 +168,7 @@ class Messenger extends EventEmitter {
     if (custom_token) {
       params.custom_token = custom_token;
     }
-    return this.post('/me/nlp_configs', { params });
+    return this.api.post('/me/nlp_configs', null, { params });
   }
 
   /**
@@ -269,7 +176,7 @@ class Messenger extends EventEmitter {
   * @return {Object} JSON Response object
   */
   subscribeAppToPage() {
-    return this.post('/me/subscribed_apps');
+    return this.api.post('/me/subscribed_apps');
   }
 
   /**
@@ -282,7 +189,7 @@ class Messenger extends EventEmitter {
     if (Array.isArray(props)) {
       fields = props.join();
     }
-    return this.get('/me/messenger_profile', { params: { fields } });
+    return this.api.get('/me/messenger_profile', { params: { fields } });
   }
 
   /**
@@ -291,7 +198,7 @@ class Messenger extends EventEmitter {
    * @return {Object} JSON Response object
    */
   setMessengerProfile(data) {
-    return this.post('/me/messenger_profile', { data });
+    return this.api.post('/me/messenger_profile', { data });
   }
 
   /**
@@ -305,7 +212,7 @@ class Messenger extends EventEmitter {
       data = [fields];
     }
 
-    return this.delete('/me/messenger_profile', { data });
+    return this.api.delete('/me/messenger_profile', { data });
   }
 
   /**
@@ -462,6 +369,7 @@ class Messenger extends EventEmitter {
     const data = { target_audience: payload };
     return this.setMessengerProfile(data);
   }
+
   /**
    * Deletes the target audience
    * @return {Object} JSON Response object
@@ -493,27 +401,11 @@ class Messenger extends EventEmitter {
   }
 }
 
-export {
-  Messenger,
-  Text,
-  Button,
-  Address,
-  Summary,
-  Adjustment,
-  DefaultAction,
-  Element,
-  Image,
-  Audio,
-  Video,
-  File,
-  ButtonTemplate,
-  GenericTemplate,
-  ReceiptTemplate,
-  ListTemplate,
-  QuickReplies,
-  QuickReply,
-  GreetingText,
-  GetStartedButton,
-  PersistentMenu,
-  PersistentMenuItem,
-};
+export * from './elements';
+export * from './attachments';
+export * from './templates';
+export * from './constants';
+export * from './messenger_profile';
+export * from './QuickReplies';
+export { Messenger };
+export default Messenger;

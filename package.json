@@ -1,6 +1,6 @@
 {
   "name": "fbmessenger",
-  "version": "5.0.1",
+  "version": "5.0.3",
   "description": "A simple wrapper for Facebook Messenger Bots",
   "keywords": [
     "Facebook",
@@ -38,21 +38,21 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
-    "babel-eslint": "^8.2.3",
-    "babel-jest": "^22.0.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-eslint": "^8.2.5",
+    "babel-jest": "^23.0.1",
+    "babel-preset-env": "^1.7.0",
     "coveralls": "^3.0.1",
-    "cross-env": "^5.1.4",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.11.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.0.0",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.13.0",
     "husky": "^0.14.3",
-    "jest": "^22.0.0",
-    "nock": "^9.2.5"
+    "jest": "^23.2.0",
+    "nock": "^10.0.0"
   },
   "dependencies": {
-    "@commitlint/cli": "^6.0.0",
-    "@commitlint/config-conventional": "^6.1.3",
+    "@commitlint/cli": "^7.0.0",
+    "@commitlint/config-conventional": "^7.5.0",
     "axios": "^0.18.0"
   },
   "jest": {

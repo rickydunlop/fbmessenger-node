@@ -2,7 +2,6 @@ import nock from 'nock';
 
 import { Messenger } from '../src/Messenger';
 import {
-  FB_API_VERSION,
   GET_STARTED_LIMIT,
   WHITELISTED_DOMAIN_MAX,
 } from '../src/constants';
@@ -38,6 +37,8 @@ const generatePayload = (key, payload) => {
   return res;
 };
 
+const FB_API_VERSION = 'v3.2';
+
 describe('Messenger', () => {
   describe('Create', () => {
     describe('with all attributes', () => {
@@ -48,7 +49,7 @@ describe('Messenger', () => {
       it('throws an error', () => {
         expect(() => {
           new Messenger();
-        }).toThrowError('PAGE_ACCESS_TOKEN is missing.');
+        }).toThrowError('A pageAccessToken is required.');
       });
     });
   });
@@ -256,6 +257,12 @@ describe('Messenger', () => {
         messenger.getUser();
       }).toThrow('A user ID is required.');
     });
+
+    it('should throw error when invalid fields are given', () => {
+      expect(() => {
+        messenger.getUser(1, 'test');
+      }).toThrow('Fields must be an array.');
+    });
   });
 
   describe('Send', () => {
@@ -380,7 +387,7 @@ describe('Messenger', () => {
     });
 
     it('can generate a code', (done) => {
-      messenger.messengerCode({ image_size: 1000 }).then((resp) => {
+      messenger.messengerCode().then((resp) => {
         try {
           expect(resp).toHaveProperty('uri');
           done();
