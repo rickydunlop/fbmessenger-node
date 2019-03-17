@@ -2,7 +2,6 @@ import EventEmitter from 'events';
 
 import axios from 'axios';
 
-import processErrorsInResponse from './processErrorsInResponse';
 import {
   SENDER_ACTIONS,
   GET_STARTED_LIMIT,
@@ -32,7 +31,7 @@ class Messenger extends EventEmitter {
       this.api.defaults = axiosConfig;
     }
 
-    this.api.interceptors.response.use(processErrorsInResponse);
+    this.api.interceptors.response.use(response => response.data);
   }
 
   handle(payload) {

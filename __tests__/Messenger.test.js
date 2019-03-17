@@ -45,12 +45,20 @@ describe('Messenger', () => {
       it('initializes correctly', () => expect(messenger).toBeTruthy());
     });
 
-    describe('with an attribute missing', () => {
-      it('throws an error', () => {
-        expect(() => {
-          new Messenger();
-        }).toThrowError('A pageAccessToken is required.');
+    it('throws an error when pageAccessToken is missing', () => {
+      expect(() => {
+        new Messenger();
+      }).toThrowError('A pageAccessToken is required.');
+    });
+
+    it('merges axios config', () => {
+      const instance = new Messenger({
+        pageAccessToken: 'test',
+        axiosConfig: {
+          headers: { 'X-Custom-Header': 'foobar' },
+        },
       });
+      expect(instance.api.defaults.headers).toEqual({ 'X-Custom-Header': 'foobar' });
     });
   });
 
