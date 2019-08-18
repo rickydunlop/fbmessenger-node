@@ -41,7 +41,7 @@
     "babel-preset-env": "^1.7.0",
     "coveralls": "^3.0.1",
     "cross-env": "^5.2.0",
-    "eslint": "^5.0.0",
+    "eslint": "^6.2.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.13.0",
     "husky": "^0.14.3",
