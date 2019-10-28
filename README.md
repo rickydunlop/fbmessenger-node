@@ -332,7 +332,7 @@ import {
 
 ...
 new Element({
-  itle: 'Title',
+  title: 'Title',
   item_url: 'http://www.example.com',
   image_url: 'http://www.example.com',
   subtitle: 'Subtitle',
@@ -529,9 +529,9 @@ import {
   ButtonTemplate
 } from 'fbmessenger';
 
-messenger.send(new ButtonTemplate(
-  'Hey user! Watch these buttons:',
-  [
+messenger.send(new ButtonTemplate({
+  text: 'Hey user! Watch these buttons:',
+  buttons: [
     new Button({
       type: 'web_url',
       title: 'Web Url Button',
@@ -543,7 +543,7 @@ messenger.send(new ButtonTemplate(
       payload: 'POSTBACK_INFO',
     })
   ]
-), message.sender.id);
+}), message.sender.id);
 ```
 
 #### GenericTemplate
