@@ -1,63 +1,37 @@
 import EventEmitter from 'events';
 
-import * as NodeUrl from 'url';
-import fetch from 'node-fetch';
+import axios from 'axios';
 
 import {
-  Text,
-  Button,
-  Address,
-  Element,
-  Summary,
-  Adjustment,
-  DefaultAction,
-  OpenGraphElement,
-} from './elements';
-
-import {
-  Image,
-  Audio,
-  Video,
-  File,
-} from './attachments';
-
-import {
-  ButtonTemplate,
-  GenericTemplate,
-  ReceiptTemplate,
-  ListTemplate,
-  OpenGraphTemplate,
-} from './templates';
-
-import {
-  FB_API_VERSION,
   SENDER_ACTIONS,
   GET_STARTED_LIMIT,
   WHITELISTED_DOMAIN_MAX,
-  TAGS,
 } from './constants';
 
-import {
-  QuickReplies,
-  QuickReply,
-} from './QuickReplies';
-
-import {
-  GreetingText,
-  PersistentMenu,
-  PersistentMenuItem,
-} from './messenger_profile';
-
-
 class Messenger extends EventEmitter {
-  constructor(opts = {}) {
+  constructor({
+    pageAccessToken = null,
+    axiosConfig = null,
+    apiVersion = 'v3.2',
+  } = {}) {
     super();
 
-    if (!Object.prototype.hasOwnProperty.call(opts, 'pageAccessToken')) {
-      throw new Error('PAGE_ACCESS_TOKEN is missing.');
+    if (!pageAccessToken) {
+      throw new Error('A pageAccessToken is required.');
     }
 
-    this.pageAccessToken = opts.pageAccessToken;
+    this.api = axios.create({
+      baseURL: `https://graph.facebook.com/${apiVersion}`,
+      params: {
+        access_token: pageAccessToken,
+      },
+    });
+
+    if (axiosConfig) {
+      this.api.defaults = axiosConfig;
+    }
+
+    this.api.interceptors.response.use(response => response.data);
   }
 
   handle(payload) {
@@ -98,154 +72,42 @@ class Messenger extends EventEmitter {
     });
   }
 
-  buildURL(pathname, queryParams) {
-    const defaultqueryParams = {
-      access_token: this.pageAccessToken,
-    };
-    const query = Object.assign({}, queryParams, defaultqueryParams);
-    const obj = {
-      protocol: 'https',
-      host: 'graph.facebook.com',
-      pathname: `/${FB_API_VERSION}/${pathname}`,
-      query,
-    };
-
-    return NodeUrl.format(obj);
-  }
-
-  static handleError(result) {
-    /* istanbul ignore if */
-    if ({}.hasOwnProperty.call(result, 'error')) {
-      switch (result.error.code) {
-        case 4:
-          if (result.error.subcode === 2018022) {
-            throw new Error('Too many send requests to phone numbers.');
-          }
-          break;
-        case 1200:
-          throw new Error('Temporary send message failure. Please try again later.');
-        case 613:
-          throw new Error('Calls to this API have exceeded the rate limit.');
-        case 100:
-          switch (result.error.subcode) {
-            case 2018109:
-              throw new Error('Attachment size exceeds allowable limit.');
-            case 2018001:
-              throw new Error('No matching user found.');
-            case 2018034:
-              throw new Error('Message cannot be empty.');
-            default:
-              throw new Error(result.error.message);
-          }
-        case 10:
-          switch (result.error.subcode) {
-            case 2018065:
-              throw new Error('This message is sent outside of allowed window. You need page_messaging_subscriptions permission to be able to do it.');
-            case 2018108:
-            default:
-              throw new Error('This Person Cannot Receive Messages: This person isn\'t receiving messages from you right now.');
-          }
-        case 200:
-          switch (result.error.subcode) {
-            case 2018028:
-              throw new Error('Cannot message users who are not admins, developers or testers of the app until pages_messaging permission is reviewed and the app is live.');
-            case 2018027:
-              throw new Error('Cannot message users who are not admins, developers or testers of the app until pages_messaging_phone_number permission is reviewed and the app is live.');
-            case 2018021:
-              throw new Error('Requires phone matching access fee to be paid by this page unless the recipient user is an admin, developer, or tester of the app.');
-            default:
-              throw new Error(result.error.message || 'Unknown error occurred.');
-          }
-        case 190:
-          throw new Error('Invalid OAuth access token.');
-        case 10303:
-          throw new Error('Invalid account_linking_token.');
-        default:
-          throw new Error(result.error.message || 'Unknown error occurred.');
-      }
-    }
-    return result;
-  }
-
-  get(url) {
-    return fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => response.json())
-      .then(res => this.constructor.handleError(res));
-  }
-
-  post(url, body = {}) {
-    return fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
-      .then(response => response.json())
-      .then(res => this.constructor.handleError(res));
-  }
-
-  delete(url, body) {
-    return fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
-      .then(response => response.json())
-      .then(res => this.constructor.handleError(res));
-  }
-
   getUser(id, fields) {
     if (!id) {
       throw new Error('A user ID is required.');
     }
 
+    if (fields && !Array.isArray(fields)) {
+      throw new Error('Fields must be an array.');
+    }
+
     const fieldsArray = fields || [
+      'name',
       'first_name',
       'last_name',
       'profile_pic',
-      'locale',
-      'timezone',
-      'gender',
-      'is_payment_enabled',
-      'last_ad_referral',
     ];
 
-    const fieldsToRequest = fieldsArray.join();
-
-    const url = this.buildURL(id, {
-      fieldsToRequest,
+    return this.api.get(`/${id}`, {
+      params: { fields: fieldsArray.join() },
     });
-
-    return this.get(url);
   }
 
-  send(payload, id, tag = '') {
+  send(payload, id, tag = null) {
     if (!id) {
       throw new Error('A user ID is required.');
     }
-    if (tag && TAGS.indexOf(tag) === -1) {
-      throw new Error('Invalid tag provided.');
-    }
 
-    const url = this.buildURL('me/messages');
-    const body = {
+    const data = {
       recipient: { id },
       message: payload,
     };
 
     if (tag) {
-      body.tag = tag;
+      data.tag = tag;
     }
 
-    return this.post(url, body);
+    return this.api.post('/me/messages', { data });
   }
 
   senderAction(senderAction, id) {
@@ -257,30 +119,27 @@ class Messenger extends EventEmitter {
       throw new Error('A user ID is required.');
     }
 
-    const url = this.buildURL('me/messages');
-    const body = {
+    const data = {
       recipient: { id },
       sender_action: senderAction,
     };
 
-    return this.post(url, body);
+    return this.api.post('/me/messages', { data });
   }
 
   messageAttachment(payload) {
-    const url = this.buildURL('me/message_attachments');
-    const body = {
+    const data = {
       message: payload,
     };
-    return this.post(url, body);
+    return this.api.post('/me/message_attachments', { data });
   }
 
   messengerCode({ type = 'standard', image_size = 1000, ref = '' } = {}) {
-    const url = this.buildURL('me/messenger_codes');
     if (image_size < 100 || image_size > 2000) {
       throw new Error('Size Supported range: 100-2000 px');
     }
 
-    const body = {
+    const data = {
       type,
       image_size,
     };
@@ -290,10 +149,10 @@ class Messenger extends EventEmitter {
       if (!isValid) {
         throw new Error(`Invalid ref provided: ${ref}`);
       }
-      body.data = { ref };
+      data.data = { ref };
     }
 
-    return this.post(url, body);
+    return this.api.post('/me/messenger_codes', { data });
   }
 
   /**
@@ -306,8 +165,7 @@ class Messenger extends EventEmitter {
     if (custom_token) {
       params.custom_token = custom_token;
     }
-    const url = this.buildURL('me/nlp_configs', params);
-    return this.post(url);
+    return this.api.post('/me/nlp_configs', null, { params });
   }
 
   /**
@@ -315,8 +173,7 @@ class Messenger extends EventEmitter {
   * @return {Object} JSON Response object
   */
   subscribeAppToPage() {
-    const url = this.buildURL('me/subscribed_apps');
-    return this.post(url);
+    return this.api.post('/me/subscribed_apps');
   }
 
   /**
@@ -329,18 +186,16 @@ class Messenger extends EventEmitter {
     if (Array.isArray(props)) {
       fields = props.join();
     }
-    const url = this.buildURL('me/messenger_profile', { fields });
-    return this.get(url, fields);
+    return this.api.get('/me/messenger_profile', { params: { fields } });
   }
 
   /**
    * Set multiple Messenger Profile properties at the same time
-   * @param {Array} payload Property names and their new settings
+   * @param {Array} data Property names and their new settings
    * @return {Object} JSON Response object
    */
-  setMessengerProfile(payload) {
-    const url = this.buildURL('me/messenger_profile');
-    return this.post(url, payload);
+  setMessengerProfile(data) {
+    return this.api.post('/me/messenger_profile', { data });
   }
 
   /**
@@ -349,13 +204,12 @@ class Messenger extends EventEmitter {
    * @return {Object} JSON Response object
    */
   deleteMessengerProfile(fields) {
-    let payload = fields;
+    let data = fields;
     if (!Array.isArray(fields)) {
-      payload = [fields];
+      data = [fields];
     }
 
-    const url = this.buildURL('me/messenger_profile');
-    return this.delete(url, { payload });
+    return this.api.delete('/me/messenger_profile', { data });
   }
 
   /**
@@ -367,10 +221,8 @@ class Messenger extends EventEmitter {
     if (payload.length > GET_STARTED_LIMIT) {
       throw new Error(`Get Started payload limit is ${GET_STARTED_LIMIT}.`);
     }
-    const params = {
-      get_started: { payload },
-    };
-    return this.setMessengerProfile(params);
+    const data = { get_started: { payload } };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -383,7 +235,7 @@ class Messenger extends EventEmitter {
 
   /**
    * Sets the Greeting Text
-   * @param {Array} payload Array of Greeting text objects
+   * @param {Array} greetings Array of Greeting text objects
    * @return {Object} JSON Response object
    */
   setGreetingText(greetings) {
@@ -396,10 +248,8 @@ class Messenger extends EventEmitter {
     if (!hasDefault) {
       throw new Error('You must provide a default locale');
     }
-    const params = {
-      greeting: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { greeting: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -422,10 +272,8 @@ class Messenger extends EventEmitter {
     if (payload.length > WHITELISTED_DOMAIN_MAX) {
       throw new Error(`You may only whitelist ${WHITELISTED_DOMAIN_MAX} domains.`);
     }
-    const params = {
-      whitelisted_domains: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { whitelisted_domains: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -438,7 +286,7 @@ class Messenger extends EventEmitter {
 
   /**
    * Sets the persistent menu
-   * @param {Object} payload PersistentMenu settings
+   * @param {Object} menus PersistentMenu settings
    * @return {Object} JSON Response object
    */
   setPersistentMenu(menus) {
@@ -452,10 +300,8 @@ class Messenger extends EventEmitter {
       throw new Error('You must provide a default locale');
     }
 
-    const params = {
-      persistent_menu: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { persistent_menu: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -475,10 +321,8 @@ class Messenger extends EventEmitter {
     if (!payload) {
       throw new Error('A URL must be provided.');
     }
-    const params = {
-      account_linking_url: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { account_linking_url: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -498,10 +342,8 @@ class Messenger extends EventEmitter {
     if (!payload) {
       throw new Error('Payment settings must be provided.');
     }
-    const params = {
-      payment_settings: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { payment_settings: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -521,10 +363,8 @@ class Messenger extends EventEmitter {
     if (!payload) {
       throw new Error('A target audience must be provided.');
     }
-    const params = {
-      target_audience: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { target_audience: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -545,10 +385,8 @@ class Messenger extends EventEmitter {
     if (!payload) {
       throw new Error('A URL must be provided.');
     }
-    const params = {
-      home_url: payload,
-    };
-    return this.setMessengerProfile(params);
+    const data = { home_url: payload };
+    return this.setMessengerProfile(data);
   }
 
   /**
@@ -560,28 +398,11 @@ class Messenger extends EventEmitter {
   }
 }
 
-export {
-  Messenger,
-  Text,
-  Button,
-  Address,
-  Summary,
-  Adjustment,
-  DefaultAction,
-  OpenGraphElement,
-  Element,
-  Image,
-  Audio,
-  Video,
-  File,
-  ButtonTemplate,
-  GenericTemplate,
-  ReceiptTemplate,
-  ListTemplate,
-  OpenGraphTemplate,
-  QuickReplies,
-  QuickReply,
-  GreetingText,
-  PersistentMenu,
-  PersistentMenuItem,
-};
+export * from './elements';
+export * from './attachments';
+export * from './templates';
+export * from './constants';
+export * from './messenger_profile';
+export * from './QuickReplies';
+export { Messenger };
+export default Messenger;

@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [6.0.0-1](https://github.com/rickydunlop/fbmessenger-node/compare/v6.0.0-0...v6.0.0-1) (2019-03-17)
+
+
+
+# [6.0.0-0](https://github.com/rickydunlop/fbmessenger-node/compare/v5.0.3...v6.0.0-0) (2019-03-17)
+
+
+### Build System
+
+* target node 8 as minimum ([cdb5eba](https://github.com/rickydunlop/fbmessenger-node/commit/cdb5eba))
+
+
+### chore
+
+* remove custom error handler ([79e9e0a](https://github.com/rickydunlop/fbmessenger-node/commit/79e9e0a))
+
+
+### Features
+
+* bump graph version to 3.0 ([0697864](https://github.com/rickydunlop/fbmessenger-node/commit/0697864))
+* replace node-fetch with axios ([6697422](https://github.com/rickydunlop/fbmessenger-node/commit/6697422))
+* switch to async/await instead of Promises ([5f999ea](https://github.com/rickydunlop/fbmessenger-node/commit/5f999ea))
+* update dependencies ([dea38c4](https://github.com/rickydunlop/fbmessenger-node/commit/dea38c4))
+
+
+### BREAKING CHANGES
+
+* removed error handling, this should be handled by the user
+* Dropped support for node 6
+
+
+
 <a name="5.0.3"></a>
 ## [5.0.3](https://github.com/rickydunlop/fbmessenger-node/compare/v5.0.2...v5.0.3) (2018-11-13)
 

@@ -2,13 +2,10 @@ import nock from 'nock';
 
 import { Messenger } from '../src/Messenger';
 import {
-  FB_API_VERSION,
   GET_STARTED_LIMIT,
   WHITELISTED_DOMAIN_MAX,
 } from '../src/constants';
-import {
-  GreetingText,
-} from '../src/messenger_profile';
+import { GreetingText } from '../src/messenger_profile';
 import Image from '../src/attachments/Image';
 
 const messenger = new Messenger({
@@ -40,18 +37,28 @@ const generatePayload = (key, payload) => {
   return res;
 };
 
+const FB_API_VERSION = 'v3.2';
+
 describe('Messenger', () => {
   describe('Create', () => {
     describe('with all attributes', () => {
       it('initializes correctly', () => expect(messenger).toBeTruthy());
     });
 
-    describe('with an attribute missing', () => {
-      it('throws an error', () => {
-        expect(() => {
-          new Messenger();
-        }).toThrowError('PAGE_ACCESS_TOKEN is missing.');
+    it('throws an error when pageAccessToken is missing', () => {
+      expect(() => {
+        new Messenger();
+      }).toThrowError('A pageAccessToken is required.');
+    });
+
+    it('merges axios config', () => {
+      const instance = new Messenger({
+        pageAccessToken: 'test',
+        axiosConfig: {
+          headers: { 'X-Custom-Header': 'foobar' },
+        },
       });
+      expect(instance.api.defaults.headers).toEqual({ 'X-Custom-Header': 'foobar' });
     });
   });
 
@@ -258,6 +265,12 @@ describe('Messenger', () => {
         messenger.getUser();
       }).toThrow('A user ID is required.');
     });
+
+    it('should throw error when invalid fields are given', () => {
+      expect(() => {
+        messenger.getUser(1, 'test');
+      }).toThrow('Fields must be an array.');
+    });
   });
 
   describe('Send', () => {
@@ -313,12 +326,6 @@ describe('Messenger', () => {
         messenger.send(payload);
       }).toThrow('A user ID is required.');
     });
-
-    it('errors if given an invalid tag', () => {
-      expect(() => {
-        messenger.send(payload, 'USER_ID', 'WRONG_TAG');
-      }).toThrow('Invalid tag provided.');
-    });
   });
 
   describe('Sender actions', () => {
@@ -331,7 +338,7 @@ describe('Messenger', () => {
         });
     });
 
-    it('return JSON', (done) => {
+    it('returns JSON', (done) => {
       messenger.senderAction('typing_on', 'USER_ID').then((resp) => {
         try {
           expect(resp).toHaveProperty('recipient_id');
@@ -409,6 +416,17 @@ describe('Messenger', () => {
       });
     });
 
+    it('uses defaults if no params are passed', (done) => {
+      messenger.messengerCode().then((resp) => {
+        try {
+          expect(resp).toHaveProperty('uri');
+          done();
+        } catch (e) {
+          done(e);
+        }
+      });
+    });
+
     it('should throw error if the ref is invalid', () => {
       expect(() => {
         messenger.messengerCode({ ref: '£REF' });
@@ -452,12 +470,12 @@ describe('Messenger', () => {
   describe('NLP', () => {
     beforeEach(() => {
       nock('https://graph.facebook.com')
-        .post(`/${FB_API_VERSION}/me/nlp_configs?nlp_enabled=true&access_token=PAGE_ACCESS_TOKEN`)
+        .post(`/${FB_API_VERSION}/me/nlp_configs?access_token=PAGE_ACCESS_TOKEN&nlp_enabled=true`)
         .reply(200, {
           result: true,
         });
       nock('https://graph.facebook.com')
-        .post(`/${FB_API_VERSION}/me/nlp_configs?nlp_enabled=true&custom_token=token&access_token=PAGE_ACCESS_TOKEN`)
+        .post(`/${FB_API_VERSION}/me/nlp_configs?access_token=PAGE_ACCESS_TOKEN&nlp_enabled=true&custom_token=token`)
         .reply(200, {
           result: true,
         });

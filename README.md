@@ -243,12 +243,8 @@ messenger.on('message', async (message) => {
 Example usage:
 
 ```javascript
-messenger.getUser()
-  .then((user) => {
-    messenger.send({
-  	  text: `Hey ${user.first_name} ${user.last_name}`
-    }, message.sender.id);
-});
+const user = await messenger.getUser()
+messenger.send({ text: `Hey ${user.name}` }, message.sender.id);
 ```
 
 Returns object with user data:
